@@ -12,7 +12,8 @@ public enum Framework {
     QUARKUS3_NATIVE("quarkus3-native"),
     SPRING3_JVM("spring3-jvm"),
     SPRING3_JVM_AOT("spring3-jvm-aot"),
-    SPRING3_NATIVE("spring3-native");
+    SPRING3_NATIVE("spring3-native"),
+    QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat");
 
     private final String name;
     private static final Map<String, Framework> ENUM_MAP;

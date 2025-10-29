@@ -1,8 +1,14 @@
 package io.quarkus.infra.performance.graphics;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Framework;
+import io.quarkus.infra.performance.graphics.model.Load;
+import io.quarkus.infra.performance.graphics.model.Result;
+import io.quarkus.infra.performance.graphics.model.Results;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,17 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import jakarta.inject.Inject;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import io.quarkus.infra.performance.graphics.model.BenchmarkData;
-import io.quarkus.infra.performance.graphics.model.Framework;
-import io.quarkus.infra.performance.graphics.model.Load;
-import io.quarkus.infra.performance.graphics.model.Result;
-import io.quarkus.infra.performance.graphics.model.Results;
-import io.quarkus.test.junit.QuarkusTest;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class ImageGeneratorTest {
@@ -50,7 +48,7 @@ class ImageGeneratorTest {
             when(data.results()).thenReturn(results);
             addDatapoint(data, Framework.QUARKUS3_JVM, THROUGHPUT);
             addDatapoint(data, Framework.SPRING3_JVM, 267.87);
-            imageGenerator.generate(data, new File("target/images/test1.svg"));
+            imageGenerator.generate(data, new File("target/images/test1.svg"), Theme.LIGHT);
             image = new File("target/images/test1.svg");
         } else {
             throw new RuntimeException("How can this be? Target directory not found: " + targetDir.toAbsolutePath());
