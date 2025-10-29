@@ -1,10 +1,12 @@
 package io.quarkus.infra.performance.graphics.model;
 
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import io.quarkus.infra.performance.graphics.charts.Datapoint;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Results {
 
@@ -22,5 +24,11 @@ public class Results {
 
     public Result framework(Framework type) {
         return frameworks.get(type);
+    }
+
+    public List<Datapoint> getDatasets(Function<Result, Double> fun) {
+        return frameworks.entrySet().stream().map(e -> new Datapoint(e.getKey(), fun.apply(e.getValue())))
+                .toList();
+
     }
 }
