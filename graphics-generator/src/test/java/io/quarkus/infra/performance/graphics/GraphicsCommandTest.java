@@ -1,11 +1,7 @@
 package io.quarkus.infra.performance.graphics;
 
-import io.quarkus.test.junit.main.Launch;
-import io.quarkus.test.junit.main.LaunchResult;
-import io.quarkus.test.junit.main.QuarkusMainLauncher;
-import io.quarkus.test.junit.main.QuarkusMainTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,15 +10,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import io.quarkus.test.junit.main.Launch;
+import io.quarkus.test.junit.main.LaunchResult;
+import io.quarkus.test.junit.main.QuarkusMainLauncher;
+import io.quarkus.test.junit.main.QuarkusMainTest;
 
 @QuarkusMainTest
-public class GreetingCommandTest {
+public class GraphicsCommandTest {
 
     @BeforeEach
     public void setup() throws IOException {
-
 
         Path targetDir = Paths.get("target"); // adjust path if needed
 
@@ -37,7 +37,6 @@ public class GreetingCommandTest {
         }
     }
 
-
     @Test
     public void testLaunchWithNoArguments(QuarkusMainLauncher launcher) {
 
@@ -49,13 +48,32 @@ public class GreetingCommandTest {
     }
 
     @Test
-    @Launch({"src/test/resources/data.json", "target"})
+    @Launch({ "src/test/resources/data.json", "target/test-output/filename" })
     public void testLaunchWithFilename(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/data.svg");
+        File image = new File("target/test-output/filename/data.svg");
         assertTrue(image.exists());
+    }
+
+    @Test
+    @Launch({ "src/test/resources", "target/test-output/directory" })
+    public void testLaunchWithDirectory(LaunchResult result) {
+        String output = result.getOutput();
+        assertTrue(output.contains("data.json"), output);
+        assertTrue(output.contains("data2.json"), output);
+
+        File dir = new File("target/test-output/directory/");
+        File image1 = new File(dir, "data.svg");
+        assertTrue(image1.exists());
+        File image2 = new File(dir, "data2.svg");
+        assertTrue(image2.exists());
+
+        File nestedDir = new File("target/test-output/directory/nested/more-nested");
+        assertTrue(nestedDir.exists());
+        File image3 = new File(nestedDir, "data3.svg");
+        assertTrue(image3.exists());
     }
 
 }
