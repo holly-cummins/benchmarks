@@ -1,14 +1,13 @@
 package io.quarkus.infra.performance.graphics;
 
+import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import jakarta.inject.Inject;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Parameters;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-
-import jakarta.inject.Inject;
-
-import io.quarkus.infra.performance.graphics.model.BenchmarkData;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 
 @Command(name = "graphics", mixinStandardHelpOptions = true)
 public class GraphicsCommand implements Runnable {
@@ -68,9 +67,15 @@ public class GraphicsCommand implements Runnable {
         } else {
             qualifiedOutputDir = new File(outputDirectory, pathRelative.toString());
         }
-        File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", ".svg"));
         try {
-            generator.generate(data, outFile);
+            {
+                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-light.svg"));
+                generator.generate(data, outFile, Theme.LIGHT);
+            }
+            {
+                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-dark.svg"));
+                generator.generate(data, outFile, Theme.DARK);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

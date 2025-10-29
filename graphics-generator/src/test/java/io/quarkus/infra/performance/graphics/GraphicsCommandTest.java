@@ -27,7 +27,7 @@ public class GraphicsCommandTest {
         Path targetDir = Paths.get("target"); // adjust path if needed
 
         if (Files.exists(targetDir) && Files.isDirectory(targetDir)) {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*.svg")) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-light.svg")) {
                 for (Path file : stream) {
                     Files.deleteIfExists(file);
                 }
@@ -53,7 +53,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data.svg");
+        File image = new File("target/test-output/filename/data-light.svg");
         assertTrue(image.exists());
     }
 
@@ -65,15 +65,25 @@ public class GraphicsCommandTest {
         assertTrue(output.contains("data2.json"), output);
 
         File dir = new File("target/test-output/directory/");
-        File image1 = new File(dir, "data.svg");
+        File image1 = new File(dir, "data-light.svg");
         assertTrue(image1.exists());
-        File image2 = new File(dir, "data2.svg");
+        File image2 = new File(dir, "data2-light.svg");
         assertTrue(image2.exists());
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");
         assertTrue(nestedDir.exists());
-        File image3 = new File(nestedDir, "data3.svg");
+        File image3 = new File(nestedDir, "data3-light.svg");
         assertTrue(image3.exists());
+    }
+
+    @Test
+    @Launch({ "src/test/resources/data.json", "target/test-output/filename" })
+    public void testDarkMode(LaunchResult result) {
+        String output = result.getOutput();
+        assertTrue(output.contains("data.json"), output);
+
+        File image = new File("target/test-output/filename/data-dark.svg");
+        assertTrue(image.exists());
     }
 
 }
