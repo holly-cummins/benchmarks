@@ -1,14 +1,8 @@
 package io.quarkus.infra.performance.graphics;
 
-import io.quarkus.infra.performance.graphics.model.BenchmarkData;
-import io.quarkus.infra.performance.graphics.model.Framework;
-import io.quarkus.infra.performance.graphics.model.Load;
-import io.quarkus.infra.performance.graphics.model.Result;
-import io.quarkus.infra.performance.graphics.model.Results;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +11,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import jakarta.inject.Inject;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Framework;
+import io.quarkus.infra.performance.graphics.model.Load;
+import io.quarkus.infra.performance.graphics.model.Result;
+import io.quarkus.infra.performance.graphics.model.Results;
+import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 class ImageGeneratorTest {
@@ -60,7 +63,7 @@ class ImageGeneratorTest {
         data.results().addFramework(framework.getName(), result);
         Load load = mock(Load.class);
         when(result.load()).thenReturn(load);
-        when(load.avThroughput()).thenReturn(throughput);
+        when(load.avThroughput()).thenReturn(new TransactionsPerSecond(throughput));
     }
 
     @Test

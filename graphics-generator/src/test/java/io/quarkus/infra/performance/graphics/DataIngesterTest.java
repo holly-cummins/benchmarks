@@ -38,18 +38,22 @@ class DataIngesterTest {
         assertEquals("3.28.4", data.config().quarkus().version());
 
         // CGroup
-        assertEquals("14G", data.config().cgroup().memMax());
+        assertEquals(14, data.config().cgroup().memMax().getValue());
+        assertEquals("G", data.config().cgroup().memMax().getUnits());
 
         // Results
-        assertEquals(27586.713333333333, data.results().framework(Framework.QUARKUS3_JVM).load().avThroughput());
-        assertEquals(6.496666666666667, data.results().framework(Framework.SPRING3_NATIVE).build().avNativeRSS());
+        assertEquals(27586.713333333333, data.results().framework(Framework.QUARKUS3_JVM).load().avThroughput().getValue());
+        assertEquals(6.496666666666667, data.results().framework(Framework.SPRING3_NATIVE).build().avNativeRSS().getValue());
+        assertEquals(35161, data.results().framework(Framework.SPRING3_NATIVE).build().classCount().getValue());
 
         // Timing
         assertEquals(Instant.parse("2025-10-20T16:05:51Z"), data.timing().start());
         assertEquals(Instant.parse("2025-10-20T17:34:02Z"), data.timing().stop());
+        assertEquals(5.526666666666666,
+                data.results().framework(Framework.QUARKUS3_JVM).build().avBuildTime().getValue());
 
         // Native
-        assertEquals("11,620", data.results().framework(Framework.SPRING3_NATIVE).build().reflectionClassCount());
+        assertEquals(11620, data.results().framework(Framework.SPRING3_NATIVE).build().reflectionClassCount().getValue());
     }
 
 }
