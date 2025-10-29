@@ -2,11 +2,11 @@ package io.quarkus.infra.performance.graphics.model;
 
 import java.util.List;
 
-public record Rss(
-        List<Double> startup,
-        List<Double> firstRequest,
-        Double avStartupRss,
-        Double avFirstRequestRss
-) {
-}
+import io.quarkus.infra.performance.graphics.model.units.Memory;
 
+public record Rss(
+        List<Memory> startup,
+        List<Memory> firstRequest,
+        Memory avStartupRss,
+        Memory avFirstRequestRss) {
+}

@@ -2,8 +2,9 @@ package io.quarkus.infra.performance.graphics.model;
 
 import java.util.List;
 
+import io.quarkus.infra.performance.graphics.model.units.Seconds;
+
 public record Startup(
-        List<Double> timings,
-        Double avStartTime
-) {
+        List<Seconds> timings,
+        Seconds avStartTime) {
 }

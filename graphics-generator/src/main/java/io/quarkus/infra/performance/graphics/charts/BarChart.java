@@ -36,7 +36,7 @@ public class BarChart implements Chart {
         g.setPaint(theme.text());
         g.setFont(new Font("Arial", Font.BOLD, 24));
 
-        double maxValue = data.stream().map(Datapoint::value).max(Double::compare).orElse(1.0);
+        double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
 
         int barSpacing = canvasHeight / data.size() - BAR_WIDTH;
         int y = barSpacing / 2;
@@ -47,7 +47,7 @@ public class BarChart implements Chart {
         for (Datapoint d : data) {
             // If this framework isn't found, it will just be the text colour, which is fine
             g.setPaint(theme.chartElements().get(d.framework()));
-            double val = d.value();
+            double val = d.value().getValue();
             int x = labelAllowance - 40; // Fudge factor for asymmetric margins
             double scale = barWidth / maxValue;
             int length = (int) (val * scale);
@@ -59,7 +59,7 @@ public class BarChart implements Chart {
             // Why do we divide by 4 instead of 2? I don't know. :)
             int labelY = y + labelSize / 4 + BAR_WIDTH / 2;
             g.drawString(d.framework().getName(), leftMargin, labelY);
-            g.drawString(java.lang.String.format("%d %s", round(val), "transactions/sec"), x + length + 20, labelY);
+            g.drawString(java.lang.String.format("%d %s", round(val), d.value().getUnits()), x + length + 20, labelY);
 
             y += BAR_WIDTH + barSpacing;
 
