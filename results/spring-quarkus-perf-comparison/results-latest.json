@@ -1,15 +1,87 @@
 {
   "timing": {
-    "start": "2025-11-05T21:42:02Z",
-    "stop": "2025-11-05T21:42:50Z"
+    "start": "2025-11-05T21:48:02Z",
+    "stop": "2025-11-05T22:06:25Z"
   },
   "results": {
     "quarkus3-jvm": {
       "build": {
         "timings": [
-          9.04
+          9.87,
+          9.73,
+          9.81
         ],
-        "avBuildTime": 9.04
+        "avBuildTime": 9.803333333333335
+      }
+    },
+    "quarkus3-native": {
+      "build": {
+        "timings": [
+          125.15,
+          124.16,
+          126.96
+        ],
+        "native": {
+          "rss": [
+            4.04,
+            4.07,
+            3.97
+          ],
+          "binarySize": 94.37
+        },
+        "avBuildTime": 125.42333333333333,
+        "avNativeRSS": 4.026666666666666,
+        "classCount": "22,109",
+        "fieldCount": "28,897",
+        "methodCount": "104,705",
+        "reflectionClassCount": "7,296",
+        "reflectionFieldCount": 233,
+        "reflectionMethodCount": "6,507"
+      }
+    },
+    "spring3-jvm": {
+      "build": {
+        "timings": [
+          5.7,
+          5.71,
+          5.7
+        ],
+        "avBuildTime": 5.703333333333333
+      }
+    },
+    "spring3-jvm-aot": {
+      "build": {
+        "timings": [
+          10.82,
+          10.89,
+          10.91
+        ],
+        "avBuildTime": 10.873333333333335
+      }
+    },
+    "spring3-native": {
+      "build": {
+        "timings": [
+          181.47,
+          181.57,
+          179.7
+        ],
+        "native": {
+          "rss": [
+            6.2,
+            6.19,
+            6.13
+          ],
+          "binarySize": 156.19
+        },
+        "avBuildTime": 180.91333333333333,
+        "avNativeRSS": 6.173333333333333,
+        "classCount": "35,173",
+        "fieldCount": "49,794",
+        "methodCount": "167,121",
+        "reflectionClassCount": "11,629",
+        "reflectionFieldCount": "1,776",
+        "reflectionMethodCount": "12,584"
       }
     }
   },
@@ -23,7 +95,7 @@
       "version": "25.0.1-tem"
     },
     "CMD_PREFIX": "",
-    "num_iterations": 1,
+    "num_iterations": 3,
     "quarkus": {
       "native_build_options": "",
       "version": "3.29.0"
