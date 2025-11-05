@@ -1,15 +1,87 @@
 {
   "timing": {
-    "start": "2025-11-05T19:28:04Z",
-    "stop": "2025-11-05T19:28:50Z"
+    "start": "2025-11-05T19:33:04Z",
+    "stop": "2025-11-05T19:51:26Z"
   },
   "results": {
     "quarkus3-jvm": {
       "build": {
         "timings": [
-          8.71
+          9.85,
+          9.86,
+          9.89
         ],
-        "avBuildTime": 8.71
+        "avBuildTime": 9.866666666666667
+      }
+    },
+    "quarkus3-native": {
+      "build": {
+        "timings": [
+          126.02,
+          125.76,
+          126.66
+        ],
+        "native": {
+          "rss": [
+            4.03,
+            4.07,
+            4.1
+          ],
+          "binarySize": 94.37
+        },
+        "avBuildTime": 126.14666666666666,
+        "avNativeRSS": 4.066666666666667,
+        "classCount": "22,109",
+        "fieldCount": "28,898",
+        "methodCount": "104,707",
+        "reflectionClassCount": "7,296",
+        "reflectionFieldCount": 233,
+        "reflectionMethodCount": "6,507"
+      }
+    },
+    "spring3-jvm": {
+      "build": {
+        "timings": [
+          5.69,
+          5.73,
+          5.66
+        ],
+        "avBuildTime": 5.693333333333334
+      }
+    },
+    "spring3-jvm-aot": {
+      "build": {
+        "timings": [
+          10.85,
+          10.84,
+          10.81
+        ],
+        "avBuildTime": 10.833333333333334
+      }
+    },
+    "spring3-native": {
+      "build": {
+        "timings": [
+          180.21,
+          181.41,
+          179.03
+        ],
+        "native": {
+          "rss": [
+            6.18,
+            6.17,
+            6.19
+          ],
+          "binarySize": 156.19
+        },
+        "avBuildTime": 180.21666666666667,
+        "avNativeRSS": 6.18,
+        "classCount": "35,173",
+        "fieldCount": "49,794",
+        "methodCount": "167,121",
+        "reflectionClassCount": "11,629",
+        "reflectionFieldCount": "1,776",
+        "reflectionMethodCount": "12,584"
       }
     }
   },
@@ -23,14 +95,14 @@
       "version": "25.0.1-tem"
     },
     "CMD_PREFIX": "",
-    "num_iterations": 1,
+    "num_iterations": 3,
     "quarkus": {
       "native_build_options": "",
       "version": "3.29.0"
     },
     "repo": {
-      "branch": "fix-push-results",
-      "url": "https://github.com/edeandrea/spring-quarkus-perf-comparison.git"
+      "branch": "main",
+      "url": "https://github.com/quarkusio/spring-quarkus-perf-comparison.git"
     },
     "profiler": {
       "name": "none",
