@@ -1,22 +1,32 @@
 package io.quarkus.infra.performance.graphics;
 
-import io.quarkus.infra.performance.graphics.model.BenchmarkData;
-import jakarta.inject.Inject;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Function;
+
+import jakarta.inject.Inject;
+
+import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Result;
+import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Parameters;
 
 @Command(name = "graphics", mixinStandardHelpOptions = true)
 public class GraphicsCommand implements Runnable {
+
+    private static final Function<Result, ? extends DimensionalNumber> THROUGHPUT = framework -> framework.load()
+            .avThroughput();
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
     Path filename;
 
     @Parameters(paramLabel = "<outputDir>", defaultValue = ".", description = "The directory for generated images")
     File outputDirectory;
+
+    @Parameters(paramLabel = "<tolerateMissingData>", defaultValue = "true", description = "Whether to suppress exceptions caused by missing data")
+    boolean tolerateMissingData;
 
     @Inject
     DataIngester ingester;
@@ -70,14 +80,18 @@ public class GraphicsCommand implements Runnable {
         try {
             {
                 File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-light.svg"));
-                generator.generate(data, outFile, Theme.LIGHT);
+                generator.generate(data, THROUGHPUT, outFile, Theme.LIGHT);
             }
             {
                 File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-dark.svg"));
-                generator.generate(data, outFile, Theme.DARK);
+                generator.generate(data, THROUGHPUT, outFile, Theme.DARK);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (MissingDataException e) {
+            if (!tolerateMissingData) {
+                throw e;
+            }
         }
     }
 }

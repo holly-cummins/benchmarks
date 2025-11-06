@@ -1,6 +1,8 @@
 package io.quarkus.infra.performance.graphics.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.infra.performance.graphics.MissingDataException;
 import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
 
@@ -23,6 +26,18 @@ class ResultsTest {
         assertEquals(589.21, datapoints.get(0).value().getValue());
         assertEquals(Framework.QUARKUS3_JVM, datapoints.get(0).framework());
         assertEquals(467.87, datapoints.get(1).value().getValue());
+
+    }
+
+    @Test
+    void getDatasetsForMissingData() {
+        Results results = new Results();
+        addDatapoint(results, Framework.SPRING3_JVM, 589.21);
+
+        Exception exception = assertThrows(MissingDataException.class,
+                () -> results.getDatasets(f -> f.rss().avFirstRequestRss()));
+        assertTrue(exception.getMessage().contains("Rss"), exception.getMessage());
+        assertTrue(exception.getMessage().contains("pring"), exception.getMessage());
 
     }
 

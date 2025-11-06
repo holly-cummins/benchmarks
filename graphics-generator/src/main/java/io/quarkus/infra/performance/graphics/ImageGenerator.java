@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -18,10 +19,13 @@ import org.w3c.dom.Document;
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.charts.Chart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Result;
+import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 
 @ApplicationScoped
 public class ImageGenerator {
-    public void generate(BenchmarkData data, File outFile, Theme theme) throws IOException {
+    public void generate(BenchmarkData data, Function<Result, ? extends DimensionalNumber> fun, File outFile, Theme theme)
+            throws IOException {
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         Document doc = impl.createDocument(svgNS, "svg", null);
@@ -30,7 +34,7 @@ public class ImageGenerator {
         svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
 
         Chart chart = new BarChart(svgGenerator, theme);
-        chart.draw(data.results().getDatasets(framework -> framework.load().avThroughput()));
+        chart.draw(data.results().getDatasets(fun));
 
         outFile.getParentFile().mkdirs();
         boolean useCSS = true;

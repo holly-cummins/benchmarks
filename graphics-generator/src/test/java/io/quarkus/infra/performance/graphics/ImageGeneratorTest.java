@@ -10,6 +10,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 import jakarta.inject.Inject;
 
@@ -21,6 +22,7 @@ import io.quarkus.infra.performance.graphics.model.Framework;
 import io.quarkus.infra.performance.graphics.model.Load;
 import io.quarkus.infra.performance.graphics.model.Result;
 import io.quarkus.infra.performance.graphics.model.Results;
+import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -51,7 +53,8 @@ class ImageGeneratorTest {
             when(data.results()).thenReturn(results);
             addDatapoint(data, Framework.QUARKUS3_JVM, THROUGHPUT);
             addDatapoint(data, Framework.SPRING3_JVM, 267.87);
-            imageGenerator.generate(data, new File("target/images/test1.svg"), Theme.LIGHT);
+            Function<Result, ? extends DimensionalNumber> fun = framework -> framework.load().avThroughput();
+            imageGenerator.generate(data, fun, new File("target/images/test1.svg"), Theme.LIGHT);
             image = new File("target/images/test1.svg");
         } else {
             throw new RuntimeException("How can this be? Target directory not found: " + targetDir.toAbsolutePath());
