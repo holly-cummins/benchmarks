@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
+import io.quarkus.infra.performance.graphics.MissingDataException;
 import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 
@@ -29,8 +30,20 @@ public class Results {
     }
 
     public List<Datapoint> getDatasets(Function<Result, ? extends DimensionalNumber> fun) {
-        return frameworks.entrySet().stream().map(e -> new Datapoint(e.getKey(), fun.apply(e.getValue())))
+        return frameworks.entrySet().stream().map(e -> getDatapoint(e, fun))
                 .toList();
 
+    }
+
+    private static Datapoint getDatapoint(Map.Entry<Framework, Result> entry,
+            Function<Result, ? extends DimensionalNumber> fun) {
+        Framework framework = entry.getKey();
+        try {
+            return new Datapoint(framework, fun.apply(entry.getValue()));
+        } catch (NullPointerException e) {
+            System.out.println("Missing data for the " + framework.getName() + " framework: " + e.getMessage());
+            throw new MissingDataException(
+                    "Data was missing for the " + framework.getName() + " framework: " + e.getMessage());
+        }
     }
 }
