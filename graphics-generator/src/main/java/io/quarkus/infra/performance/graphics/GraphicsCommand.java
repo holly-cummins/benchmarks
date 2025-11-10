@@ -19,6 +19,8 @@ public class GraphicsCommand implements Runnable {
             framework -> framework.rss().avFirstRequestRss());
     private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time",
             framework -> framework.startup().avStartTime());
+    private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Time",
+            framework -> framework.build().avBuildTime());
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
     Path filename;
@@ -81,6 +83,7 @@ public class GraphicsCommand implements Runnable {
         generate(file, qualifiedOutputDir, data, RSS);
         generate(file, qualifiedOutputDir, data, TIME_TO_FIRST_REQUEST);
         generate(file, qualifiedOutputDir, data, THROUGHPUT);
+        generate(file, qualifiedOutputDir, data, BUILD_TIME);
     }
 
     private void generate(File file, File qualifiedOutputDir, BenchmarkData data, PlotDefinition plotDefinition) {
