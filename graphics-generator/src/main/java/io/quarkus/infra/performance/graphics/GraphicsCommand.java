@@ -3,21 +3,22 @@ package io.quarkus.infra.performance.graphics;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Function;
 
 import jakarta.inject.Inject;
 
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
-import io.quarkus.infra.performance.graphics.model.Result;
-import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "graphics", mixinStandardHelpOptions = true)
 public class GraphicsCommand implements Runnable {
 
-    private static final Function<Result, ? extends DimensionalNumber> THROUGHPUT = framework -> framework.load()
-            .avThroughput();
+    private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", framework -> framework.load()
+            .avThroughput());
+    private static final PlotDefinition RSS = new PlotDefinition("Average RSS at first request",
+            framework -> framework.rss().avFirstRequestRss());
+    private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time",
+            framework -> framework.startup().avStartTime());
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
     Path filename;
@@ -77,14 +78,21 @@ public class GraphicsCommand implements Runnable {
         } else {
             qualifiedOutputDir = new File(outputDirectory, pathRelative.toString());
         }
+        generate(file, qualifiedOutputDir, data, RSS);
+        generate(file, qualifiedOutputDir, data, TIME_TO_FIRST_REQUEST);
+        generate(file, qualifiedOutputDir, data, THROUGHPUT);
+    }
+
+    private void generate(File file, File qualifiedOutputDir, BenchmarkData data, PlotDefinition plotDefinition) {
+        String fileMod = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and");
         try {
             {
-                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-light.svg"));
-                generator.generate(data, THROUGHPUT, outFile, Theme.LIGHT);
+                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-light.svg"));
+                generator.generate(data, plotDefinition, outFile, Theme.LIGHT);
             }
             {
-                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-dark.svg"));
-                generator.generate(data, THROUGHPUT, outFile, Theme.DARK);
+                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-dark.svg"));
+                generator.generate(data, plotDefinition, outFile, Theme.DARK);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

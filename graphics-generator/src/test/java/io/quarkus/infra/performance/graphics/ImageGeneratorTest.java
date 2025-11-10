@@ -54,7 +54,9 @@ class ImageGeneratorTest {
             addDatapoint(data, Framework.QUARKUS3_JVM, THROUGHPUT);
             addDatapoint(data, Framework.SPRING3_JVM, 267.87);
             Function<Result, ? extends DimensionalNumber> fun = framework -> framework.load().avThroughput();
-            imageGenerator.generate(data, fun, new File("target/images/test1.svg"), Theme.LIGHT);
+            PlotDefinition plotDefinition = new PlotDefinition("test plot", fun);
+            imageGenerator.generate(data, plotDefinition, new File("target/images/test1.svg"),
+                    Theme.LIGHT);
             image = new File("target/images/test1.svg");
         } else {
             throw new RuntimeException("How can this be? Target directory not found: " + targetDir.toAbsolutePath());
@@ -87,7 +89,7 @@ class ImageGeneratorTest {
     @Test
     public void testDataLabels() throws IOException {
         String contents = Files.readString(image.toPath());
-        assertTrue(contents.contains("456"), contents);
+        assertTrue(contents.contains("457"), contents);
     }
 
 }

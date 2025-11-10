@@ -27,7 +27,7 @@ public class BarChart implements Chart {
     }
 
     @Override
-    public void draw(List<Datapoint> data) {
+    public void draw(String title, List<Datapoint> data) {
 
         g.setPaint(theme.background());
         g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
@@ -38,12 +38,17 @@ public class BarChart implements Chart {
 
         double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
 
-        int barSpacing = canvasHeight / data.size() - BAR_WIDTH;
-        int y = barSpacing / 2;
+        int plotHeight = canvasHeight - 3 * labelSize;
+        int barSpacing = plotHeight / data.size() - BAR_WIDTH;
 
         int labelAllowance = 250;
         int leftMargin = 20;
         int barWidth = canvasWidth - 2 * labelAllowance;
+
+        int verticalOffset = 2 * labelSize;
+        g.drawString(title, leftMargin, verticalOffset);
+        int y = barSpacing / 2 + verticalOffset;
+
         for (Datapoint d : data) {
             // If this framework isn't found, it will just be the text colour, which is fine
             g.setPaint(theme.chartElements().get(d.framework()));

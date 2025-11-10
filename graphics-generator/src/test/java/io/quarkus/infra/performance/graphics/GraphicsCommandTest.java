@@ -32,6 +32,11 @@ public class GraphicsCommandTest {
                     Files.deleteIfExists(file);
                 }
             }
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-dark.svg")) {
+                for (Path file : stream) {
+                    Files.deleteIfExists(file);
+                }
+            }
         } else {
             throw new RuntimeException("How can this be? Target directory not found: " + targetDir.toAbsolutePath());
         }
@@ -53,7 +58,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-light.svg");
+        File image = new File("target/test-output/filename/data-throughput-light.svg");
         assertTrue(image.exists());
     }
 
@@ -65,14 +70,14 @@ public class GraphicsCommandTest {
         assertTrue(output.contains("data2.json"), output);
 
         File dir = new File("target/test-output/directory/");
-        File image1 = new File(dir, "data-light.svg");
+        File image1 = new File(dir, "data-throughput-light.svg");
         assertTrue(image1.exists());
-        File image2 = new File(dir, "data2-light.svg");
+        File image2 = new File(dir, "data2-throughput-light.svg");
         assertTrue(image2.exists());
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");
         assertTrue(nestedDir.exists());
-        File image3 = new File(nestedDir, "data3-light.svg");
+        File image3 = new File(nestedDir, "data3-throughput-light.svg");
         assertTrue(image3.exists());
     }
 
@@ -82,7 +87,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-dark.svg");
+        File image = new File("target/test-output/filename/data-throughput-dark.svg");
         assertTrue(image.exists());
     }
 
