@@ -14,3 +14,7 @@ Benchmark source code: https://github.com/quarkusio/spring-quarkus-perf-comparis
 
 ![](images/spring-quarkus-perf-comparison/results-latest-average-rss-at-first-request-light.svg#gh-light-mode-only)
 ![](images/spring-quarkus-perf-comparison/results-latest-average-rss-at-first-request-dark.svg#gh-dark-mode-only)
+
+
+![](images/spring-quarkus-perf-comparison/results-latest-build-time-light.svg#gh-light-mode-only)
+![](images/spring-quarkus-perf-comparison/results-latest-build-time-dark.svg#gh-dark-mode-only)
