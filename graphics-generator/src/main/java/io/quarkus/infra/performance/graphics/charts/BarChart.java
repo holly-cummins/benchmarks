@@ -18,6 +18,10 @@ public class BarChart implements Chart {
     private final Theme theme;
     private int labelSize = 24;
 
+    private static final Font titleFont = new Font("Arial", Font.BOLD, 24);
+    private static final Font keyFont = new Font("Arial", Font.BOLD, 18);
+    private static final Font labelFont = new Font("Arial", Font.PLAIN, 14);
+
     public BarChart(SVGGraphics2D g, Theme theme) {
         this.g = g;
         this.theme = theme;
@@ -34,7 +38,7 @@ public class BarChart implements Chart {
 
         // --- Draw section titles ---
         g.setPaint(theme.text());
-        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.setFont(titleFont);
 
         double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
 
@@ -68,11 +72,13 @@ public class BarChart implements Chart {
             barArea.fillRect(0, y, length, BAR_THICKNESS);
 
             labelArea.setPaint(theme.text());
+            g.setFont(labelFont);
             // Vertically align text with the centre of the bars
             // The SVG attribute alignment-baseline="middle" is not supported by Batik.
             // Why do we divide by 4 instead of 2? I don't know. :)
             int labelY = y + labelSize / 4 + BAR_THICKNESS / 2;
             labelArea.drawString(d.framework().getName(), 0, labelY);
+            g.setFont(keyFont);
             barArea.drawString(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
                     length + labelPadding,
                     labelY);
