@@ -11,7 +11,7 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import io.quarkus.infra.performance.graphics.Theme;
 
 public class BarChart implements Chart {
-    private static final int BAR_WIDTH = 70;
+    private static final int BAR_THICKNESS = 70;
     private final SVGGraphics2D g;
     private final int canvasHeight;
     private final int canvasWidth;
@@ -39,7 +39,7 @@ public class BarChart implements Chart {
         double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
 
         int plotHeight = canvasHeight - 3 * labelSize;
-        int barSpacing = plotHeight / data.size() - BAR_WIDTH;
+        int barSpacing = plotHeight / data.size() - BAR_THICKNESS;
 
         int labelAllowance = 250;
         int leftMargin = 20;
@@ -47,26 +47,37 @@ public class BarChart implements Chart {
 
         int verticalOffset = 2 * labelSize;
         g.drawString(title, leftMargin, verticalOffset);
-        int y = barSpacing / 2 + verticalOffset;
+
+        int plotWidth = canvasWidth - 2 * leftMargin;
+        Subcanvas chartArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, barSpacing / 2 + verticalOffset);
+
+        int y = 0;
+        int labelPadding = 20;
+
+        Subcanvas labelArea = new Subcanvas(chartArea, labelAllowance, plotHeight, 0, 0);
+        // Fudge factor for asymmetric margins
+        int fudge = 40;
+        Subcanvas barArea = new Subcanvas(chartArea, barWidth, plotHeight, labelAllowance - fudge, 0);
 
         for (Datapoint d : data) {
             // If this framework isn't found, it will just be the text colour, which is fine
-            g.setPaint(theme.chartElements().get(d.framework()));
+            barArea.setPaint(theme.chartElements().get(d.framework()));
             double val = d.value().getValue();
-            int x = labelAllowance - 40; // Fudge factor for asymmetric margins
             double scale = barWidth / maxValue;
             int length = (int) (val * scale);
-            g.fillRect(x, y, length, BAR_WIDTH);
+            barArea.fillRect(0, y, length, BAR_THICKNESS);
 
-            g.setPaint(theme.text());
+            labelArea.setPaint(theme.text());
             // Vertically align text with the centre of the bars
             // The SVG attribute alignment-baseline="middle" is not supported by Batik.
             // Why do we divide by 4 instead of 2? I don't know. :)
-            int labelY = y + labelSize / 4 + BAR_WIDTH / 2;
-            g.drawString(d.framework().getName(), leftMargin, labelY);
-            g.drawString(java.lang.String.format("%d %s", round(val), d.value().getUnits()), x + length + 20, labelY);
+            int labelY = y + labelSize / 4 + BAR_THICKNESS / 2;
+            labelArea.drawString(d.framework().getName(), 0, labelY);
+            barArea.drawString(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
+                    length + labelPadding,
+                    labelY);
 
-            y += BAR_WIDTH + barSpacing;
+            y += BAR_THICKNESS + barSpacing;
 
         }
     }
