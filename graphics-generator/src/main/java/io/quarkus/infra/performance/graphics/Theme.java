@@ -5,11 +5,12 @@ import static java.awt.Color.decode;
 import java.awt.Color;
 import java.util.Map;
 
+import io.quarkus.infra.performance.graphics.charts.EmbeddableFont;
 import io.quarkus.infra.performance.graphics.model.Framework;
 
 public record Theme(Color background, Color text, Map<Framework, Color> chartElements) {
 
-    public static final String FONT = "Open Sans";
+    public static final EmbeddableFont FONT = EmbeddableFont.OPENSANS;
 
     public static Theme LIGHT = new Theme(Color.WHITE, Color.BLACK,
             Map.of(Framework.QUARKUS3_JVM, decode("#4695EB"), Framework.QUARKUS3_NATIVE, decode("#FF0000"),
