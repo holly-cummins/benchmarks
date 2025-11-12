@@ -1,30 +1,36 @@
 package io.quarkus.infra.performance.graphics.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Framework {
-    QUARKUS3_JVM("quarkus3-jvm"),
-    QUARKUS3_NATIVE("quarkus3-native"),
-    SPRING3_JVM("spring3-jvm"),
-    SPRING3_JVM_AOT("spring3-jvm-aot"),
-    SPRING3_NATIVE("spring3-native"),
-    QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat");
+    QUARKUS3_JVM("quarkus3-jvm", "Quarkus + JIT\n(via OpenJDK)"),
+    QUARKUS3_NATIVE("quarkus3-native", "Quarkus + Native\n(via GraalVM)"),
+    SPRING3_JVM("spring3-jvm", "Spring + JIT\n(via GraalVM)"),
+    SPRING3_JVM_AOT("spring3-jvm-aot", "Spring\nAOT"),
+    SPRING3_NATIVE("spring3-native", "Spring + Native\n(via GraalVM)"),
+    QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat", "Spring\n with Quarkus compatibility libraries");
 
     private final String name;
+    private final String expandedName;
     private static final Map<String, Framework> ENUM_MAP;
 
-    Framework(String name) {
+    Framework(String name, String expandedName) {
         this.name = name;
+        this.expandedName = expandedName;
     }
 
     @JsonValue
     public String getName() {
         return this.name;
+    }
+
+    public String getExpandedName() {
+        return this.expandedName;
     }
 
     // Build an immutable map of String name to enum pairs.

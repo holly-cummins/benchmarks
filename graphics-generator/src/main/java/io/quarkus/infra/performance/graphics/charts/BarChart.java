@@ -11,16 +11,14 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import io.quarkus.infra.performance.graphics.Theme;
 
 public class BarChart implements Chart {
-    private static final int BAR_THICKNESS = 70;
+    private static final int BAR_THICKNESS = 44;
+    private static final int barSpacing = 12;
+    private static final int labelPadding = 6;
+
     private final SVGGraphics2D g;
     private final int canvasHeight;
     private final int canvasWidth;
     private final Theme theme;
-    private int labelSize = 24;
-
-    private static final Font titleFont = new Font(Theme.FONT.getName(), Font.BOLD, 24);
-    private static final Font keyFont = new Font(Theme.FONT.getName(), Font.BOLD, 18);
-    private static final Font labelFont = new Font(Theme.FONT.getName(), Font.PLAIN, 14);
 
     public BarChart(SVGGraphics2D g, Theme theme) {
         this.g = g;
@@ -38,25 +36,22 @@ public class BarChart implements Chart {
 
         // --- Draw section titles ---
         g.setPaint(theme.text());
-        g.setFont(titleFont);
 
         double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
 
-        int plotHeight = canvasHeight - 3 * labelSize;
-        int barSpacing = plotHeight / data.size() - BAR_THICKNESS;
-
-        int labelAllowance = 250;
+        int labelAllowance = 180;
         int leftMargin = 20;
         int barWidth = canvasWidth - 2 * labelAllowance;
 
-        int verticalOffset = 2 * labelSize;
-        g.drawString(title, leftMargin, verticalOffset);
+        int titleTextSize = 48;
+        Subcanvas titleCanvas = new Subcanvas(g, canvasWidth, titleTextSize * 2, leftMargin, 0);
+        new Label(title, 0, titleTextSize).setTargetHeight(titleTextSize).setStyle(Font.BOLD).draw(titleCanvas);
 
         int plotWidth = canvasWidth - 2 * leftMargin;
-        Subcanvas chartArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, barSpacing / 2 + verticalOffset);
+        int plotHeight = canvasHeight - titleCanvas.getHeight();
+        Subcanvas chartArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, titleCanvas.getHeight());
 
         int y = 0;
-        int labelPadding = 20;
 
         Subcanvas labelArea = new Subcanvas(chartArea, labelAllowance, plotHeight, 0, 0);
         // Fudge factor for asymmetric margins
@@ -72,16 +67,12 @@ public class BarChart implements Chart {
             barArea.fillRect(0, y, length, BAR_THICKNESS);
 
             labelArea.setPaint(theme.text());
-            g.setFont(labelFont);
             // Vertically align text with the centre of the bars
-            // The SVG attribute alignment-baseline="middle" is not supported by Batik.
-            // Why do we divide by 4 instead of 2? I don't know. :)
-            int labelY = y + labelSize / 4 + BAR_THICKNESS / 2;
-            labelArea.drawString(d.framework().getName(), 0, labelY);
-            g.setFont(keyFont);
-            barArea.drawString(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
+            int labelY = y + BAR_THICKNESS / 2;
+            new Label(d.framework().getExpandedName(), 0, labelY).setTargetHeight(BAR_THICKNESS).draw(labelArea);
+            new Label(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
                     length + labelPadding,
-                    labelY);
+                    labelY).setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3).draw(barArea);
 
             y += BAR_THICKNESS + barSpacing;
 

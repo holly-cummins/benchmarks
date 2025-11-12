@@ -82,8 +82,9 @@ class ImageGeneratorTest {
     @Test
     public void testFrameworkLabels() throws IOException {
         String contents = Files.readString(image.toPath());
-        assertTrue(contents.contains("quarkus3-jvm"), contents);
-        assertTrue(contents.contains("spring3-jvm"), contents);
+        assertTrue(contents.contains("Quarkus"), contents);
+        assertTrue(contents.contains("Spring"), contents);
+        assertTrue(contents.contains("GraalVM"), contents);
     }
 
     @Test

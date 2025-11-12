@@ -8,7 +8,7 @@ import org.apache.batik.svggen.SVGGraphics2D;
 public class Subcanvas {
     private final SVGGraphics2D g;
     private final int width;
-    private final Object height;
+    private final int height;
     private final int xOffset;
     private final int yOffset;
 
@@ -32,11 +32,24 @@ public class Subcanvas {
         g.setPaint(color);
     }
 
-    public void fillRect(int x, int y, int length, int barWidth) {
-        g.fillRect(x + xOffset, y + yOffset, length, barWidth);
+    public void fillRect(int x, int y, int width, int height) {
+        g.fillRect(x + xOffset, y + yOffset, width, height);
     }
 
     public void drawString(String name, int x, int y) {
         g.drawString(name, x + xOffset, y + yOffset);
+    }
+
+    // Access to the underlying graphics object, when we don't have the right abstracted method in place
+    public SVGGraphics2D getGraphics() {
+        return g;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
