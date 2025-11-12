@@ -15,11 +15,11 @@ public class GraphicsCommand implements Runnable {
 
     private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", framework -> framework.load()
             .avThroughput());
-    private static final PlotDefinition RSS = new PlotDefinition("Average RSS at first request",
+    private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS)",
             framework -> framework.rss().avFirstRequestRss());
     private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time",
             framework -> framework.startup().avStartTime());
-    private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Time",
+    private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration",
             framework -> framework.build().avBuildTime());
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
