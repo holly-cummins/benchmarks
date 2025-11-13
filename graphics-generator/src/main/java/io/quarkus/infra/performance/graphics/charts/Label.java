@@ -15,6 +15,7 @@ public class Label {
     // The g.getGraphics().getFontMetrics().getHeight() number is 39-40% bigger than the notional font size; use it to estimate what font size we might need to set
     private static final double realHeightRatio = 1.4;
     private int style = Font.PLAIN;
+    private Alignment alignment = Alignment.LEFT;
 
     /**
      * @param text Use \n for multiline text
@@ -46,9 +47,14 @@ public class Label {
 
         // Compute starting y to vertically center the text block
         int yPosition = y - textBlockHeight / 2 + fontMetrics.getAscent();
-
         for (String string : strings) {
-            g.drawString(string, x, yPosition);
+            int width = fontMetrics.stringWidth(string);
+            int alignedX = switch (alignment) {
+                case LEFT -> x;
+                case RIGHT -> x - width;
+                case CENTER -> x - width / 2;
+            };
+            g.drawString(string, alignedX, yPosition);
             yPosition += lineHeight;
         }
 
@@ -57,6 +63,11 @@ public class Label {
     // We will need to have a labelGroup abstraction to keep sizes consistent, and perhaps also set a maximum width
     public Label setTargetHeight(int height) {
         this.targetHeight = height;
+        return this;
+    }
+
+    public Label setHorizontalAlignment(Alignment alignment) {
+        this.alignment = alignment;
         return this;
     }
 
