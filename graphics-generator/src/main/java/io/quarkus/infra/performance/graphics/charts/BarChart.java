@@ -53,10 +53,10 @@ public class BarChart implements Chart {
 
         int y = 0;
 
-        Subcanvas labelArea = new Subcanvas(chartArea, labelAllowance, plotHeight, 0, 0);
         // Fudge factor for asymmetric margins
         int fudge = 40;
-        Subcanvas barArea = new Subcanvas(chartArea, barWidth, plotHeight, labelAllowance - fudge, 0);
+        Subcanvas labelArea = new Subcanvas(chartArea, labelAllowance - fudge, plotHeight, 0, 0);
+        Subcanvas barArea = new Subcanvas(chartArea, barWidth, plotHeight, labelArea.getWidth(), 0);
 
         for (Datapoint d : data) {
             // If this framework isn't found, it will just be the text colour, which is fine
@@ -69,7 +69,9 @@ public class BarChart implements Chart {
             labelArea.setPaint(theme.text());
             // Vertically align text with the centre of the bars
             int labelY = y + BAR_THICKNESS / 2;
-            new Label(d.framework().getExpandedName(), 0, labelY).setTargetHeight(BAR_THICKNESS).draw(labelArea);
+            new Label(d.framework().getExpandedName(), labelArea.getWidth() - labelPadding, labelY)
+                    .setHorizontalAlignment(Alignment.RIGHT)
+                    .setTargetHeight(BAR_THICKNESS).draw(labelArea);
             new Label(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
                     length + labelPadding,
                     labelY).setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3).draw(barArea);
