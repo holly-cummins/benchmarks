@@ -19,9 +19,9 @@
     ><text x="20" xml:space="preserve" y="62" style="stroke:none;"
       >Build Duration</text
       ><rect x="160" y="96" width="840" style="fill:rgb(70,149,235); stroke:none;" height="44"
-      /><text x="20" y="113" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      /><text x="62" y="113" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + JIT</text
-      ><text x="20" y="134" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      ><text x="60" y="134" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
       ><text x="1006" xml:space="preserve" y="126" style="font-size:20px; stroke:none;"
       >9 s</text
