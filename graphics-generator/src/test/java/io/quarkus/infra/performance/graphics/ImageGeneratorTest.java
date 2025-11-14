@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Framework;
 import io.quarkus.infra.performance.graphics.model.Load;
@@ -55,7 +56,7 @@ class ImageGeneratorTest {
             addDatapoint(data, Framework.SPRING3_JVM, 267.87);
             Function<Result, ? extends DimensionalNumber> fun = framework -> framework.load().avThroughput();
             PlotDefinition plotDefinition = new PlotDefinition("test plot", fun);
-            imageGenerator.generate(data, plotDefinition, new File("target/images/test1.svg"),
+            imageGenerator.generate(BarChart::new, data, plotDefinition, new File("target/images/test1.svg"),
                     Theme.LIGHT);
             image = new File("target/images/test1.svg");
         } else {

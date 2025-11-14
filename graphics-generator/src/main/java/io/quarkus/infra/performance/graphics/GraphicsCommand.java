@@ -3,9 +3,14 @@ package io.quarkus.infra.performance.graphics;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.BiFunction;
 
 import jakarta.inject.Inject;
 
+import org.apache.batik.svggen.SVGGraphics2D;
+
+import io.quarkus.infra.performance.graphics.charts.BarChart;
+import io.quarkus.infra.performance.graphics.charts.Chart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
@@ -80,22 +85,23 @@ public class GraphicsCommand implements Runnable {
         } else {
             qualifiedOutputDir = new File(outputDirectory, pathRelative.toString());
         }
-        generate(file, qualifiedOutputDir, data, RSS);
-        generate(file, qualifiedOutputDir, data, TIME_TO_FIRST_REQUEST);
-        generate(file, qualifiedOutputDir, data, THROUGHPUT);
-        generate(file, qualifiedOutputDir, data, BUILD_TIME);
+        generate(file, qualifiedOutputDir, CubeChart::new, data, RSS);
+        generate(file, qualifiedOutputDir, BarChart::new, data, TIME_TO_FIRST_REQUEST);
+        generate(file, qualifiedOutputDir, BarChart::new, data, THROUGHPUT);
+        generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
     }
 
-    private void generate(File file, File qualifiedOutputDir, BenchmarkData data, PlotDefinition plotDefinition) {
+    private void generate(File file, File qualifiedOutputDir, BiFunction<SVGGraphics2D, Theme, Chart> chartConstructor,
+            BenchmarkData data, PlotDefinition plotDefinition) {
         String fileMod = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and");
         try {
             {
                 File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-light.svg"));
-                generator.generate(data, plotDefinition, outFile, Theme.LIGHT);
+                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
             }
             {
                 File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-dark.svg"));
-                generator.generate(data, plotDefinition, outFile, Theme.DARK);
+                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

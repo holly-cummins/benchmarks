@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.function.BiFunction;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -16,7 +17,6 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.charts.Chart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 
@@ -24,7 +24,8 @@ import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 public class ImageGenerator {
     private static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
-    public void generate(BenchmarkData data, PlotDefinition plotDefinition, File outFile, Theme theme)
+    public void generate(BiFunction<SVGGraphics2D, Theme, Chart> chartConstructor, BenchmarkData data,
+            PlotDefinition plotDefinition, File outFile, Theme theme)
             throws IOException {
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         Document doc = impl.createDocument(svgNS, "svg", null);
@@ -32,7 +33,7 @@ public class ImageGenerator {
         SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
         svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
 
-        Chart chart = new BarChart(svgGenerator, theme);
+        Chart chart = chartConstructor.apply(svgGenerator, theme);
         chart.draw(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()));
 
         Element root = svgGenerator.getRoot();
