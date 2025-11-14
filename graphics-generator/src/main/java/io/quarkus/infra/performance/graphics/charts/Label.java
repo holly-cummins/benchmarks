@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 
 import io.quarkus.infra.performance.graphics.Theme;
+import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Label {
 
@@ -16,6 +17,7 @@ public class Label {
     private static final double realHeightRatio = 1.4;
     private int style = Font.PLAIN;
     private Alignment alignment = Alignment.LEFT;
+    private VAlignment valignment = VAlignment.MIDDLE;
 
     /**
      * @param text Use \n for multiline text
@@ -46,7 +48,12 @@ public class Label {
         int textBlockHeight = lineHeight * strings.length;
 
         // Compute starting y to vertically center the text block
-        int yPosition = y - textBlockHeight / 2 + fontMetrics.getAscent();
+        int yPosition = switch (valignment) {
+            case TOP -> y + g.getGraphics().getFontMetrics().getHeight();
+            case BOTTOM -> y - fontMetrics.getAscent();
+            case MIDDLE -> y - textBlockHeight / 2 + fontMetrics.getAscent();
+        };
+
         for (String string : strings) {
             int width = fontMetrics.stringWidth(string);
             int alignedX = switch (alignment) {
@@ -76,6 +83,11 @@ public class Label {
      */
     public Label setStyle(int style) {
         this.style = style;
+        return this;
+    }
+
+    public Label setVerticalAlignment(VAlignment vAlignment) {
+        this.valignment = vAlignment;
         return this;
     }
 }

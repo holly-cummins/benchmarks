@@ -20,12 +20,12 @@ public class Subcanvas {
         this.yOffset = yOffset;
     }
 
-    public Subcanvas(Subcanvas chartArea, int width, int height, int xOffset, int yOffset) {
-        this.g = chartArea.g;
+    public Subcanvas(Subcanvas subcanvas, int width, int height, int xOffset, int yOffset) {
+        this.g = subcanvas.g;
         this.width = width;
         this.height = height;
-        this.xOffset = chartArea.xOffset + xOffset;
-        this.yOffset = chartArea.yOffset + yOffset;
+        this.xOffset = subcanvas.xOffset + xOffset;
+        this.yOffset = subcanvas.yOffset + yOffset;
     }
 
     public void setPaint(Color color) {
