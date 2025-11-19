@@ -888,8 +888,8 @@
       /><rect x="670" y="138" width="5" style="fill:rgb(153,153,153); stroke:none;" height="5"
       /><text x="558" y="213" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + JIT</text
-      ><text x="551" y="234" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >(via GraalVM)</text
+      ><text x="549" y="234" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
       ><text x="560" xml:space="preserve" y="264" style="font-size:20px; stroke:none;"
       >505 MB</text
       ><rect x="716" y="186" width="5" style="fill:rgb(170,170,170); stroke:none;" height="5"
@@ -1405,10 +1405,10 @@
       /><rect x="902" y="102" width="5" style="fill:rgb(170,170,170); stroke:none;" height="5"
       /><rect x="902" y="96" width="5" style="fill:rgb(170,170,170); stroke:none;" height="5"
       /><rect x="908" y="186" width="5" style="fill:rgb(170,170,170); stroke:none;" height="5"
-      /><text x="806" y="213" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring</text
-      ><text x="814" y="234" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >AOT</text
+      /><text x="790" y="213" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Spring AOT</text
+      ><text x="781" y="234" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
       ><text x="792" xml:space="preserve" y="264" style="font-size:20px; stroke:none;"
       >513 MB</text
       ><rect x="948" y="186" width="5" style="fill:rgb(119,119,119); stroke:none;" height="5"
