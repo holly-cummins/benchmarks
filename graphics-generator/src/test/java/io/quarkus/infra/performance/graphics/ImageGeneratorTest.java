@@ -82,16 +82,20 @@ class ImageGeneratorTest {
 
     @Test
     public void testFrameworkLabels() throws IOException {
-        String contents = Files.readString(image.toPath());
+        String contents = getImageFileContents();
         assertTrue(contents.contains("Quarkus"), contents);
         assertTrue(contents.contains("Spring"), contents);
-        assertTrue(contents.contains("GraalVM"), contents);
+        assertTrue(contents.contains("OpenJDK"), contents);
     }
 
     @Test
     public void testDataLabels() throws IOException {
-        String contents = Files.readString(image.toPath());
+        String contents = getImageFileContents();
         assertTrue(contents.contains("457"), contents);
+    }
+
+    private String getImageFileContents() throws IOException {
+        return Files.readString(image.toPath()).replaceAll(" src: url\\(.*\\)", " src: url([truncated-hex])");
     }
 
 }
