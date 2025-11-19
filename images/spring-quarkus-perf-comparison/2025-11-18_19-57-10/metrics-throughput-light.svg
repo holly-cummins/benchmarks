@@ -35,15 +35,15 @@
       ><rect x="160" y="208" width="453" style="fill:rgb(103,103,103); stroke:none;" height="44"
       /><text x="77" y="225" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + JIT</text
-      ><text x="63" y="246" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >(via GraalVM)</text
+      ><text x="60" y="246" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
       ><text x="619" xml:space="preserve" y="238" style="font-size:20px; stroke:none;"
       >10145 transactions/sec</text
       ><rect x="160" y="264" width="449" style="fill:gray; stroke:none;" height="44"
-      /><text x="110" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring</text
-      ><text x="125" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >AOT</text
+      /><text x="77" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Spring AOT</text
+      ><text x="60" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
       ><text x="615" xml:space="preserve" y="294" style="font-size:20px; stroke:none;"
       >10051 transactions/sec</text
       ><rect x="160" y="320" width="387" style="fill:rgb(68,68,68); stroke:none;" height="44"

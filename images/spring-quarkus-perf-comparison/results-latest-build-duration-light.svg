@@ -18,41 +18,41 @@
     ><g style="font-family:'Open Sans'; font-size:34px; font-weight:bold;"
     ><text x="20" xml:space="preserve" y="62" style="stroke:none;"
       >Build Duration</text
-      ><rect x="160" y="96" width="80" style="fill:rgb(70,149,235); stroke:none;" height="44"
+      ><rect x="160" y="96" width="73" style="fill:rgb(70,149,235); stroke:none;" height="44"
       /><text x="62" y="113" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + JIT</text
       ><text x="60" y="134" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
-      ><text x="246" xml:space="preserve" y="126" style="font-size:20px; stroke:none;"
-      >10 s</text
-      ><rect x="160" y="152" width="627" style="fill:red; stroke:none;" height="44"
+      ><text x="239" xml:space="preserve" y="126" style="font-size:20px; stroke:none;"
+      >9 s</text
+      ><rect x="160" y="152" width="618" style="fill:red; stroke:none;" height="44"
       /><text x="34" y="169" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + Native</text
       ><text x="63" y="190" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
-      ><text x="793" xml:space="preserve" y="182" style="font-size:20px; stroke:none;"
-      >77 s</text
-      ><rect x="160" y="208" width="45" style="fill:rgb(103,103,103); stroke:none;" height="44"
+      ><text x="784" xml:space="preserve" y="182" style="font-size:20px; stroke:none;"
+      >75 s</text
+      ><rect x="160" y="208" width="40" style="fill:rgb(103,103,103); stroke:none;" height="44"
       /><text x="77" y="225" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + JIT</text
-      ><text x="63" y="246" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >(via GraalVM)</text
-      ><text x="211" xml:space="preserve" y="238" style="font-size:20px; stroke:none;"
-      >6 s</text
-      ><rect x="160" y="264" width="90" style="fill:gray; stroke:none;" height="44"
-      /><text x="110" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring</text
-      ><text x="125" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >AOT</text
-      ><text x="256" xml:space="preserve" y="294" style="font-size:20px; stroke:none;"
-      >11 s</text
+      ><text x="60" y="246" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
+      ><text x="206" xml:space="preserve" y="238" style="font-size:20px; stroke:none;"
+      >5 s</text
+      ><rect x="160" y="264" width="81" style="fill:gray; stroke:none;" height="44"
+      /><text x="77" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Spring AOT</text
+      ><text x="60" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
+      ><text x="247" xml:space="preserve" y="294" style="font-size:20px; stroke:none;"
+      >10 s</text
       ><rect x="160" y="320" width="840" style="fill:rgb(68,68,68); stroke:none;" height="44"
       /><text x="49" y="337" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + Native</text
       ><text x="63" y="358" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
       ><text x="1006" xml:space="preserve" y="350" style="font-size:20px; stroke:none;"
-      >102 s</text
+      >101 s</text
     ></g
   ></g
 ></svg
