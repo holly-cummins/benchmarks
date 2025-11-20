@@ -69,6 +69,7 @@ public class GraphicsCommand implements Runnable {
                     }
                 } else if (file.isDirectory()) {
                     processDirectory(file);
+
                 }
             }
         }
@@ -77,13 +78,16 @@ public class GraphicsCommand implements Runnable {
     private void processFile(File file) {
         BenchmarkData data = ingester.ingest(file);
 
-        File qualifiedOutputDir;
-        Path pathRelative = filename.relativize(file.getParentFile().toPath());
-        //        If relativize leads to "..", use current dir
-        if (pathRelative.toString().endsWith("..")) {
-            qualifiedOutputDir = outputDirectory;
-        } else {
-            qualifiedOutputDir = new File(outputDirectory, pathRelative.toString());
+        File parent = file.getParentFile();
+        File qualifiedOutputDir = outputDirectory;
+
+        if (parent != null) {
+            Path relative = filename.relativize(parent.toPath());
+
+            //        If relativize leads to "..", use current dir
+            if (!relative.toString().startsWith("..")) {
+                qualifiedOutputDir = new File(outputDirectory, relative.toString());
+            }
         }
         generate(file, qualifiedOutputDir, CubeChart::new, data, RSS);
         generate(file, qualifiedOutputDir, BarChart::new, data, TIME_TO_FIRST_REQUEST);
