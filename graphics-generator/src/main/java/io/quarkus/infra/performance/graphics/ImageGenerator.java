@@ -42,7 +42,7 @@ public class ImageGenerator {
         outFile.getParentFile().mkdirs();
         try (Writer out = new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8)) {
             svgGenerator.stream(root, out, true, false);
-            System.out.printf("\uD83C\uDFA8 Wrote SVG image to %s\n", outFile.getAbsolutePath());
+            System.out.printf("\uD83D\uDCCA Wrote SVG image to %s\n", outFile.getAbsolutePath());
         }
     }
 
