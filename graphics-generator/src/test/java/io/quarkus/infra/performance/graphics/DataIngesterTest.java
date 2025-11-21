@@ -33,27 +33,23 @@ class DataIngesterTest {
         // Don't check every value, but do some drilling down to sense check
 
         // Config
-        assertEquals("25-tem", data.config().jvm().version());
-        assertEquals("25-graalce", data.config().jvm().graalVM().version());
-        assertEquals("3.28.4", data.config().quarkus().version());
-
-        // CGroup
-        assertEquals(14, data.config().cgroup().memMax().getValue());
-        assertEquals("G", data.config().cgroup().memMax().getUnits());
+        assertEquals("25.0.1-tem", data.config().jvm().version());
+        assertEquals("25.0.1-graalce", data.config().jvm().graalVM().version());
+        assertEquals("3.29.3", data.config().quarkus().version());
 
         // Results
-        assertEquals(27586.713333333333, data.results().framework(Framework.QUARKUS3_JVM).load().avThroughput().getValue());
-        assertEquals(6.496666666666667, data.results().framework(Framework.SPRING3_NATIVE).build().avNativeRSS().getValue());
-        assertEquals(35161, data.results().framework(Framework.SPRING3_NATIVE).build().classCount().getValue());
+        assertEquals(18927.38, data.results().framework(Framework.QUARKUS3_JVM).load().avThroughput().getValue());
+        assertEquals(7.183333333333334, data.results().framework(Framework.SPRING3_NATIVE).build().avNativeRSS().getValue());
+        assertEquals(35173, data.results().framework(Framework.SPRING3_NATIVE).build().classCount().getValue());
 
         // Timing
-        assertEquals(Instant.parse("2025-10-20T16:05:51Z"), data.timing().start());
-        assertEquals(Instant.parse("2025-10-20T17:34:02Z"), data.timing().stop());
-        assertEquals(5.526666666666666,
+        assertEquals(Instant.parse("2025-11-18T22:28:52Z"), data.timing().start());
+        assertEquals(Instant.parse("2025-11-19T00:19:44Z"), data.timing().stop());
+        assertEquals(8.81,
                 data.results().framework(Framework.QUARKUS3_JVM).build().avBuildTime().getValue());
 
         // Native
-        assertEquals(11620, data.results().framework(Framework.SPRING3_NATIVE).build().reflectionClassCount().getValue());
+        assertEquals(11629, data.results().framework(Framework.SPRING3_NATIVE).build().reflectionClassCount().getValue());
     }
 
 }

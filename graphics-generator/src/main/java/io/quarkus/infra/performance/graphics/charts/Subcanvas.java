@@ -52,4 +52,14 @@ public class Subcanvas {
     public int getHeight() {
         return height;
     }
+
+    // This shouldn't need to be used much
+    public int getXOffset() {
+        return xOffset;
+    }
+
+    // This shouldn't need to be used much
+    public int getYOffset() {
+        return yOffset;
+    }
 }

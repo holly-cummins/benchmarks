@@ -8,7 +8,7 @@ import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Label {
 
-    private final String text;
+    private final String[] strings;
     private final int x;
     private final int y;
     private int targetHeight = 24; // Arbitrary default
@@ -18,6 +18,9 @@ public class Label {
     private int style = Font.PLAIN;
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
+    private int lineHeight;
+    // TODO should be final, but needs constructor logic to swap round
+    private FontMetrics fontMetrics;
 
     /**
      * @param text Use \n for multiline text
@@ -25,13 +28,18 @@ public class Label {
      * @param y The y position of the center of the text
      */
     public Label(String text, int x, int y) {
-        this.text = text;
+        this.strings = text.split("\n");
+        this.x = x;
+        this.y = y;
+    }
+
+    public Label(String[] lines, int x, int y) {
+        this.strings = lines;
         this.x = x;
         this.y = y;
     }
 
     public void draw(Subcanvas g) {
-        String[] strings = text.split("\n");
         int size = strings.length > 1 ? (int) (targetHeight / (strings.length * lineSpacing * realHeightRatio))
                 : (int) (targetHeight / (realHeightRatio));
         Font font = new Font(Theme.FONT.getName(), style, size);
@@ -43,15 +51,15 @@ public class Label {
         // Four variables describe the height of a font: leading (pronounced like the metal), ascent, descent, and height. Leading is the amount of space required between lines of the same font. Ascent is the space above the baseline required by the tallest character in the font. Descent is the space required below the baseline by the lowest descender (the "tail" of a character like "y"). Height is the total of the three: ascent, baseline, and descent. 
 
         // Should be the same as the targetHeight, but recalculate in case of rounding errors
-        FontMetrics fontMetrics = g.getGraphics().getFontMetrics();
-        int lineHeight = (int) (fontMetrics.getHeight() * lineSpacing);
+        fontMetrics = g.getGraphics().getFontMetrics();
+        lineHeight = (int) (fontMetrics.getHeight() * lineSpacing);
         int textBlockHeight = lineHeight * strings.length;
 
         // Compute starting y to vertically center the text block
         int yPosition = switch (valignment) {
             case TOP -> y + g.getGraphics().getFontMetrics().getHeight();
-            case BOTTOM -> y - fontMetrics.getAscent();
-            case MIDDLE -> y - textBlockHeight / 2 + fontMetrics.getAscent();
+            case BOTTOM -> y - getAscent();
+            case MIDDLE -> y - textBlockHeight / 2 + getAscent();
         };
 
         for (String string : strings) {
@@ -65,6 +73,10 @@ public class Label {
             yPosition += lineHeight;
         }
 
+    }
+
+    int getAscent() {
+        return fontMetrics.getAscent();
     }
 
     // We will need to have a labelGroup abstraction to keep sizes consistent, and perhaps also set a maximum width
@@ -89,5 +101,17 @@ public class Label {
     public Label setVerticalAlignment(VAlignment vAlignment) {
         this.valignment = vAlignment;
         return this;
+    }
+
+    public int getLineHeight() {
+        return lineHeight;
+    }
+
+    public int calculateWidth(String s) {
+        return fontMetrics.stringWidth(s);
+    }
+
+    public int getDescent() {
+        return fontMetrics.getDescent();
     }
 }
