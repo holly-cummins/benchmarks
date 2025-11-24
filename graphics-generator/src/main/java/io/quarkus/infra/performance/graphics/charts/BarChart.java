@@ -4,11 +4,13 @@ import static java.lang.Math.round;
 
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 
 import io.quarkus.infra.performance.graphics.Theme;
+import io.quarkus.infra.performance.graphics.model.Config;
 
 public class BarChart implements Chart {
     private static final int BAR_THICKNESS = 44;
@@ -19,6 +21,7 @@ public class BarChart implements Chart {
     private final int canvasHeight;
     private final int canvasWidth;
     private final Theme theme;
+    private FinePrint fineprint;
 
     public BarChart(SVGGraphics2D g, Theme theme) {
         this.g = g;
@@ -29,12 +32,11 @@ public class BarChart implements Chart {
     }
 
     @Override
-    public void draw(String title, List<Datapoint> data) {
+    public void draw(String title, List<Datapoint> data, Config metadata) {
 
         g.setPaint(theme.background());
         g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
 
-        // --- Draw section titles ---
         g.setPaint(theme.text());
 
         double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
@@ -48,7 +50,8 @@ public class BarChart implements Chart {
         new Label(title, 0, titleTextSize).setTargetHeight(titleTextSize).setStyle(Font.BOLD).draw(titleCanvas);
 
         int plotWidth = canvasWidth - 2 * leftMargin;
-        int plotHeight = canvasHeight - titleCanvas.getHeight();
+        int finePrintHeight = 80;
+        int plotHeight = canvasHeight - titleCanvas.getHeight() - finePrintHeight;
         Subcanvas chartArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, titleCanvas.getHeight());
 
         int y = 0;
@@ -57,6 +60,9 @@ public class BarChart implements Chart {
         int fudge = 40;
         Subcanvas labelArea = new Subcanvas(chartArea, labelAllowance - fudge, plotHeight, 0, 0);
         Subcanvas barArea = new Subcanvas(chartArea, barWidth, plotHeight, labelArea.getWidth(), 0);
+        int finePrintPadding = 300;
+        Subcanvas finePrintArea = new Subcanvas(chartArea, barWidth - 2 * finePrintPadding, finePrintHeight, finePrintPadding,
+                barArea.getHeight() - 50); // TODO Arbitrary fudge padding, remove when scaling work is done
 
         for (Datapoint d : data) {
             // If this framework isn't found, it will just be the text colour, which is fine
@@ -79,6 +85,14 @@ public class BarChart implements Chart {
             y += BAR_THICKNESS + barSpacing;
 
         }
+
+        this.fineprint = new FinePrint(finePrintArea, theme);
+        fineprint.draw(metadata);
+    }
+
+    @Override
+    public Collection<InlinedSVG> getInlinedSVGs() {
+        return fineprint.getInlinedSVGs();
     }
 
 }

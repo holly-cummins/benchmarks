@@ -11,6 +11,7 @@ import org.apache.batik.svggen.SVGGraphics2D;
 
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.charts.Chart;
+import io.quarkus.infra.performance.graphics.charts.CubeChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;

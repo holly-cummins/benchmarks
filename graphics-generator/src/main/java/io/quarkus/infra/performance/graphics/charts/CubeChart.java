@@ -1,18 +1,17 @@
-package io.quarkus.infra.performance.graphics;
+package io.quarkus.infra.performance.graphics.charts;
 
 import static java.lang.Math.round;
 
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 
-import io.quarkus.infra.performance.graphics.charts.Alignment;
-import io.quarkus.infra.performance.graphics.charts.Chart;
-import io.quarkus.infra.performance.graphics.charts.Datapoint;
-import io.quarkus.infra.performance.graphics.charts.Label;
-import io.quarkus.infra.performance.graphics.charts.Subcanvas;
+import io.quarkus.infra.performance.graphics.Theme;
+import io.quarkus.infra.performance.graphics.VAlignment;
+import io.quarkus.infra.performance.graphics.model.Config;
 
 public class CubeChart implements Chart {
     private static final int BAR_THICKNESS = 44;
@@ -23,6 +22,7 @@ public class CubeChart implements Chart {
     private final int canvasHeight;
     private final int canvasWidth;
     private final Theme theme;
+    private FinePrint fineprint;
 
     public CubeChart(SVGGraphics2D g, Theme theme) {
         this.g = g;
@@ -33,7 +33,7 @@ public class CubeChart implements Chart {
     }
 
     @Override
-    public void draw(String title, List<Datapoint> data) {
+    public void draw(String title, List<Datapoint> data, Config metadata) {
 
         g.setPaint(theme.background());
         g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
@@ -53,6 +53,11 @@ public class CubeChart implements Chart {
         int plotHeight = canvasHeight - titleCanvas.getHeight();
 
         Subcanvas plotArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, titleCanvas.getHeight());
+        int finePrintHeight = 80;
+        int finePrintPadding = 300;
+        Subcanvas finePrintArea = new Subcanvas(g, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
+                finePrintPadding,
+                plotArea.getHeight() - 50); // TODO Arbitrary fudge padding, remove when scaling work is done);
 
         int cubePadding = 1;
 
@@ -107,6 +112,12 @@ public class CubeChart implements Chart {
             x += dataArea.getWidth() + dataPadding;
 
         }
+        this.fineprint = new FinePrint(finePrintArea, theme);
+        fineprint.draw(metadata);
     }
 
+    @Override
+    public Collection<InlinedSVG> getInlinedSVGs() {
+        return fineprint.getInlinedSVGs();
+    }
 }
