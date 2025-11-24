@@ -10,11 +10,19 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Framework {
     // The order of these determines the natural order in the charts
     QUARKUS3_JVM("quarkus3-jvm", "Quarkus + JIT\n(via OpenJDK)"),
-    SPRING3_JVM("spring3-jvm", "Spring + JIT\n(via OpenJDK)"),
-    SPRING3_JVM_AOT("spring3-jvm-aot", "Spring AOT\n(via OpenJDK)"),
+    SPRING_JVM("spring-jvm", "Spring + JIT\n(via OpenJDK)"),
+    SPRING4_JVM("spring4-jvm", "Spring 4 + JIT\n(via OpenJDK)"),
+    SPRING3_JVM("spring3-jvm", "Spring 3 + JIT\n(via OpenJDK)"),
+    SPRING4_JVM_AOT("spring4-jvm-aot", "Spring 4 AOT\n(via OpenJDK)"),
+    SPRING_JVM_AOT("spring-jvm-aot", "Spring AOT\n(via OpenJDK)"),
+    SPRING3_JVM_AOT("spring3-jvm-aot", "Spring 3 AOT\n(via OpenJDK)"),
     QUARKUS3_NATIVE("quarkus3-native", "Quarkus + Native\n(via GraalVM)"),
-    SPRING3_NATIVE("spring3-native", "Spring + Native\n(via GraalVM)"),
-    QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat", "Spring\n with Quarkus compatibility libraries");
+    SPRING_NATIVE("spring-native", "Spring + Native\n(via GraalVM)"),
+    SPRING4_NATIVE("spring4-native", "Spring 4 + Native\n(via GraalVM)"),
+    SPRING3_NATIVE("spring3-native", "Spring 3 + Native\n(via GraalVM)"),
+    QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat", "Quarkus\n with Spring compatibility libraries"),
+    QUARKUS3_SPRING4_COMPAT("quarkus3-spring4-compat", "Quarkus\n with Spring 4 compatibility libraries"),
+    QUARKUS3_SPRING3_COMPAT("quarkus3-spring3-compat", "Quarkus\n with Spring 3 compatibility libraries");
 
     private final String name;
     private final String expandedName;

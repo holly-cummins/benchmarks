@@ -30,6 +30,40 @@ class ResultsTest {
     }
 
     @Test
+    void getDatasetsAdjustsFrameworksWhenOnlyOnePresent() {
+        Results results = new Results();
+        addDatapoint(results, Framework.QUARKUS3_JVM, 589.21);
+        addDatapoint(results, Framework.SPRING3_JVM, 467.87);
+
+        List<Datapoint> datapoints = results.getDatasets(f -> f.load().avThroughput());
+        assertEquals(2, datapoints.size());
+        assertEquals(589.21, datapoints.get(0).value().getValue());
+        // The second framework should be a synthetic one to reflect the fact there's only one Spring version
+        assertEquals(Framework.SPRING_JVM, datapoints.get(1).framework());
+        assertEquals(467.87, datapoints.get(1).value().getValue());
+    }
+
+    @Test
+    void getDatasetsDoesNotAdjustFrameworksWhenMultiplesPresent() {
+        Results results = new Results();
+        addDatapoint(results, Framework.SPRING4_JVM, 42.1);
+        addDatapoint(results, Framework.QUARKUS3_JVM, 589.21);
+        addDatapoint(results, Framework.SPRING3_JVM, 467.87);
+
+        List<Datapoint> datapoints = results.getDatasets(f -> f.load().avThroughput());
+        assertEquals(3, datapoints.size());
+        assertEquals(589.21, datapoints.get(0).value().getValue());
+        assertEquals(Framework.QUARKUS3_JVM, datapoints.get(0).framework());
+
+        assertEquals(Framework.SPRING4_JVM, datapoints.get(1).framework());
+        assertEquals(42.1, datapoints.get(1).value().getValue());
+
+        assertEquals(Framework.SPRING3_JVM, datapoints.get(2).framework());
+        assertEquals(467.87, datapoints.get(2).value().getValue());
+
+    }
+
+    @Test
     void getDatasetsForMissingData() {
         Results results = new Results();
         addDatapoint(results, Framework.SPRING3_JVM, 589.21);

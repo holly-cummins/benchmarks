@@ -30,9 +30,42 @@ public class Results {
     }
 
     public List<Datapoint> getDatasets(Function<Result, ? extends DimensionalNumber> fun) {
+        // Adjust the frameworks to unqualified ones if there's not different versions of the same framework
+        // There's no perfect place to do this, but this seems like a reasonable place
+
+        if (hasOnlyOneSpringVersion(frameworks)) {
+            swap(Framework.SPRING3_JVM, Framework.SPRING_JVM);
+            swap(Framework.SPRING3_NATIVE, Framework.SPRING_NATIVE);
+            swap(Framework.SPRING3_JVM_AOT, Framework.SPRING_JVM_AOT);
+            swap(Framework.QUARKUS3_SPRING3_COMPAT, Framework.QUARKUS3_SPRING_COMPAT);
+
+            swap(Framework.SPRING4_JVM, Framework.SPRING_JVM);
+            swap(Framework.SPRING4_NATIVE, Framework.SPRING_NATIVE);
+            swap(Framework.SPRING4_JVM_AOT, Framework.SPRING_JVM_AOT);
+            swap(Framework.QUARKUS3_SPRING4_COMPAT, Framework.QUARKUS3_SPRING_COMPAT);
+        }
+
         return frameworks.entrySet().stream().map(e -> getDatapoint(e, fun))
                 .toList();
 
+    }
+
+    private boolean hasOnlyOneSpringVersion(Map<Framework, Result> frameworks) {
+        boolean hasSpring3 = frameworks.containsKey(Framework.SPRING3_JVM) || frameworks.containsKey(Framework.SPRING3_NATIVE)
+                || frameworks.containsKey(Framework.SPRING3_JVM_AOT);
+        boolean hasSpring4 = frameworks.containsKey(Framework.SPRING4_JVM) || frameworks.containsKey(Framework.SPRING4_NATIVE)
+                || frameworks.containsKey(Framework.SPRING4_JVM_AOT);
+
+        // Use xor
+        return hasSpring3 ^ hasSpring4;
+
+    }
+
+    private void swap(Framework qualified, Framework simple) {
+        if (frameworks.containsKey(qualified)) {
+            frameworks.put(simple, frameworks.get(qualified));
+            frameworks.remove(qualified);
+        }
     }
 
     private static Datapoint getDatapoint(Map.Entry<Framework, Result> entry,
