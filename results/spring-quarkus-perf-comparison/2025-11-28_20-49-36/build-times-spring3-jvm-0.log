@@ -1,0 +1,80 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< org.acme:springboot3 >------------------------
+[INFO] Building springboot3 1.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.43.0/error_prone_annotations-2.43.0.pom
+Progress (1): 821 BProgress (1): 2.8 kBProgress (1): 3.2 kBProgress (1): 4.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.43.0/error_prone_annotations-2.43.0.pom (4.3 kB at 11 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_parent/2.43.0/error_prone_parent-2.43.0.pom
+Progress (1): 728 BProgress (1): 2.1 kBProgress (1): 3.3 kBProgress (1): 5.7 kBProgress (1): 10.0 kBProgress (1): 11 kB  Progress (1): 15 kBProgress (1): 16 kB                   Downloaded from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_parent/2.43.0/error_prone_parent-2.43.0.pom (16 kB at 224 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/github/ben-manes/caffeine/jcache/3.2.3/jcache-3.2.3.pom
+Progress (1): 949 BProgress (1): 2.6 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/github/ben-manes/caffeine/jcache/3.2.3/jcache-3.2.3.pom (2.6 kB at 57 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.service.component.annotations/1.5.1/org.osgi.service.component.annotations-1.5.1.pom
+Progress (1): 1.1 kBProgress (1): 2.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.service.component.annotations/1.5.1/org.osgi.service.component.annotations-1.5.1.pom (2.8 kB at 48 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/osgi.annotation/8.1.0/osgi.annotation-8.1.0.pom
+Progress (1): 1.1 kBProgress (1): 1.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/osgi.annotation/8.1.0/osgi.annotation-8.1.0.pom (1.5 kB at 34 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.namespace.extender/1.0.1/org.osgi.namespace.extender-1.0.1.pom
+Progress (1): 1.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.namespace.extender/1.0.1/org.osgi.namespace.extender-1.0.1.pom (1.3 kB at 31 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.function/1.0.0/org.osgi.util.function-1.0.0.pom
+Progress (1): 1.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.function/1.0.0/org.osgi.util.function-1.0.0.pom (1.3 kB at 28 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.promise/1.0.0/org.osgi.util.promise-1.0.0.pom
+Progress (1): 1.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.promise/1.0.0/org.osgi.util.promise-1.0.0.pom (1.3 kB at 23 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/typesafe/config/1.4.5/config-1.4.5.pom
+Progress (1): 1.3 kBProgress (1): 2.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/typesafe/config/1.4.5/config-1.4.5.pom (2.0 kB at 21 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.43.0/error_prone_annotations-2.43.0.jar
+Progress (1): 0.9/20 kBProgress (1): 2.3/20 kBProgress (1): 3.6/20 kBProgress (1): 5.0/20 kBProgress (1): 6.4/20 kBProgress (1): 7.7/20 kBProgress (1): 9.1/20 kBProgress (1): 10/20 kB Progress (1): 12/20 kBProgress (1): 13/20 kBProgress (1): 15/20 kBProgress (1): 16/20 kBProgress (1): 17/20 kBProgress (1): 19/20 kBProgress (1): 20/20 kBProgress (1): 20/20 kBProgress (1): 20 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.43.0/error_prone_annotations-2.43.0.jar (20 kB at 392 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/github/ben-manes/caffeine/jcache/3.2.3/jcache-3.2.3.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.service.component.annotations/1.5.1/org.osgi.service.component.annotations-1.5.1.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/osgi.annotation/8.1.0/osgi.annotation-8.1.0.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.namespace.extender/1.0.1/org.osgi.namespace.extender-1.0.1.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.function/1.0.0/org.osgi.util.function-1.0.0.jar
+Progress (1): 3.8/119 kBProgress (1): 8.0/119 kBProgress (1): 12/119 kB Progress (1): 16/119 kBProgress (1): 21/119 kBProgress (1): 25/119 kBProgress (1): 29/119 kBProgress (1): 33/119 kBProgress (1): 38/119 kBProgress (1): 42/119 kBProgress (1): 46/119 kBProgress (1): 50/119 kBProgress (1): 55/119 kBProgress (1): 59/119 kBProgress (1): 63/119 kBProgress (1): 67/119 kBProgress (1): 71/119 kBProgress (1): 76/119 kBProgress (1): 80/119 kBProgress (1): 84/119 kBProgress (1): 88/119 kBProgress (1): 93/119 kBProgress (1): 97/119 kBProgress (1): 101/119 kBProgress (1): 105/119 kBProgress (1): 109/119 kBProgress (2): 109/119 kB | 0.9/36 kBProgress (2): 109/119 kB | 2.3/36 kBProgress (2): 114/119 kB | 2.3/36 kBProgress (2): 114/119 kB | 3.6/36 kBProgress (2): 114/119 kB | 5.0/36 kBProgress (2): 114/119 kB | 6.4/36 kBProgress (2): 118/119 kB | 6.4/36 kBProgress (2): 118/119 kB | 7.7/36 kBProgress (2): 119 kB | 7.7/36 kB    Progress (2): 119 kB | 9.1/36 kBProgress (2): 119 kB | 10/36 kB Progress (2): 119 kB | 12/36 kBProgress (3): 119 kB | 12/36 kB | 0.9/13 kBProgress (3): 119 kB | 13/36 kB | 0.9/13 kBProgress (3): 119 kB | 15/36 kB | 0.9/13 kB                                           Downloaded from central: https://repo.maven.apache.org/maven2/com/github/ben-manes/caffeine/jcache/3.2.3/jcache-3.2.3.jar (119 kB at 1.7 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.promise/1.0.0/org.osgi.util.promise-1.0.0.jar
+Progress (2): 15/36 kB | 2.3/13 kBProgress (2): 16/36 kB | 2.3/13 kBProgress (2): 17/36 kB | 2.3/13 kBProgress (2): 17/36 kB | 3.6/13 kBProgress (2): 19/36 kB | 3.6/13 kBProgress (2): 19/36 kB | 3.7/13 kBProgress (2): 20/36 kB | 3.7/13 kBProgress (2): 20/36 kB | 5.1/13 kBProgress (2): 21/36 kB | 5.1/13 kBProgress (2): 21/36 kB | 6.5/13 kBProgress (2): 23/36 kB | 6.5/13 kBProgress (2): 23/36 kB | 7.8/13 kBProgress (2): 24/36 kB | 7.8/13 kBProgress (2): 24/36 kB | 9.2/13 kBProgress (2): 25/36 kB | 9.2/13 kBProgress (2): 25/36 kB | 11/13 kB Progress (2): 26/36 kB | 11/13 kBProgress (2): 26/36 kB | 12/13 kBProgress (2): 27/36 kB | 12/13 kBProgress (2): 27/36 kB | 13 kB   Progress (2): 29/36 kB | 13 kBProgress (2): 30/36 kB | 13 kBProgress (2): 31/36 kB | 13 kBProgress (2): 33/36 kB | 13 kBProgress (2): 34/36 kB | 13 kB                              Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.function/1.0.0/org.osgi.util.function-1.0.0.jar (13 kB at 170 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/typesafe/config/1.4.5/config-1.4.5.jar
+Progress (1): 36/36 kBProgress (1): 36 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/osgi.annotation/8.1.0/osgi.annotation-8.1.0.jar (36 kB at 477 kB/s)
+Progress (1): 0.9/12 kBProgress (1): 2.3/12 kBProgress (1): 3.6/12 kBProgress (1): 5.0/12 kBProgress (1): 6.4/12 kBProgress (1): 7.7/12 kBProgress (1): 9.1/12 kBProgress (1): 10/12 kB Progress (1): 12 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.namespace.extender/1.0.1/org.osgi.namespace.extender-1.0.1.jar (12 kB at 131 kB/s)
+Progress (1): 0.9/43 kBProgress (1): 2.3/43 kBProgress (1): 3.6/43 kBProgress (1): 5.0/43 kBProgress (1): 6.4/43 kBProgress (1): 7.7/43 kBProgress (1): 9.1/43 kBProgress (1): 10/43 kB Progress (1): 12/43 kBProgress (1): 13/43 kBProgress (1): 15/43 kBProgress (1): 16/43 kBProgress (1): 17/43 kBProgress (1): 19/43 kBProgress (1): 20/43 kBProgress (1): 20/43 kBProgress (1): 21/43 kBProgress (1): 23/43 kBProgress (1): 24/43 kBProgress (1): 26/43 kBProgress (1): 27/43 kBProgress (1): 28/43 kBProgress (1): 30/43 kBProgress (1): 31/43 kBProgress (1): 32/43 kBProgress (1): 34/43 kBProgress (1): 35/43 kBProgress (1): 37/43 kBProgress (1): 38/43 kBProgress (1): 39/43 kBProgress (1): 41/43 kBProgress (1): 42/43 kBProgress (1): 43 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.service.component.annotations/1.5.1/org.osgi.service.component.annotations-1.5.1.jar (43 kB at 442 kB/s)
+Progress (1): 0.9/295 kBProgress (1): 2.3/295 kBProgress (1): 3.6/295 kBProgress (1): 3.7/295 kBProgress (1): 5.1/295 kBProgress (1): 6.4/295 kBProgress (1): 7.8/295 kBProgress (1): 9.2/295 kBProgress (1): 11/295 kB Progress (1): 12/295 kBProgress (1): 13/295 kBProgress (1): 15/295 kBProgress (1): 16/295 kBProgress (1): 20/295 kBProgress (1): 24/295 kBProgress (1): 29/295 kBProgress (1): 33/295 kBProgress (1): 37/295 kBProgress (1): 41/295 kBProgress (1): 46/295 kBProgress (1): 50/295 kBProgress (1): 54/295 kBProgress (1): 58/295 kBProgress (1): 63/295 kBProgress (1): 67/295 kBProgress (1): 71/295 kBProgress (1): 75/295 kBProgress (1): 79/295 kBProgress (1): 84/295 kBProgress (1): 88/295 kBProgress (1): 92/295 kBProgress (1): 96/295 kBProgress (1): 101/295 kBProgress (1): 105/295 kBProgress (1): 109/295 kBProgress (1): 113/295 kBProgress (1): 118/295 kBProgress (1): 118/295 kBProgress (1): 123/295 kBProgress (1): 127/295 kBProgress (1): 131/295 kBProgress (1): 135/295 kBProgress (1): 140/295 kBProgress (1): 144/295 kBProgress (1): 148/295 kBProgress (1): 152/295 kBProgress (1): 155/295 kBProgress (1): 159/295 kBProgress (1): 163/295 kBProgress (1): 168/295 kBProgress (1): 172/295 kBProgress (1): 176/295 kBProgress (1): 180/295 kBProgress (1): 197/295 kBProgress (1): 213/295 kBProgress (1): 229/295 kBProgress (1): 246/295 kBProgress (1): 262/295 kBProgress (2): 262/295 kB | 3.8/43 kBProgress (2): 262/295 kB | 8.0/43 kBProgress (2): 279/295 kB | 8.0/43 kBProgress (2): 279/295 kB | 12/43 kB Progress (2): 279/295 kB | 16/43 kBProgress (2): 286/295 kB | 16/43 kBProgress (2): 286/295 kB | 20/43 kBProgress (2): 295/295 kB | 20/43 kBProgress (2): 295/295 kB | 24/43 kBProgress (2): 295 kB | 24/43 kB    Progress (2): 295 kB | 29/43 kBProgress (2): 295 kB | 33/43 kBProgress (2): 295 kB | 37/43 kB                               Downloaded from central: https://repo.maven.apache.org/maven2/com/typesafe/config/1.4.5/config-1.4.5.jar (295 kB at 2.4 MB/s)
+Progress (1): 41/43 kBProgress (1): 43 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/osgi/org.osgi.util.promise/1.0.0/org.osgi.util.promise-1.0.0.jar (43 kB at 349 kB/s)
+[INFO] 
+[INFO] --- clean:3.4.1:clean (default-clean) @ springboot3 ---
+[INFO] 
+[INFO] --- properties:1.2.1:set-system-properties (default) @ springboot3 ---
+[INFO] Set 1 system property
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ springboot3 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ springboot3 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 10 source files with javac [debug parameters release 21] to target/classes
+[INFO] 
+[INFO] --- hibernate-enhance:6.6.36.Final:enhance (enhance) @ springboot3 ---
+[INFO] Starting Hibernate enhancement for classes on /home/jenkins/spring-quarkus-perf-comparison/spring-quarkus-perf-comparison/springboot3/target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ springboot3 ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ springboot3 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 5 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.4:test (default-test) @ springboot3 ---
+[WARNING]  Parameter 'systemProperties' is deprecated: Use systemPropertyVariables instead.
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ springboot3 ---
+[INFO] Building jar: /home/jenkins/spring-quarkus-perf-comparison/spring-quarkus-perf-comparison/springboot3/target/springboot3.jar
+[INFO] 
+[INFO] --- spring-boot:3.5.8:repackage (repackage) @ springboot3 ---
+[INFO] Replacing main artifact /home/jenkins/spring-quarkus-perf-comparison/spring-quarkus-perf-comparison/springboot3/target/springboot3.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/jenkins/spring-quarkus-perf-comparison/spring-quarkus-perf-comparison/springboot3/target/springboot3.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.456 s
+[INFO] Finished at: 2025-11-28T14:42:07-05:00
+[INFO] ------------------------------------------------------------------------
