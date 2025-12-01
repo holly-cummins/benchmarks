@@ -8,10 +8,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Framework {
+    // The order of these determines the natural order in the charts
     QUARKUS3_JVM("quarkus3-jvm", "Quarkus + JIT\n(via OpenJDK)"),
-    QUARKUS3_NATIVE("quarkus3-native", "Quarkus + Native\n(via GraalVM)"),
     SPRING3_JVM("spring3-jvm", "Spring + JIT\n(via OpenJDK)"),
     SPRING3_JVM_AOT("spring3-jvm-aot", "Spring AOT\n(via OpenJDK)"),
+    QUARKUS3_NATIVE("quarkus3-native", "Quarkus + Native\n(via GraalVM)"),
     SPRING3_NATIVE("spring3-native", "Spring + Native\n(via GraalVM)"),
     QUARKUS3_SPRING_COMPAT("quarkus3-spring-compat", "Spring\n with Quarkus compatibility libraries");
 
