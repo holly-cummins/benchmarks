@@ -25,27 +25,27 @@
       >(via OpenJDK)</text
       ><text x="1006" xml:space="preserve" y="126" style="font-size:20px; stroke:none;"
       >18429 transactions/sec</text
-      ><rect x="160" y="152" width="449" style="fill:red; stroke:none;" height="44"
-      /><text x="34" y="169" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Quarkus + Native</text
-      ><text x="63" y="190" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >(via GraalVM)</text
-      ><text x="615" xml:space="preserve" y="182" style="font-size:20px; stroke:none;"
-      >9852 transactions/sec</text
-      ><rect x="160" y="208" width="307" style="fill:rgb(103,103,103); stroke:none;" height="44"
-      /><text x="77" y="225" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      ><rect x="160" y="152" width="307" style="fill:rgb(103,103,103); stroke:none;" height="44"
+      /><text x="77" y="169" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + JIT</text
+      ><text x="60" y="190" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via OpenJDK)</text
+      ><text x="473" xml:space="preserve" y="182" style="font-size:20px; stroke:none;"
+      >6741 transactions/sec</text
+      ><rect x="160" y="208" width="310" style="fill:gray; stroke:none;" height="44"
+      /><text x="77" y="225" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Spring AOT</text
       ><text x="60" y="246" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
-      ><text x="473" xml:space="preserve" y="238" style="font-size:20px; stroke:none;"
-      >6741 transactions/sec</text
-      ><rect x="160" y="264" width="310" style="fill:gray; stroke:none;" height="44"
-      /><text x="77" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring AOT</text
-      ><text x="60" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >(via OpenJDK)</text
-      ><text x="476" xml:space="preserve" y="294" style="font-size:20px; stroke:none;"
+      ><text x="476" xml:space="preserve" y="238" style="font-size:20px; stroke:none;"
       >6814 transactions/sec</text
+      ><rect x="160" y="264" width="449" style="fill:red; stroke:none;" height="44"
+      /><text x="34" y="281" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Quarkus + Native</text
+      ><text x="63" y="302" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via GraalVM)</text
+      ><text x="615" xml:space="preserve" y="294" style="font-size:20px; stroke:none;"
+      >9852 transactions/sec</text
       ><rect x="160" y="320" width="201" style="fill:rgb(68,68,68); stroke:none;" height="44"
       /><text x="49" y="337" style="font-size:15px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring + Native</text
