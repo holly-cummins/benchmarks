@@ -47,13 +47,13 @@ public class FinePrint {
         }
         if (metadata.jvm() != null) {
 
-            if (metadata.jvm().graalVM() != null) {
-                leftColumn.add("JVM: "
-                        + metadata.jvm().graalVM().version());
-            }
-            leftColumn.add("GraalVM: "
+            leftColumn.add("JVM: "
                     + metadata.jvm().version());
 
+            if (metadata.jvm().graalVM() != null) {
+                leftColumn.add("GraalVM: "
+                        + metadata.jvm().graalVM().version());
+            }
             if (metadata.jvm().memory() != null) {
                 rightColumn.add("Memory: "
                         + metadata.jvm().memory());
