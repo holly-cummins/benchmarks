@@ -31,23 +31,28 @@ public class ImageGenerator {
     public void generate(BiFunction<SVGGraphics2D, Theme, Chart> chartConstructor, BenchmarkData data,
             PlotDefinition plotDefinition, File outFile, Theme theme)
             throws IOException {
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        Document doc = impl.createDocument(svgNS, "svg", null);
+        if (data != null && data.results() != null) {
+            DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
+            Document doc = impl.createDocument(svgNS, "svg", null);
 
-        SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
-        svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
+            SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
+            svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
 
-        Chart chart = chartConstructor.apply(svgGenerator, theme);
-        chart.draw(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()), data.config());
+            Chart chart = chartConstructor.apply(svgGenerator, theme);
+            chart.draw(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()), data.config());
 
-        Element root = svgGenerator.getRoot();
-        initialiseFonts(doc, root);
-        inlineGraphics(doc, root, chart.getInlinedSVGs());
+            Element root = svgGenerator.getRoot();
+            initialiseFonts(doc, root);
+            inlineGraphics(doc, root, chart.getInlinedSVGs());
 
-        outFile.getParentFile().mkdirs();
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8)) {
-            svgGenerator.stream(root, out, true, false);
-            System.out.printf("\uD83D\uDCCA Wrote SVG image to %s\n", outFile.getAbsolutePath());
+            outFile.getParentFile().mkdirs();
+            try (Writer out = new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8)) {
+                svgGenerator.stream(root, out, true, false);
+                System.out.printf("\uD83D\uDCCA Wrote SVG image to %s\n", outFile.getAbsolutePath());
+            }
+        } else {
+            System.out.printf("\uD83D\uDDD1\uFE0F Not generating image for %s (no data)\n", outFile.getAbsolutePath());
+
         }
     }
 
