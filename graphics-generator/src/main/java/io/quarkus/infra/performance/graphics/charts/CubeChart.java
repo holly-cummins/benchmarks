@@ -7,62 +7,56 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.batik.svggen.SVGGraphics2D;
-
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 import io.quarkus.infra.performance.graphics.model.Config;
 
-public class CubeChart implements Chart {
+public class CubeChart extends Chart {
     private static final int BAR_THICKNESS = 44;
-    private static final int barSpacing = 12;
-    private static final int labelPadding = 6;
 
-    private final SVGGraphics2D g;
-    private final int canvasHeight;
-    private final int canvasWidth;
-    private final Theme theme;
     private FinePrint fineprint;
 
-    public CubeChart(SVGGraphics2D g, Theme theme) {
-        this.g = g;
-        this.theme = theme;
-        this.canvasHeight = g.getSVGCanvasSize().height;
-        this.canvasWidth = g.getSVGCanvasSize().width;
+    public CubeChart(String title, List<Datapoint> data, Config metadata) {
+        super(title, data, metadata);
 
+        this.fineprint = new FinePrint(metadata);
+        children.add(fineprint);
     }
 
     @Override
-    public void draw(String title, List<Datapoint> data, Config metadata) {
+    protected void drawNoCheck(Subcanvas g, Theme theme) {
+        int canvasHeight = g.getHeight();
+        int canvasWidth = g.getWidth();
 
         g.setPaint(theme.background());
         g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
 
-        // --- Draw section titles ---
-        g.setPaint(theme.text());
+        int margins = 20;
+        int ymargins = 20;
 
-        double maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
+        int finePrintHeight = 80;
 
-        int leftMargin = 20;
+        Subcanvas canvasWithMargins = new Subcanvas(g, canvasWidth - 2 * margins, canvasHeight - 2 * ymargins, margins,
+                ymargins);
 
         int titleTextSize = 48;
-        Subcanvas titleCanvas = new Subcanvas(g, canvasWidth, titleTextSize * 2, leftMargin, 0);
-        new Label(title, 0, titleTextSize).setTargetHeight(titleTextSize).setStyle(Font.BOLD).draw(titleCanvas);
+        g.setPaint(theme.text());
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleTextSize * 2, 0, 0);
+        titleLabel.setTargetHeight(titleTextSize).draw(titleCanvas, 0, titleTextSize);
 
-        int plotWidth = canvasWidth - 2 * leftMargin;
-        int plotHeight = canvasHeight - titleCanvas.getHeight();
+        int plotWidth = canvasWidth - 2 * margins;
+        int plotHeight = canvasHeight - titleCanvas.getHeight() - finePrintHeight;
 
-        Subcanvas plotArea = new Subcanvas(g, plotWidth, plotHeight, leftMargin, titleCanvas.getHeight());
-        int finePrintHeight = 80;
-        int finePrintPadding = 300;
-        Subcanvas finePrintArea = new Subcanvas(g, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
+        Subcanvas plotArea = new Subcanvas(g, plotWidth, plotHeight, margins, titleCanvas.getHeight());
+        int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
+        Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
-                plotArea.getHeight() - 50); // TODO Arbitrary fudge padding, remove when scaling work is done);
+                plotArea.getHeight());
 
         int cubePadding = 1;
 
         int dataPadding = 8;
-        int subSectionWidth = plotArea.getWidth() / data.size() - dataPadding;
+        int subSectionWidth = (plotArea.getWidth() + dataPadding) / data.size() - dataPadding;
         int numCubesPerColumn = 16;
         int unitsPerCube = 1; // For now, assume 1mb per square
         int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
@@ -99,21 +93,20 @@ public class CubeChart implements Chart {
 
             labelArea.setPaint(theme.text());
             int labelY = 0;
-            new Label(d.framework().getExpandedName(), labelArea.getWidth() / 2, labelY)
+            new Label(d.framework().getExpandedName())
                     .setHorizontalAlignment(Alignment.CENTER)
                     .setVerticalAlignment(VAlignment.TOP)
-                    .setTargetHeight(BAR_THICKNESS).draw(labelArea);
-            new Label(java.lang.String.format("%d %s", round(val), d.value().getUnits()),
-                    labelArea.getWidth() / 2,
-                    labelY + BAR_THICKNESS).setHorizontalAlignment(Alignment.CENTER)
+                    .setTargetHeight(BAR_THICKNESS).draw(labelArea, labelArea.getWidth() / 2, 0);
+            new Label(java.lang.String.format("%d %s", round(val), d.value().getUnits()))
+                    .setHorizontalAlignment(Alignment.CENTER)
                     .setVerticalAlignment(VAlignment.TOP)
-                    .setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3).draw(labelArea);
+                    .setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3)
+                    .draw(labelArea, labelArea.getWidth() / 2, labelY + BAR_THICKNESS);
 
             x += dataArea.getWidth() + dataPadding;
 
         }
-        this.fineprint = new FinePrint(finePrintArea, theme);
-        fineprint.draw(metadata);
+        fineprint.draw(finePrintArea, theme);
     }
 
     @Override

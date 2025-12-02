@@ -1,5 +1,7 @@
 package io.quarkus.infra.performance.graphics.charts;
 
+import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,32 +12,24 @@ import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 import io.quarkus.infra.performance.graphics.model.Config;
 
-public class FinePrint {
+public class FinePrint implements ElasticElement {
 
-    private static final int padding = 60;
+    private static final int MAXIMUM_FONT_SIZE = 30;
+    private static final int MINIMUM_FONT_SIZE = 8;
 
-    private final Subcanvas g;
-    private final int canvasHeight;
-    private final int canvasWidth;
-    private final Theme theme;
+    private static final int PADDING = 60;
+    private static final int MINIMUM_PADDING = PADDING / 3;
+    private static final int MAXIMUM_PADDING = PADDING * 3;
+
+    private final Config metadata;
+    private final Label leftLabel;
+    private final Label rightLabel;
     private InlinedSVG svg;
+    private final List<String> leftColumn = new ArrayList<>();
+    private final List<String> rightColumn = new ArrayList();
 
-    public FinePrint(Subcanvas g, Theme theme) {
-        this.g = g;
-        this.theme = theme;
-        this.canvasHeight = g.getHeight();
-        this.canvasWidth = g.getWidth();
-
-    }
-
-    public void draw(Config metadata) {
-
-        g.setPaint(theme.background());
-
-        g.setPaint(theme.text());
-
-        List<String> leftColumn = new ArrayList<>();
-        List<String> rightColumn = new ArrayList();
+    public FinePrint(Config metadata) {
+        this.metadata = metadata;
 
         if (metadata.quarkus() != null) {
             leftColumn.add("Quarkus: "
@@ -84,21 +78,54 @@ public class FinePrint {
             rightColumn.add(Math.max(0, rightColumn.size() - 1), " ");
         }
 
-        Label leftLabel = new Label(leftColumn.toArray(String[]::new), 0, 0)
+        leftLabel = new Label(leftColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
-                .setVerticalAlignment(VAlignment.TOP)
-                .setTargetHeight(g.getHeight());
+                .setVerticalAlignment(VAlignment.TOP);
+
+        rightLabel = new Label(rightColumn.toArray(String[]::new))
+                .setHorizontalAlignment(Alignment.LEFT)
+                .setVerticalAlignment(VAlignment.TOP);
+
+    }
+
+    @Override
+    public int getMaximumVerticalSize() {
+        return Math.max(leftColumn.size(), rightColumn.size()) * MAXIMUM_FONT_SIZE;
+
+    }
+
+    @Override
+    public int getMaximumHorizontalSize() {
+        return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
+
+    }
+
+    @Override
+    public int getMinimumVerticalSize() {
+        return Math.max(leftColumn.size(), rightColumn.size()) * MINIMUM_FONT_SIZE;
+    }
+
+    @Override
+    public int getMinimumHorizontalSize() {
+        return calculateWidth(leftColumn, MINIMUM_FONT_SIZE) + calculateWidth(rightColumn, MINIMUM_FONT_SIZE) + MINIMUM_PADDING;
+    }
+
+    public void draw(Subcanvas g, Theme theme) {
+
+        g.setPaint(theme.background());
+
+        g.setPaint(theme.text());
+
+        leftLabel.setTargetHeight(g.getHeight());
         leftLabel.draw(g);
 
         int leftLabelWidth = leftLabel
                 .calculateWidth(leftColumn.stream().max(Comparator.comparingInt(String::length)).orElse(""));
         int rightLabelX = leftLabelWidth
-                + padding;
-        Label rightLabel = new Label(rightColumn.toArray(String[]::new), rightLabelX, 0)
-                .setHorizontalAlignment(Alignment.LEFT)
-                .setVerticalAlignment(VAlignment.TOP)
-                .setTargetHeight(g.getHeight());
-        rightLabel.draw(g);
+                + PADDING;
+        rightLabel.setTargetHeight(g.getHeight());
+        Subcanvas rl = new Subcanvas(g, g.getWidth() - rightLabelX, g.getHeight(), rightLabelX, 0);
+        rightLabel.draw(rl);
         int sw = rightLabel.calculateWidth("Source code:");
 
         if (metadata.repo() != null) {
