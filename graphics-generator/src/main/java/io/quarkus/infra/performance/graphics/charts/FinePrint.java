@@ -38,6 +38,19 @@ public class FinePrint implements ElasticElement {
         if (metadata.springboot() != null) {
             leftColumn.add("Spring: "
                     + metadata.springboot().version());
+            // If there's only one Spring, strip the qualifier
+            // Assume the truth is in the data, and what's in the data set is what is being plotted
+        } else if (metadata.springboot3() != null && metadata.springboot4() == null) {
+            leftColumn.add("Spring: "
+                    + metadata.springboot3().version());
+        } else if (metadata.springboot4() != null && metadata.springboot3() == null) {
+            leftColumn.add("Spring: "
+                    + metadata.springboot4().version());
+        } else if (metadata.springboot3() != null && metadata.springboot4() != null) {
+            leftColumn.add("Spring 3: "
+                    + metadata.springboot3().version());
+            leftColumn.add("Spring 4: "
+                    + metadata.springboot4().version());
         }
         if (metadata.jvm() != null) {
 
