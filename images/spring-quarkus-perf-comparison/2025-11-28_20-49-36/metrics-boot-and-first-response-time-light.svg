@@ -34,7 +34,7 @@
       ><text x="47" y="212" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
-    ><g style="fill:rgb(103,103,103); font-size:16px; font-family:'Open Sans'; stroke:rgb(103,103,103);"
+    ><g style="fill:rgb(70,70,70); font-size:16px; font-family:'Open Sans'; stroke:rgb(70,70,70);"
     ><rect x="155" width="933" height="44" y="172" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
@@ -45,7 +45,7 @@
       ><text x="47" y="268" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
-    ><g style="fill:gray; font-size:16px; font-family:'Open Sans'; stroke:gray;"
+    ><g style="fill:rgb(14,14,14); font-size:16px; font-family:'Open Sans'; stroke:rgb(14,14,14);"
     ><rect x="155" width="839" height="44" y="228" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
@@ -67,7 +67,7 @@
       ><text x="49" y="380" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
     ></g
-    ><g style="fill:rgb(68,68,68); font-size:16px; font-family:'Open Sans'; stroke:rgb(68,68,68);"
+    ><g style="fill:rgb(42,42,42); font-size:16px; font-family:'Open Sans'; stroke:rgb(42,42,42);"
     ><rect x="155" width="15" height="44" y="340" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
