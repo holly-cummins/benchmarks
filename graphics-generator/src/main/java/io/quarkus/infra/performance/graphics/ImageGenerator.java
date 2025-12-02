@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.function.BiFunction;
+import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -21,25 +21,28 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import io.quarkus.infra.performance.graphics.charts.Chart;
+import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.charts.InlinedSVG;
+import io.quarkus.infra.performance.graphics.charts.Subcanvas;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Config;
 
 @ApplicationScoped
 public class ImageGenerator {
     private static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
-    public void generate(BiFunction<SVGGraphics2D, Theme, Chart> chartConstructor, BenchmarkData data,
+    public void generate(TriFunction<String, List<Datapoint>, Config, Chart> chartConstructor, BenchmarkData data,
             PlotDefinition plotDefinition, File outFile, Theme theme)
             throws IOException {
         if (data != null && data.results() != null) {
             DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
             Document doc = impl.createDocument(svgNS, "svg", null);
 
+            Chart chart = chartConstructor.apply(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()),
+                    data.config());
             SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
             svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
-
-            Chart chart = chartConstructor.apply(svgGenerator, theme);
-            chart.draw(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()), data.config());
+            chart.draw(new Subcanvas(svgGenerator), theme);
 
             Element root = svgGenerator.getRoot();
             initialiseFonts(doc, root);

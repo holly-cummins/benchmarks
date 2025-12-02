@@ -9,12 +9,8 @@ import io.quarkus.infra.performance.graphics.VAlignment;
 public class Label {
 
     private final String[] strings;
-    private final int x;
-    private final int y;
     private int targetHeight = 24; // Arbitrary default
     private double lineSpacing = 1;
-    // The g.getGraphics().getFontMetrics().getHeight() number is 39-40% bigger than the notional font size; use it to estimate what font size we might need to set
-    private static final double realHeightRatio = 1.4;
     private int style = Font.PLAIN;
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
@@ -24,24 +20,23 @@ public class Label {
 
     /**
      * @param text Use \n for multiline text
-     * @param x
-     * @param y The y position of the center of the text
      */
-    public Label(String text, int x, int y) {
+    public Label(String text) {
         this.strings = text.split("\n");
-        this.x = x;
-        this.y = y;
+
     }
 
-    public Label(String[] lines, int x, int y) {
+    public Label(String[] lines) {
         this.strings = lines;
-        this.x = x;
-        this.y = y;
     }
 
     public void draw(Subcanvas g) {
-        int size = strings.length > 1 ? (int) (targetHeight / (strings.length * lineSpacing * realHeightRatio))
-                : (int) (targetHeight / (realHeightRatio));
+        draw(g, 0, 0);
+    }
+
+    public void draw(Subcanvas g, int x, int y) {
+        int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing)))
+                : Sizer.calculateFontSize(targetHeight);
         Font font = new Font(Theme.FONT.getName(), style, size);
         g.getGraphics().setFont(font);
 
@@ -83,6 +78,10 @@ public class Label {
     public Label setTargetHeight(int height) {
         this.targetHeight = height;
         return this;
+    }
+
+    public int getTargetHeight() {
+        return targetHeight;
     }
 
     public Label setHorizontalAlignment(Alignment alignment) {

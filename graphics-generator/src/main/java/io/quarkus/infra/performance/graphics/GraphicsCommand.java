@@ -3,16 +3,16 @@ package io.quarkus.infra.performance.graphics;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.BiFunction;
+import java.util.List;
 
 import jakarta.inject.Inject;
-
-import org.apache.batik.svggen.SVGGraphics2D;
 
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.charts.Chart;
 import io.quarkus.infra.performance.graphics.charts.CubeChart;
+import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Config;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -96,7 +96,8 @@ public class GraphicsCommand implements Runnable {
         generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
     }
 
-    private void generate(File file, File qualifiedOutputDir, BiFunction<SVGGraphics2D, Theme, Chart> chartConstructor,
+    private void generate(File file, File qualifiedOutputDir,
+            TriFunction<String, List<Datapoint>, Config, Chart> chartConstructor,
             BenchmarkData data, PlotDefinition plotDefinition) {
         String fileMod = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and");
         try {
