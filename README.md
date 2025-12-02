@@ -17,7 +17,7 @@ This will generate a set of plots in an `images` directory.
 Benchmark source code: https://github.com/quarkusio/spring-quarkus-perf-comparison
 
 ![](images/spring-quarkus-perf-comparison/results-latest-throughput-light.svg#gh-light-mode-only)
-![](images/spring-quarkus-perf-comparison/results-latest-throughput.svg#gh-dark-mode-only)
+![](images/spring-quarkus-perf-comparison/results-latest-throughput-dark.svg#gh-dark-mode-only)
 
 ![](images/spring-quarkus-perf-comparison/results-latest-boot-and-first-response-time-light.svg#gh-light-mode-only)
 ![](images/spring-quarkus-perf-comparison/results-latest-boot-and-first-response-time-dark.svg#gh-dark-mode-only)
