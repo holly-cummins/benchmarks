@@ -8,7 +8,7 @@ import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Bar implements ElasticElement {
-    private static final int BAR_THICKNESS = 44;
+    static final int BAR_THICKNESS = 44;
     public static final int VALUE_LABEL_HEIGHT = BAR_THICKNESS * 2 / 3;
     private static final int MINIMUM_BAR_THICKNESS = 44;
     private static final int MAXIMUM_BAR_THICKNESS = 44;

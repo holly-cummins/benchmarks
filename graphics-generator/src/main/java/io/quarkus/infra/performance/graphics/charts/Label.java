@@ -2,11 +2,15 @@ package io.quarkus.infra.performance.graphics.charts;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Label {
+
+    private static final int DEFAULT_TARGET_HEIGHT = 24;
 
     private final String[] strings;
     private int targetHeight = 24; // Arbitrary default
@@ -15,19 +19,20 @@ public class Label {
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
     private int lineHeight;
-    // TODO should be final, but needs constructor logic to swap round
     private FontMetrics fontMetrics;
+    private Font font;
 
     /**
      * @param text Use \n for multiline text
      */
     public Label(String text) {
-        this.strings = text.split("\n");
+        this(text.split("\n"));
 
     }
 
     public Label(String[] lines) {
         this.strings = lines;
+        setTargetHeight(DEFAULT_TARGET_HEIGHT);
     }
 
     public void draw(Subcanvas g) {
@@ -35,9 +40,7 @@ public class Label {
     }
 
     public void draw(Subcanvas g, int x, int y) {
-        int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing)))
-                : Sizer.calculateFontSize(targetHeight);
-        Font font = new Font(Theme.FONT.getName(), style, size);
+
         g.getGraphics().setFont(font);
 
         // The SVG attribute alignment-baseline="middle" is not supported by Batik.
@@ -77,6 +80,9 @@ public class Label {
     // We will need to have a labelGroup abstraction to keep sizes consistent, and perhaps also set a maximum width
     public Label setTargetHeight(int height) {
         this.targetHeight = height;
+        int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing)))
+                : Sizer.calculateFontSize(targetHeight);
+        font = new Font(Theme.FONT.getName(), style, size);
         return this;
     }
 
@@ -107,10 +113,18 @@ public class Label {
     }
 
     public int calculateWidth(String s) {
-        return fontMetrics.stringWidth(s);
+        if (fontMetrics != null) {
+            return fontMetrics.stringWidth(s);
+        } else {
+            return Sizer.calculateWidth(s, font.getSize());
+        }
     }
 
     public int getDescent() {
         return fontMetrics.getDescent();
+    }
+
+    public int calculateWidth() {
+        return calculateWidth(Arrays.stream(strings).max(Comparator.comparingInt(String::length)).orElse(""));
     }
 }

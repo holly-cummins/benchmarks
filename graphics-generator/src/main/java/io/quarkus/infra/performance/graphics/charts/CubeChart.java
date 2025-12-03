@@ -1,18 +1,13 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import static java.lang.Math.round;
-
-import java.awt.Font;
-import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import io.quarkus.infra.performance.graphics.Theme;
-import io.quarkus.infra.performance.graphics.VAlignment;
 import io.quarkus.infra.performance.graphics.model.Config;
 
 public class CubeChart extends Chart {
-    private static final int BAR_THICKNESS = 44;
 
     private FinePrint fineprint;
 
@@ -24,84 +19,75 @@ public class CubeChart extends Chart {
     }
 
     @Override
-    protected void drawNoCheck(Subcanvas g, Theme theme) {
-        int canvasHeight = g.getHeight();
-        int canvasWidth = g.getWidth();
-
-        g.setPaint(theme.background());
-        g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
-
-        int margins = 20;
-        int ymargins = 20;
+    protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
 
         int finePrintHeight = 80;
 
-        Subcanvas canvasWithMargins = new Subcanvas(g, canvasWidth - 2 * margins, canvasHeight - 2 * ymargins, margins,
-                ymargins);
-
         int titleTextSize = 48;
-        g.setPaint(theme.text());
+        canvasWithMargins.setPaint(theme.text());
+
         Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleTextSize * 2, 0, 0);
-        titleLabel.setTargetHeight(titleTextSize).draw(titleCanvas, 0, titleTextSize);
+        title.draw(titleCanvas, theme);
 
-        int plotWidth = canvasWidth - 2 * margins;
-        int plotHeight = canvasHeight - titleCanvas.getHeight() - finePrintHeight;
-
-        Subcanvas plotArea = new Subcanvas(g, plotWidth, plotHeight, margins, titleCanvas.getHeight());
+        Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
+                canvasWithMargins.getHeight() - titleCanvas.getHeight() - finePrintHeight, 0, titleCanvas.getHeight());
         int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
         Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
                 plotArea.getHeight());
 
-        int cubePadding = 1;
+        int minimumDataPadding = 8;
 
-        int dataPadding = 8;
-        int subSectionWidth = (plotArea.getWidth() + dataPadding) / data.size() - dataPadding;
+        int totalColumnsContributingToWidth = 0;
+
+        List<Cubes> cubes = new ArrayList<>();
+
         int numCubesPerColumn = 16;
+        Cubes.setNumCubesPerColumn(numCubesPerColumn);
+
         int unitsPerCube = 1; // For now, assume 1mb per square
         int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
-        int cubeSize = subSectionWidth / maxColumns - cubePadding;
-        int totalCubeSize = cubeSize + cubePadding;
 
-        int x = 0;
+        int intersectionPadding = minimumDataPadding * (data.size() - 1);
+        int availableWidth = canvasWithMargins.getWidth() - intersectionPadding;
+
+        int minColumnWidth = availableWidth / (maxColumns * data.size());
+        int thinOnes = 0;
 
         for (Datapoint d : data) {
-            Subcanvas dataArea = new Subcanvas(plotArea, subSectionWidth, plotArea.getHeight(), x, 0);
+            Cubes c = new Cubes(d);
+            cubes.add(c);
 
-            // If this framework isn't found, it will just be the text colour, which is fine
-            plotArea.setPaint(theme.chartElements().get(d.framework()));
-            double val = d.value().getValue();
-
-            Subcanvas cubeArea = new Subcanvas(dataArea, dataArea.getWidth(), numCubesPerColumn * totalCubeSize, 0, 0);
-
-            Subcanvas labelArea = new Subcanvas(dataArea, dataArea.getWidth(), dataArea.getHeight() - cubeArea.getHeight(), 0,
-                    cubeArea.getHeight());
-
-            int startingCy = cubeArea.getHeight() - totalCubeSize;
-            int cx = 0, cy = startingCy;
-            int numCubes = (int) Math.round(val / unitsPerCube);
-
-            for (int i = 0; i < numCubes; i++) {
-                cubeArea.fillRect(cx, cy, cubeSize, cubeSize);
-                cy -= totalCubeSize;
-                if ((i + 1) % numCubesPerColumn == 0) {
-                    cx += totalCubeSize;
-                    cy = startingCy;
-                }
-
+            // Estimate the likely width of a column, assuming evenly spaced sections
+            if (c.getMinimumHorizontalSize() > c.getColumnCount() * minColumnWidth) {
+                thinOnes += c.getMinimumHorizontalSize();
+            } else {
+                totalColumnsContributingToWidth += c.getColumnCount();
             }
+        }
 
-            labelArea.setPaint(theme.text());
-            int labelY = 0;
-            new Label(d.framework().getExpandedName())
-                    .setHorizontalAlignment(Alignment.CENTER)
-                    .setVerticalAlignment(VAlignment.TOP)
-                    .setTargetHeight(BAR_THICKNESS).draw(labelArea, labelArea.getWidth() / 2, 0);
-            new Label(java.lang.String.format("%d %s", round(val), d.value().getUnits()))
-                    .setHorizontalAlignment(Alignment.CENTER)
-                    .setVerticalAlignment(VAlignment.TOP)
-                    .setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3)
-                    .draw(labelArea, labelArea.getWidth() / 2, labelY + BAR_THICKNESS);
+        int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
+                ? (availableWidth - thinOnes) / totalColumnsContributingToWidth
+                : (maxColumns * data.size()) / thinOnes;
+        // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
+
+        int x = 0;
+        int actualOccupiedArea = 0;
+
+        // Work out how much space is used, so we can space the sections evenly
+        for (Cubes c : cubes) {
+            c.setCubeSize(cubeWithPaddingSize);
+
+            int width = Math.max(c.getMinimumHorizontalSize(), c.getColumnCount() * cubeWithPaddingSize);
+            actualOccupiedArea += width;
+        }
+
+        int dataPadding = (canvasWithMargins.getWidth() - actualOccupiedArea) / (data.size() - 1);
+        for (Cubes c : cubes) {
+
+            int width = Math.max(c.getMinimumHorizontalSize(), c.getColumnCount() * cubeWithPaddingSize);
+            Subcanvas dataArea = new Subcanvas(plotArea, width, plotArea.getHeight(), x, 0);
+            c.draw(dataArea, theme);
 
             x += dataArea.getWidth() + dataPadding;
 

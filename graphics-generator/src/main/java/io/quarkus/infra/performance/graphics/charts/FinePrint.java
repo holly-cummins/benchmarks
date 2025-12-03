@@ -5,7 +5,6 @@ import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import io.quarkus.infra.performance.graphics.Theme;
@@ -133,7 +132,7 @@ public class FinePrint implements ElasticElement {
         leftLabel.draw(g);
 
         int leftLabelWidth = leftLabel
-                .calculateWidth(leftColumn.stream().max(Comparator.comparingInt(String::length)).orElse(""));
+                .calculateWidth();
         int rightLabelX = leftLabelWidth
                 + PADDING;
         rightLabel.setTargetHeight(g.getHeight());

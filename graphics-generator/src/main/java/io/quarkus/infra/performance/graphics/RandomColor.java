@@ -6,9 +6,9 @@ import java.util.Random;
 public class RandomColor {
     private static final Random rand = new Random();
     private static final Color[] COLORS = {
-            Color.BLACK, Color.BLUE, Color.CYAN, Color.DARK_GRAY, Color.GRAY,
+            Color.BLUE, Color.CYAN, Color.DARK_GRAY, Color.GRAY,
             Color.GREEN, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE,
-            Color.PINK, Color.RED, Color.WHITE, Color.YELLOW
+            Color.PINK, Color.RED, Color.YELLOW
     };
 
     public static Color nextColor() {

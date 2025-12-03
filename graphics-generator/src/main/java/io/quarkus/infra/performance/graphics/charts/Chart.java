@@ -1,6 +1,6 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,26 +12,22 @@ import io.quarkus.infra.performance.graphics.model.Config;
 
 public abstract class Chart implements ElasticElement {
 
-    protected final Label titleLabel;
-    protected final int titleTextSize = 48;
-
     protected final List<Datapoint> data;
-    protected final String title;
     protected final Config metadata;
     // For size calculations, the assumption is that these are stacked vertically
     protected final Set<ElasticElement> children;
+    protected final Title title;
 
     protected final double maxValue;
 
     protected Chart(String title, List<Datapoint> datasets, Config metadata) {
         this.data = datasets;
-        this.title = title;
         this.metadata = metadata;
         children = new HashSet<>();
 
-        titleLabel = new Label(title).setStyle(Font.BOLD);
+        this.title = new Title(title);
+        children.add(this.title);
 
-        // TODO title not included in vertical height
         maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);
     }
 
@@ -44,7 +40,20 @@ public abstract class Chart implements ElasticElement {
             throw new SizeException("Cannot fit " + getMinimumHorizontalSize() + "px of content into a " + g.getHeight()
                     + "px vertical space.");
         }
-        drawNoCheck(g, theme);
+
+        int canvasHeight = g.getHeight();
+        int canvasWidth = g.getWidth();
+
+        g.setPaint(theme.background());
+        g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
+
+        int xmargins = 20;
+        int ymargins = 20;
+
+        Subcanvas canvasWithMargins = new Subcanvas(g, canvasWidth - 2 * xmargins, canvasHeight - 2 * ymargins, xmargins,
+                ymargins);
+
+        drawNoCheck(canvasWithMargins, theme);
     }
 
     protected abstract void drawNoCheck(Subcanvas g, Theme theme);
