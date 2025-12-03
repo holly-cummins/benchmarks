@@ -1,11 +1,11 @@
 package io.quarkus.infra.performance.graphics.charts;
 
+import io.quarkus.infra.performance.graphics.Theme;
+import io.quarkus.infra.performance.graphics.model.Config;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import io.quarkus.infra.performance.graphics.Theme;
-import io.quarkus.infra.performance.graphics.model.Config;
 
 public class CubeChart extends Chart {
 

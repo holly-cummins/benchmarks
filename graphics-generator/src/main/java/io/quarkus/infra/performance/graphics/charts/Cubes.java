@@ -69,8 +69,11 @@ public class Cubes implements ElasticElement {
         Subcanvas labelArea = new Subcanvas(dataArea, dataArea.getWidth(), dataArea.getHeight() - cubeArea.getHeight(), 0,
                 cubeArea.getHeight());
 
-        int startingCy = cubeArea.getHeight() - totalCubeSize;
-        int cx = 0, cy = startingCy;
+        int startingY = cubeArea.getHeight() - totalCubeSize;
+
+        // Center the cubes
+        int startingX = (cubeArea.getWidth() - (getColumnCount() * totalCubeSize)) / 2;
+        int cx = startingX, cy = startingY;
         int numCubes = (int) Math.round(val / unitsPerCube);
 
         for (int i = 0; i < numCubes; i++) {
@@ -78,7 +81,7 @@ public class Cubes implements ElasticElement {
             cy -= totalCubeSize;
             if ((i + 1) % numCubesPerColumn == 0) {
                 cx += totalCubeSize;
-                cy = startingCy;
+                cy = startingY;
             }
 
         }
