@@ -65,7 +65,10 @@ public class FinePrint implements ElasticElement {
                 rightColumn.add("Memory: "
                         + metadata.jvm().memory());
             }
-
+            if (metadata.jvm().args() != null) {
+                rightColumn.add("JVM args: "
+                        + metadata.jvm().args());
+            }
             if (metadata.jvm().args() != null && metadata.jvm().args().contains("-XX:ActiveProcessorCount=")) {
                 // TODO risky calculation, what if the core is a cgroup or something else and not an arg?
                 rightColumn.add("CPUs: "
@@ -89,6 +92,9 @@ public class FinePrint implements ElasticElement {
         while (rightColumn.size() < leftColumn.size()) {
             // Put the padding before the last source control line
             rightColumn.add(Math.max(0, rightColumn.size() - 1), " ");
+        }
+        while (rightColumn.size() > leftColumn.size()) {
+            leftColumn.add(" ");
         }
 
         leftLabel = new Label(leftColumn.toArray(String[]::new))
