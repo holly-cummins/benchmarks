@@ -1,6 +1,5 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,24 +28,13 @@ public class BarChart extends Chart {
     }
 
     @Override
-    protected void drawNoCheck(Subcanvas g, Theme theme) {
-        int canvasHeight = g.getHeight();
-        int canvasWidth = g.getWidth();
-
-        g.setPaint(theme.background());
-        g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
-
-        int margins = 20;
-        int ymargins = 20;
+    protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
 
         int finePrintHeight = 80;
 
-        Subcanvas canvasWithMargins = new Subcanvas(g, canvasWidth - 2 * margins, canvasHeight - 2 * ymargins, margins,
-                ymargins);
-
-        g.setPaint(theme.text());
-        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleTextSize * 2, 0, 0);
-        titleLabel.setTargetHeight(titleTextSize).draw(titleCanvas, 0, titleTextSize);
+        canvasWithMargins.setPaint(theme.text());
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), 48 * 2, 0, 0);
+        title.draw(titleCanvas, theme);
 
         Subcanvas barArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
                 canvasWithMargins.getHeight() - titleCanvas.getHeight() - finePrintHeight, 0, titleCanvas.getHeight());
@@ -67,7 +55,7 @@ public class BarChart extends Chart {
         Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, barArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
                 barArea.getHeight());
-        g.setPaint(theme.text());
+        canvasWithMargins.setPaint(theme.text());
 
         for (Bar bar : bars) {
             bar.setScale(scale);
