@@ -28,40 +28,40 @@
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
     ><text x="940" xml:space="preserve" y="146" style="stroke:none;"
-      >18635 transactions/sec</text
+      >18789 transactions/sec</text
       ><text x="51" y="189" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 4 + JIT</text
       ><text x="45" y="212" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(154,154,154); font-size:16px; font-family:'Open Sans'; stroke:rgb(154,154,154);"
-    ><rect x="153" width="303" height="44" y="172" style="stroke:none;"
+    ><rect x="153" width="304" height="44" y="172" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="462" xml:space="preserve" y="202" style="stroke:none;"
-      >7233 transactions/sec</text
+    ><text x="463" xml:space="preserve" y="202" style="stroke:none;"
+      >7334 transactions/sec</text
       ><text x="51" y="245" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 3 + JIT</text
       ><text x="45" y="268" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(238,238,238); font-size:16px; font-family:'Open Sans'; stroke:rgb(238,238,238);"
-    ><rect x="153" width="283" height="44" y="228" style="stroke:none;"
+    ><rect x="153" width="279" height="44" y="228" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="442" xml:space="preserve" y="258" style="stroke:none;"
-      >6756 transactions/sec</text
+    ><text x="438" xml:space="preserve" y="258" style="stroke:none;"
+      >6730 transactions/sec</text
       ><text x="50" y="301" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 4 AOT</text
       ><text x="45" y="324" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(98,98,98); font-size:16px; font-family:'Open Sans'; stroke:rgb(98,98,98);"
-    ><rect x="153" width="304" height="44" y="284" style="stroke:none;"
+    ><rect x="153" width="307" height="44" y="284" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="463" xml:space="preserve" y="314" style="stroke:none;"
-      >7259 transactions/sec</text
+    ><text x="466" xml:space="preserve" y="314" style="stroke:none;"
+      >7389 transactions/sec</text
       ><text x="50" y="357" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 3 AOT</text
       ><text x="45" y="380" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
@@ -72,29 +72,40 @@
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
     ><text x="447" xml:space="preserve" y="370" style="stroke:none;"
-      >6881 transactions/sec</text
+      >6948 transactions/sec</text
       ><text x="18" y="413" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + Native</text
       ><text x="47" y="436" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
     ></g
     ><g style="fill:red; font-size:16px; font-family:'Open Sans'; stroke:red;"
-    ><rect x="153" width="404" height="44" y="396" style="stroke:none;"
+    ><rect x="153" width="412" height="44" y="396" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="563" xml:space="preserve" y="426" style="stroke:none;"
-      >9643 transactions/sec</text
+    ><text x="571" xml:space="preserve" y="426" style="stroke:none;"
+      >9925 transactions/sec</text
       ><text x="20" y="469" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring 3 + Native</text
+      >Spring 4 + Native</text
       ><text x="47" y="492" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
     ></g
-    ><g style="fill:rgb(210,210,210); font-size:16px; font-family:'Open Sans'; stroke:rgb(210,210,210);"
-    ><rect x="153" width="188" height="44" y="452" style="stroke:none;"
+    ><g style="fill:rgb(126,126,126); font-size:16px; font-family:'Open Sans'; stroke:rgb(126,126,126);"
+    ><rect x="153" width="171" height="44" y="452" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="347" xml:space="preserve" y="482" style="stroke:none;"
-      >4508 transactions/sec</text
+    ><text x="330" xml:space="preserve" y="482" style="stroke:none;"
+      >4132 transactions/sec</text
+      ><text x="20" y="525" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >Spring 3 + Native</text
+      ><text x="47" y="548" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
+      >(via GraalVM)</text
+    ></g
+    ><g style="fill:rgb(210,210,210); font-size:16px; font-family:'Open Sans'; stroke:rgb(210,210,210);"
+    ><rect x="153" width="184" height="44" y="508" style="stroke:none;"
+    /></g
+    ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
+    ><text x="343" xml:space="preserve" y="538" style="stroke:none;"
+      >4427 transactions/sec</text
       ><text x="320" y="420" style="font-size:11px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus: 3.30.1</text
       ><text x="320" y="436" style="font-size:11px; font-weight:normal; stroke:none;" xml:space="preserve"
