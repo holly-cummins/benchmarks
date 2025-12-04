@@ -1,4 +1,4 @@
-name: Surge PR Preview
+name: PR Images Preview
 
 on:
   workflow_run:
@@ -14,20 +14,26 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     steps:
+      - uses: actions/checkout@v6
       - name: Download PR Artifact
         uses: actions/download-artifact@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
           run-id: ${{ github.event.workflow_run.id }}
-          name: url
-      - name: Store url as variable
-        id: url
+          name: images
+      - name: Push to temporary branch
+        id: push
         run: |
-          echo "url=$(<url.txt)" >> $GITHUB_OUTPUT
+          git branch pr-images || true
+          git checkout pr-images
+          git add images/*svg
+          git commit -m "Images for #${{ github.event.number }}"
+          git push origin -u pr-images
+          echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
       - name: Update PR status comment
         uses: actions-cool/maintain-one-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            🚀 PR Preview ${{ steps.url.outputs.url }}/spring-quarkus-perf-comparison-latest-throughput-light.svg
+            🚀 PR Preview ![generated image](../blob/${{ steps.push.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
           number: ${{ steps.pr.outputs.id }}

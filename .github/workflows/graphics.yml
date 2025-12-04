@@ -69,14 +69,4 @@ jobs:
         with:
           name: images
           path: ./images/*svg
-          retention-days: 180
-      - name: Output artifact URL
-        if: github.repository == 'quarkusio/benchmarks' && ! endsWith(github.ref, '/main') && github.event_name == 'pull_request'
-        run: echo 'Artifact URL is ${{ steps.artifact-upload-step.outputs.artifact-url }}' > url.txt
-      - name: Publish artifact url as an artifact
-        if: github.repository == 'quarkusio/benchmarks' && ! endsWith(github.ref, '/main') && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: url
-          path: ./url.txt
-          retention-days: 2
+          retention-days: 3
