@@ -26,6 +26,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git config --global user.name "quarkusbot"
+          git config --global user.email "quarkusbot@ibm.com"
           git branch pr-images || true
           git checkout pr-images
           git add images/*svg
