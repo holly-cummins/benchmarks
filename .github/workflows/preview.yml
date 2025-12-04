@@ -23,6 +23,8 @@ jobs:
           name: images
       - name: Push to temporary branch
         id: push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git branch pr-images || true
           git checkout pr-images
