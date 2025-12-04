@@ -17,11 +17,11 @@ jobs:
       - uses: actions/checkout@v6
       - name: Download PR Artifact
         uses: actions/download-artifact@v5
-        working-directory: images
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
           run-id: ${{ github.event.workflow_run.id }}
           name: images
+          path: images
       - name: Push to temporary branch
         id: push
         env:
