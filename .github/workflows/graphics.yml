@@ -6,7 +6,7 @@ on:
     paths:
       - 'graphics-generator/**'
       - 'results/**'
-      - '.github/**'
+      - '.github/workflows/**'
   pull_request:
     branches:
       - main
