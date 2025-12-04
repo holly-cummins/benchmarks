@@ -1,0 +1,33 @@
+name: Surge PR Preview
+
+on:
+  workflow_run:
+    workflows: [ "Generate graphics" ]
+    types:
+      - completed
+    branches-ignore:
+      - 'main'
+
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Download PR Artifact
+        uses: actions/download-artifact@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
+          run-id: ${{ github.event.workflow_run.id }}
+          name: url
+      - name: Store url as variable
+        id: url
+        run: |
+          echo "url=$(<url.txt)" >> $GITHUB_OUTPUT
+      - name: Update PR status comment
+        uses: actions-cool/maintain-one-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            🚀 PR Preview ${{ steps.url.outputs.url }}/spring-quarkus-perf-comparison-latest-throughput-light.svg
+          number: ${{ steps.pr.outputs.id }}
