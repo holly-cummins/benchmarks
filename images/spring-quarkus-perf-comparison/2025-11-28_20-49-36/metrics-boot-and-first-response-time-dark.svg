@@ -84,7 +84,7 @@
       ><text x="539" y="424" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Memory: -Xmx512m -Xms512m</text
       ><text x="539" y="444" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      > </text
+      >JVM args: -XX:+UseNUMA</text
       ><text x="539" y="464" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       > </text
       ><text x="539" y="484" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"

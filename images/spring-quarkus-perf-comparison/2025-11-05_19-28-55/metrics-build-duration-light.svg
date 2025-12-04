@@ -40,9 +40,9 @@
       ><text x="539" y="424" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Memory: </text
       ><text x="539" y="444" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Source code:      edeandrea/spring-quarkus-perf-comparison</text
+      >JVM args: </text
       ><text x="539" y="464" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      > </text
+      >Source code:      edeandrea/spring-quarkus-perf-comparison</text
       ><text x="539" y="484" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Branch: fix-push-results</text
     ></g
