@@ -60,3 +60,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         if: (steps.create-pr.outputs.pull-request-operation == 'created') && (steps.create-pr.outputs.pull-request-number)
         run: gh pr merge --merge --delete-branch "${{ steps.create-pr.outputs.pull-request-url }}"
+      - name: Publish latest images for inspection
+        if: github.repository == 'quarkusio/benchmarks' && ! endsWith(github.ref, '/main') && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./images/*svg
+          retention-days: 180
