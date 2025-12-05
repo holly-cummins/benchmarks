@@ -37,19 +37,27 @@ jobs:
         id: changed
         run: |
           # Refresh index so git diff-index doesn't return true just because of timestamp changes
+          git add images/*svg
           git update-index --refresh
-          
-          git status --long
-          
-          ls images
-          
-          # Decide if anything has changed
-          if [ -n "$(git status --porcelain)" ]; then
-          echo "Changes detected."
-          echo "files_changed=true" >> $GITHUB_OUTPUT
+                  
+          # Decide if anything has changed relative to origin/main (not just the head of this branch)
+          if ! git diff-index --quiet origin/main --; then
+            echo "Changes detected."
+            echo "files_changed=true" >> $GITHUB_OUTPUT
           else
-          echo "No changes."
-          echo "files_changed=false" >> $GITHUB_OUTPUT
+            echo "No changes."
+            echo "files_changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check for changes on this branch
+        id: branch_changed
+        run: |
+          # Decide if anything has changed on this branch
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Changes detected."
+            echo "branch_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes."
+            echo "branch_changed=false" >> $GITHUB_OUTPUT
           fi
       - name: Download PR Artifact
         uses: actions/download-artifact@v5
@@ -63,7 +71,7 @@ jobs:
           echo "id=$(<pr_number)" >> $GITHUB_OUTPUT
           rm pr_number
       - name: Push to temporary branch
-        if: steps.changed.outputs.files_changed == 'true'
+        if: steps.changed.outputs.branch_changed == 'true'
         id: push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,6 +79,10 @@ jobs:
           git add images/*svg
           git commit -m "Images for #${{ steps.pr.outputs.id }}}"
           git push origin -u pr-images
+      - name: Capture most recent hash on branch
+        if: steps.changed.outputs.branch_changed == 'true'
+        id: hash
+        run: | 
           echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
@@ -78,7 +90,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            🚀 PR Preview ![generated image](../blob/${{ steps.push.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
+            🚀 This is what some of the generated images would look like with this change. 
+            ![generated image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
+            ![generated image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
           number: ${{ steps.pr.outputs.id }}
       - name: Update PR status comment with absence of link
         if: steps.changed.outputs.files_changed == 'false'
