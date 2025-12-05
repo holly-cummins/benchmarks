@@ -28,13 +28,13 @@ jobs:
           # Refresh index so git diff-index doesn't return true just because of timestamp changes
           git update-index --refresh
           
-          # Compare HEAD with previous commit
-          if ! git diff-index --quiet HEAD --; then 
-            echo "Changes detected."
-            echo "files_changed=true" >> $GITHUB_OUTPUT
+          # Decide if anything has changed
+          if [ -n "$(git status --porcelain)" ]; then
+          echo "Changes detected."
+          echo "files_changed=true" >> $GITHUB_OUTPUT
           else
-            echo "No changes."
-            echo "files_changed=false" >> $GITHUB_OUTPUT
+          echo "No changes."
+          echo "files_changed=false" >> $GITHUB_OUTPUT
           fi
       - name: Push to temporary branch
         if: steps.changed.outputs.files_changed == 'true'
