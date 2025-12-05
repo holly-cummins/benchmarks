@@ -80,7 +80,7 @@ jobs:
           git commit -m "Images for #${{ steps.pr.outputs.id }}}"
           git push origin -u pr-images
       - name: Capture most recent hash on branch
-        if: steps.changed.outputs.branch_changed == 'true'
+        if: steps.changed.outputs.files_changed == 'true'
         id: hash
         run: | 
           echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
@@ -91,8 +91,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             🚀 This is what some of the generated images would look like with this change. 
-            ![generated image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
-            ![generated image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
+            ![generated throughput image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
+            ![generated rss image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-memory-(rss)-dark.svg?raw=true)
           number: ${{ steps.pr.outputs.id }}
       - name: Update PR status comment with absence of link
         if: steps.changed.outputs.files_changed == 'false'
