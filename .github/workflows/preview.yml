@@ -39,6 +39,10 @@ jobs:
           # Refresh index so git diff-index doesn't return true just because of timestamp changes
           git update-index --refresh
           
+          git status --porcelain
+          
+          ls images
+          
           # Decide if anything has changed
           if [ -n "$(git status --porcelain)" ]; then
           echo "Changes detected."

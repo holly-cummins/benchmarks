@@ -40,7 +40,10 @@ jobs:
       - name: Ensure source directory exists
         run: mkdir -p results
       - name: Generate graphics
-        run: java -jar graphics-generator/target/quarkus-app/quarkus-run.jar results images true
+        run: |
+          rm -rf images # start with a clean slate
+          mkdir images
+          java -jar graphics-generator/target/quarkus-app/quarkus-run.jar results images true
       - name: Commit generated resources via PR
         if: github.repository == 'quarkusio/benchmarks' && endsWith(github.ref, '/main') && github.event_name != 'pull_request' 
         id: create-pr
