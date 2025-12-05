@@ -25,6 +25,7 @@ jobs:
           git fetch origin
           git branch pr-images || true
           git checkout pr-images
+          git pull --rebase
       - name: Download PR Artifact
         uses: actions/download-artifact@v5
         with:
@@ -46,16 +47,6 @@ jobs:
           echo "No changes."
           echo "files_changed=false" >> $GITHUB_OUTPUT
           fi
-      - name: Push to temporary branch
-        if: steps.changed.outputs.files_changed == 'true'
-        id: push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git add images/*svg
-          git commit -m "Images for #${{ github.event.number }}"
-          git push origin -u pr-images
-          echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
       - name: Download PR Artifact
         uses: actions/download-artifact@v5
         with:
@@ -66,6 +57,17 @@ jobs:
         id: pr
         run: |
           echo "id=$(<pr_number)" >> $GITHUB_OUTPUT
+          rm pr_number
+      - name: Push to temporary branch
+        if: steps.changed.outputs.files_changed == 'true'
+        id: push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add images/*svg
+          git commit -m "Images for #${{ steps.pr.outputs.id }}}"
+          git push origin -u pr-images
+          echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
         uses: actions-cool/maintain-one-comment@v3
@@ -80,5 +82,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-           This PR does not change any of the images.
+           This PR would not change any of the generated images.
           number: ${{ steps.pr.outputs.id }}
