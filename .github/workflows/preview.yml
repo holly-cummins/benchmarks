@@ -58,8 +58,8 @@ jobs:
           body: |
             🚀 PR Preview ![generated image](../blob/${{ steps.push.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
           number: ${{ steps.pr.outputs.id }}
-      - name: Update PR status comment with absense of link
-        if: steps.changed.outputs.files_changed == 'true'
+      - name: Update PR status comment with absence of link
+        if: steps.changed.outputs.files_changed == 'false'
         uses: actions-cool/maintain-one-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
