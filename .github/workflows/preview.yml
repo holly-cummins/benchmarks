@@ -39,7 +39,7 @@ jobs:
           # Refresh index so git diff-index doesn't return true just because of timestamp changes
           git update-index --refresh
           
-          git status --porcelain
+          git status --long
           
           ls images
           
