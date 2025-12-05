@@ -50,6 +50,16 @@ jobs:
           git commit -m "Images for #${{ github.event.number }}"
           git push origin -u pr-images
           echo hash=`git rev-parse HEAD` >> $GITHUB_OUTPUT
+      - name: Download PR Artifact
+        uses: actions/download-artifact@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
+          run-id: ${{ github.event.workflow_run.id }}
+          name: pr
+      - name: Store PR id as variable
+        id: pr
+        run: |
+          echo "id=$(<pr_number)" >> $GITHUB_OUTPUT
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
         uses: actions-cool/maintain-one-comment@v3

@@ -70,3 +70,14 @@ jobs:
           name: images
           path: ./images/*svg
           retention-days: 3
+      - name: Save PR number
+        if: github.repository == 'quarkusio/benchmarks' && ! endsWith(github.ref, '/main') && github.event_name == 'pull_request'
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          mkdir -p ./pr
+          echo $PR_NUMBER > ./pr/pr_number
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr_number
+          path: pr/
