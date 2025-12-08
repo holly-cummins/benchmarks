@@ -8,12 +8,12 @@ import java.util.Map;
 import io.quarkus.infra.performance.graphics.charts.EmbeddableFont;
 import io.quarkus.infra.performance.graphics.model.Framework;
 
-public record Theme(Color background, Color text, Map<Framework, Color> chartElements) {
+public record Theme(String name, Color background, Color text, Map<Framework, Color> chartElements) {
 
     public static final EmbeddableFont FONT = EmbeddableFont.OPENSANS;
 
-    public static Theme LIGHT = new Theme(
-            Color.WHITE,
+    public static Theme LIGHT = new Theme("light",
+            java.awt.Color.WHITE,
             Color.BLACK,
             Map.ofEntries(
                     Map.entry(Framework.QUARKUS3_JVM, decode("#4695EB")),
@@ -31,7 +31,7 @@ public record Theme(Color background, Color text, Map<Framework, Color> chartEle
                     Map.entry(Framework.SPRING_NATIVE, decode("#2A2A2A")),
                     Map.entry(Framework.SPRING_JVM_AOT, decode("#0E0E0E"))));
 
-    public static final Theme DARK = new Theme(
+    public static final Theme DARK = new Theme("dark",
             Color.BLACK,
             Color.WHITE,
             Map.ofEntries(

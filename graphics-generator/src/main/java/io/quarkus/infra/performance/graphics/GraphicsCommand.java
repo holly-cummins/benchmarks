@@ -99,14 +99,14 @@ public class GraphicsCommand implements Runnable {
     private void generate(File file, File qualifiedOutputDir,
             TriFunction<String, List<Datapoint>, Config, Chart> chartConstructor,
             BenchmarkData data, PlotDefinition plotDefinition) {
-        String fileMod = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and");
         try {
             {
-                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-light.svg"));
+                File outFile = new File(qualifiedOutputDir,
+                        deriveOutputFilename(file, plotDefinition, Theme.LIGHT));
                 generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
             }
             {
-                File outFile = new File(qualifiedOutputDir, file.getName().replace(".json", "-" + fileMod + "-dark.svg"));
+                File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, Theme.DARK));
                 generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
             }
         } catch (IOException e) {
@@ -116,5 +116,12 @@ public class GraphicsCommand implements Runnable {
                 throw e;
             }
         }
+    }
+
+    private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Theme mode) {
+        String chartTitle = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and")
+                .replaceAll("\\(", "").replaceAll("\\)", "");
+        return file.getName().replace(".json",
+                "-" + chartTitle + "-" + mode.name() + ".svg");
     }
 }

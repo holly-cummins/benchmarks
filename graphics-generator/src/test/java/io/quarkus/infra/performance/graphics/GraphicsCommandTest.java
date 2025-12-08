@@ -129,6 +129,10 @@ public class GraphicsCommandTest {
 
         File image = new File("target/test-output/filename/data-throughput-light.svg");
         assertTrue(image.exists());
+
+        // Check parentheseses are stripped
+        image = new File("target/test-output/filename/data-memory-rss-dark.svg");
+        assertTrue(image.exists());
     }
 
     @Test
