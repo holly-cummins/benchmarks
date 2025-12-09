@@ -1,21 +1,57 @@
 package io.quarkus.infra.performance.graphics.charts;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.model.Config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class CubeChart extends Chart {
 
-    private FinePrint fineprint;
+    private final FinePrint fineprint;
+    private final List<Cubes> cubes = new ArrayList<>();
+    int numCubesPerColumn = 16;
 
     public CubeChart(String title, List<Datapoint> data, Config metadata) {
         super(title, data, metadata);
 
         this.fineprint = new FinePrint(metadata);
         children.add(fineprint);
+
+        Cubes.setNumCubesPerColumn(numCubesPerColumn);
+
+        // Make sure the preferred size calculations don't return something absurdly huge for the number of datasets
+        int approximateTotalNumberOfColumns = (int) (data.stream().mapToDouble(d -> d.value().getValue()).sum()
+                / numCubesPerColumn);
+        Cubes.setMaxCubeSize(2000 / approximateTotalNumberOfColumns);
+
+        for (Datapoint d : data) {
+            Cubes c = new Cubes(d);
+            cubes.add(c);
+
+        }
+
+        // Add the tallest cube to the children, for height calculations
+        cubes.stream()
+                .max(Comparator.comparing(Cubes::getPreferredVerticalSize))
+                .ifPresent(children::add);
+    }
+
+    @Override
+    public int getMaximumHorizontalSize() {
+        return cubes.stream().mapToInt(ElasticElement::getMaximumHorizontalSize).sum() + 2 * xmargins;
+    }
+
+    @Override
+    public int getMinimumHorizontalSize() {
+        return cubes.stream().mapToInt(ElasticElement::getMinimumHorizontalSize).sum() + 2 * xmargins;
+    }
+
+    @Override
+    public int getPreferredHorizontalSize() {
+        return cubes.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).sum() + 2 * xmargins;
     }
 
     @Override
@@ -23,10 +59,10 @@ public class CubeChart extends Chart {
 
         int finePrintHeight = 80;
 
-        int titleTextSize = 48;
         canvasWithMargins.setPaint(theme.text());
 
-        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleTextSize * 2, 0, 0);
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), title.getPreferredVerticalSize(),
+                0, 0);
         title.draw(titleCanvas, theme);
 
         Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
@@ -34,58 +70,24 @@ public class CubeChart extends Chart {
         int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
         Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
-                plotArea.getHeight());
+                plotArea.getHeight() + titleCanvas.getHeight());
 
-        int minimumDataPadding = 8;
+        int dataPadding = workOutCubeSizes(canvasWithMargins);
 
-        int totalColumnsContributingToWidth = 0;
-
-        List<Cubes> cubes = new ArrayList<>();
-
-        int numCubesPerColumn = 16;
-        Cubes.setNumCubesPerColumn(numCubesPerColumn);
-
-        int unitsPerCube = 1; // For now, assume 1mb per square
-        int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
-
-        int intersectionPadding = minimumDataPadding * (data.size() - 1);
-        int availableWidth = canvasWithMargins.getWidth() - intersectionPadding;
-
-        int minColumnWidth = availableWidth / (maxColumns * data.size());
-        int thinOnes = 0;
-
-        for (Datapoint d : data) {
-            Cubes c = new Cubes(d);
-            cubes.add(c);
-
-            // Estimate the likely width of a column, assuming evenly spaced sections
-            if (c.getMinimumHorizontalSize() > c.getColumnCount() * minColumnWidth) {
-                thinOnes += c.getMinimumHorizontalSize();
-            } else {
-                totalColumnsContributingToWidth += c.getColumnCount();
+        while (dataPadding <= 0) {
+            // If it doesn't fit, shrink fonts
+            for (Cubes c : cubes) {
+                c.decrementFonts();
             }
+            dataPadding = workOutCubeSizes(canvasWithMargins);
         }
-
-        int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
-                ? (availableWidth - thinOnes) / totalColumnsContributingToWidth
-                : (maxColumns * data.size()) / thinOnes;
-        // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
 
         int x = 0;
-        int actualOccupiedArea = 0;
 
-        // Work out how much space is used, so we can space the sections evenly
-        for (Cubes c : cubes) {
-            c.setCubeSize(cubeWithPaddingSize);
-
-            int width = Math.max(c.getMinimumHorizontalSize(), c.getColumnCount() * cubeWithPaddingSize);
-            actualOccupiedArea += width;
-        }
-
-        int dataPadding = (canvasWithMargins.getWidth() - actualOccupiedArea) / (data.size() - 1);
         for (Cubes c : cubes) {
 
-            int width = Math.max(c.getMinimumHorizontalSize(), c.getColumnCount() * cubeWithPaddingSize);
+            int width = c.getActualHorizontalSize();
+
             Subcanvas dataArea = new Subcanvas(plotArea, width, plotArea.getHeight(), x, 0);
             c.draw(dataArea, theme);
 
@@ -93,6 +95,55 @@ public class CubeChart extends Chart {
 
         }
         fineprint.draw(finePrintArea, theme);
+    }
+
+    private int workOutCubeSizes(Subcanvas canvasWithMargins) {
+        int minimumDataPadding = 8;
+
+        int totalColumnsContributingToWidth = 0;
+
+        int unitsPerCube = 1; // For now, assume 1mb per square
+        int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
+
+        int numGutters = data.size() - 1;
+        int gutterPadding = minimumDataPadding * numGutters;
+        int availableWidth = canvasWithMargins.getWidth() - gutterPadding;
+
+        int minColumnWidth = availableWidth / (maxColumns * data.size());
+        int widthOfThinSections = 0;
+
+        int smallestCubeSize = Integer.MAX_VALUE;
+
+        for (Cubes c : cubes) {
+            // Iterate to a correct value; to start off with, set a column width
+            c.setCubeSize(minColumnWidth);
+
+            // Estimate the likely width of a column, assuming evenly spaced sections
+            if (c.getActualHorizontalSize() > c.getColumnCount() * minColumnWidth) {
+                widthOfThinSections += c.getMinimumHorizontalSize();
+                int cubeSizeForThisSection = c.getMinimumHorizontalSize() / c.getColumnCount();
+
+                smallestCubeSize = Math.min(smallestCubeSize, cubeSizeForThisSection);
+            } else {
+                totalColumnsContributingToWidth += c.getColumnCount();
+            }
+        }
+
+        int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
+                ? (availableWidth - widthOfThinSections) / totalColumnsContributingToWidth
+                : smallestCubeSize;
+        // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
+
+        int actualOccupiedArea = 0;
+
+        // Work out how much space is used, so we can space the sections evenly
+        for (Cubes c : cubes) {
+            c.setCubeSize(cubeWithPaddingSize);
+            int width = c.getActualHorizontalSize();
+            actualOccupiedArea += width;
+        }
+
+        return (canvasWithMargins.getWidth() - actualOccupiedArea) / numGutters;
     }
 
     @Override

@@ -12,4 +12,12 @@ public interface ElasticElement {
     int getMinimumHorizontalSize();
 
     void draw(Subcanvas g, Theme theme);
+
+    default int getPreferredHorizontalSize() {
+        return (getMinimumHorizontalSize() + getMaximumHorizontalSize()) / 2;
+    }
+
+    default int getPreferredVerticalSize() {
+        return (getMinimumVerticalSize() + getMaximumVerticalSize()) / 2;
+    }
 }
