@@ -71,7 +71,7 @@ jobs:
           echo "id=$(<pr_number)" >> $GITHUB_OUTPUT
           rm pr_number
       - name: Push to temporary branch
-        if: steps.changed.outputs.branch_changed == 'true'
+        if: steps.branch_changed.outputs.branch_changed == 'true'
         id: push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
