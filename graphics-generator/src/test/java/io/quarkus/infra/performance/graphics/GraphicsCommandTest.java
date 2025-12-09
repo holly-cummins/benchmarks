@@ -140,12 +140,12 @@ public class GraphicsCommandTest {
     public void testLaunchWithDirectory(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
-        assertTrue(output.contains("data2.json"), output);
+        assertTrue(output.contains("eight-framework.json"), output);
 
         File dir = new File("target/test-output/directory/");
         File image1 = new File(dir, "data-throughput-light.svg");
         assertTrue(image1.exists());
-        File image2 = new File(dir, "data2-throughput-light.svg");
+        File image2 = new File(dir, "eight-framework-throughput-light.svg");
         assertTrue(image2.exists());
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");

@@ -20,6 +20,9 @@ public abstract class Chart implements ElasticElement {
 
     protected final double maxValue;
 
+    final int xmargins = 20;
+    final int ymargins = 20;
+
     protected Chart(String title, List<Datapoint> datasets, Config metadata) {
         this.data = datasets;
         this.metadata = metadata;
@@ -47,9 +50,6 @@ public abstract class Chart implements ElasticElement {
         g.setPaint(theme.background());
         g.fill(new Rectangle2D.Double(0, 0, canvasWidth, canvasWidth));
 
-        int xmargins = 20;
-        int ymargins = 20;
-
         Subcanvas canvasWithMargins = new Subcanvas(g, canvasWidth - 2 * xmargins, canvasHeight - 2 * ymargins, xmargins,
                 ymargins);
 
@@ -66,21 +66,31 @@ public abstract class Chart implements ElasticElement {
 
     @Override
     public int getMaximumVerticalSize() {
-        return children.stream().mapToInt(ElasticElement::getMaximumVerticalSize).sum();
+        return children.stream().mapToInt(ElasticElement::getMaximumVerticalSize).sum() + 2 * ymargins;
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return children.stream().mapToInt(ElasticElement::getMaximumHorizontalSize).max().orElse(0);
+        return children.stream().mapToInt(ElasticElement::getMaximumHorizontalSize).max().orElse(0) + 2 * xmargins;
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return children.stream().mapToInt(ElasticElement::getMinimumVerticalSize).sum();
+        return children.stream().mapToInt(ElasticElement::getMinimumVerticalSize).sum() + 2 * ymargins;
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return children.stream().mapToInt(ElasticElement::getMinimumHorizontalSize).max().orElse(0);
+        return children.stream().mapToInt(ElasticElement::getMinimumHorizontalSize).max().orElse(0) + 2 * xmargins;
+    }
+
+    @Override
+    public int getPreferredVerticalSize() {
+        return children.stream().mapToInt(ElasticElement::getPreferredVerticalSize).sum() + 2 * ymargins;
+    }
+
+    @Override
+    public int getPreferredHorizontalSize() {
+        return children.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).max().orElse(0) + 2 * xmargins;
     }
 }

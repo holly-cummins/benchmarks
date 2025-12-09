@@ -25,7 +25,7 @@ public class FinePrint implements ElasticElement {
     private final Label rightLabel;
     private InlinedSVG svg;
     private final List<String> leftColumn = new ArrayList<>();
-    private final List<String> rightColumn = new ArrayList();
+    private final List<String> rightColumn = new ArrayList<>();
 
     public FinePrint(Config metadata) {
         this.metadata = metadata;
@@ -81,7 +81,7 @@ public class FinePrint implements ElasticElement {
             // Use a few spaces to leave room for a logo
         }
 
-        if (!"main".equals(metadata.repo().branch())) {
+        if (metadata.repo() != null && !"main".equals(metadata.repo().branch())) {
             rightColumn.add("Branch: " + metadata.repo().branch());
 
         }
@@ -149,8 +149,7 @@ public class FinePrint implements ElasticElement {
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = g.getXOffset() + rightLabelX + sw + 2;
-            int logoY = g.getYOffset() + (rightColumn.size()) * rightLabel.getLineHeight() - rightLabel.getAscent()
-                    + rightLabel.getDescent() / 2;
+            int logoY = g.getYOffset() + (rightColumn.size() - 1) * rightLabel.getLineHeight() + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
                     logoY);

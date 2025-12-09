@@ -40,8 +40,9 @@ public class ImageGenerator {
 
             Chart chart = chartConstructor.apply(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()),
                     data.config());
+
             SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
-            svgGenerator.setSVGCanvasSize(new Dimension(1200, 600));
+            svgGenerator.setSVGCanvasSize(new Dimension(chart.getPreferredHorizontalSize(), chart.getPreferredVerticalSize()));
             chart.draw(new Subcanvas(svgGenerator), theme);
 
             Element root = svgGenerator.getRoot();

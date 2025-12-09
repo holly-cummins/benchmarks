@@ -14,7 +14,7 @@ public class Label {
 
     private final String[] strings;
     private int targetHeight = 24; // Arbitrary default
-    private double lineSpacing = 1;
+    private final double lineSpacing = 1;
     private int style = Font.PLAIN;
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
@@ -55,7 +55,7 @@ public class Label {
 
         // Compute starting y to vertically center the text block
         int yPosition = switch (valignment) {
-            case TOP -> y + g.getGraphics().getFontMetrics().getHeight();
+            case TOP -> y + g.getGraphics().getFontMetrics().getAscent();
             case BOTTOM -> y - getAscent();
             case MIDDLE -> y - textBlockHeight / 2 + getAscent();
         };
@@ -113,6 +113,7 @@ public class Label {
     }
 
     public int calculateWidth(String s) {
+
         if (fontMetrics != null) {
             return fontMetrics.stringWidth(s);
         } else {
@@ -125,6 +126,15 @@ public class Label {
     }
 
     public int calculateWidth() {
-        return calculateWidth(Arrays.stream(strings).max(Comparator.comparingInt(String::length)).orElse(""));
+        return calculateWidth(getLongestText());
+    }
+
+    private String getLongestText() {
+        // It would be cheaper to just count characters, but sometimes the longest string isn't the fattest – including for framework labels we are using
+        return Arrays.stream(strings).max(Comparator.comparingInt(this::calculateWidth)).orElse("");
+    }
+
+    public String toString() {
+        return "Label[" + getLongestText() + "]";
     }
 }

@@ -62,8 +62,8 @@ public class Bar implements ElasticElement {
 
     @Override
     public int getMaximumHorizontalSize() {
-        // Arbitrary; we can go big
-        return 3000;
+        // Arbitrary; we can go big, but this will contribute to the preferred size
+        return getMinimumHorizontalSize() + 1000;
     }
 
     @Override

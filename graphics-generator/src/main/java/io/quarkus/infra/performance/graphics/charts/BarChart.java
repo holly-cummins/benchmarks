@@ -30,10 +30,11 @@ public class BarChart extends Chart {
     @Override
     protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
 
-        int finePrintHeight = 80;
+        int finePrintHeight = fineprint.getPreferredVerticalSize();
 
         canvasWithMargins.setPaint(theme.text());
-        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), 48 * 2, 0, 0);
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), title.getPreferredVerticalSize(),
+                0, 0);
         title.draw(titleCanvas, theme);
 
         Subcanvas barArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
@@ -54,7 +55,7 @@ public class BarChart extends Chart {
         int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
         Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, barArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
-                barArea.getHeight());
+                barArea.getHeight() + titleCanvas.getHeight());
         canvasWithMargins.setPaint(theme.text());
 
         for (Bar bar : bars) {

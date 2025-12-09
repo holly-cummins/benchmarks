@@ -8,13 +8,16 @@ import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Cubes implements ElasticElement {
+    private static final int LABEL_HEIGHT = BAR_THICKNESS;
     private final Datapoint d;
     private static int numCubesPerColumn = 16;
-    private int cubePadding = 1;
-    private int unitsPerCube = 1; // For now, assume 1mb per square
+    private static final int CUBE_PADDING = 1;
+    private final int unitsPerCube = 1; // For now, assume 1mb per square
     private int totalCubeSize;
     private final Label valueLabel;
     private final Label frameworkLabel;
+    private static final int MINIMUM_CUBE_SIZE = 2;
+    private static int maximumCubeSize = 20;
 
     public Cubes(Datapoint d) {
         this.d = d;
@@ -23,37 +26,51 @@ public class Cubes implements ElasticElement {
         frameworkLabel = new Label(d.framework().getExpandedName())
                 .setHorizontalAlignment(Alignment.CENTER)
                 .setVerticalAlignment(VAlignment.TOP)
-                .setTargetHeight(BAR_THICKNESS);
+                .setTargetHeight(LABEL_HEIGHT);
         valueLabel = new Label(String.format("%d %s", Math.round(val), d.value().getUnits()))
                 .setHorizontalAlignment(Alignment.CENTER)
                 .setVerticalAlignment(VAlignment.TOP)
-                .setStyle(Font.BOLD).setTargetHeight(BAR_THICKNESS * 2 / 3);
+                .setStyle(Font.BOLD).setTargetHeight(LABEL_HEIGHT * 2 / 3);
     }
 
     public static void setNumCubesPerColumn(int num) {
         numCubesPerColumn = num;
     }
 
+    public static void setMaxCubeSize(int m) {
+        maximumCubeSize = m;
+    }
+
     @Override
     public int getMaximumVerticalSize() {
-        return 0;
+        return (int) Math.min(numCubesPerColumn, d.value().getValue()) * maximumCubeSize + valueLabel.getTargetHeight()
+                + frameworkLabel.getTargetHeight();
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        // We can scale arbitrarily big
-        return 1000;
+        return (int) Math.ceil(d.value().getValue() / numCubesPerColumn * maximumCubeSize);
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return 0;
+        return (int) Math.min(numCubesPerColumn, d.value().getValue()) * MINIMUM_CUBE_SIZE + valueLabel.getTargetHeight()
+                + frameworkLabel.getTargetHeight();
     }
 
     @Override
     public int getMinimumHorizontalSize() {
         // Assume we can shrink columns smaller than the label
-        return Math.max(valueLabel.calculateWidth(), frameworkLabel.calculateWidth());
+        int widestLabel = Math.max(valueLabel.calculateWidth(), frameworkLabel.calculateWidth());
+        int cubesWidth = (int) Math.ceil(d.value().getValue() / numCubesPerColumn * MINIMUM_CUBE_SIZE);
+        return Math.max(widestLabel, cubesWidth);
+    }
+
+    public int getActualHorizontalSize() {
+        // Assume we can shrink columns smaller than the label
+        int widestLabel = Math.max(valueLabel.calculateWidth(), frameworkLabel.calculateWidth());
+        int cubesWidth = (int) Math.ceil(d.value().getValue() / numCubesPerColumn * totalCubeSize);
+        return Math.max(widestLabel, cubesWidth);
     }
 
     @Override
@@ -62,7 +79,7 @@ public class Cubes implements ElasticElement {
         // If this framework isn't found, it will just be the text colour, which is fine
         dataArea.setPaint(theme.chartElements().get(d.framework()));
 
-        int cubeSize = totalCubeSize - cubePadding;
+        int cubeSize = totalCubeSize - CUBE_PADDING;
 
         Subcanvas cubeArea = new Subcanvas(dataArea, dataArea.getWidth(), numCubesPerColumn * totalCubeSize, 0, 0);
 
@@ -72,8 +89,8 @@ public class Cubes implements ElasticElement {
         int startingY = cubeArea.getHeight() - totalCubeSize;
 
         // Center the cubes
-        int startingX = (cubeArea.getWidth() - (getColumnCount() * totalCubeSize)) / 2;
-        int cx = startingX, cy = startingY;
+        int cx = (cubeArea.getWidth() - (getColumnCount() * totalCubeSize)) / 2;
+        int cy = startingY;
         int numCubes = (int) Math.round(val / unitsPerCube);
 
         for (int i = 0; i < numCubes; i++) {
@@ -89,7 +106,7 @@ public class Cubes implements ElasticElement {
         labelArea.setPaint(theme.text());
         int labelY = 0;
         frameworkLabel.draw(labelArea, labelArea.getWidth() / 2, 0);
-        valueLabel.draw(labelArea, labelArea.getWidth() / 2, labelY + BAR_THICKNESS);
+        valueLabel.draw(labelArea, labelArea.getWidth() / 2, labelY + LABEL_HEIGHT);
     }
 
     // Includes the padding
@@ -99,5 +116,10 @@ public class Cubes implements ElasticElement {
 
     public int getColumnCount() {
         return (int) Math.ceil(d.value().getValue() / (numCubesPerColumn * unitsPerCube));
+    }
+
+    public void decrementFonts() {
+        frameworkLabel.setTargetHeight((int) (frameworkLabel.getTargetHeight() * 0.95));
+        valueLabel.setTargetHeight((int) (valueLabel.getTargetHeight() * 0.95));
     }
 }

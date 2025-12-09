@@ -19,22 +19,22 @@ public class Title implements ElasticElement {
 
     @Override
     public int getMaximumVerticalSize() {
-        return Sizer.calculateHeight(MAXIMUM_TITLE_TEXT_SIZE);
+        return 2 * Sizer.calculateHeight(MAXIMUM_TITLE_TEXT_SIZE);
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return Sizer.calculateWidth(title, MAXIMUM_TITLE_TEXT_SIZE);
+        return 2 * Sizer.calculateWidth(title, MAXIMUM_TITLE_TEXT_SIZE);
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return Sizer.calculateHeight(MINIMUM_TITLE_TEXT_SIZE);
+        return 2 * Sizer.calculateHeight(MINIMUM_TITLE_TEXT_SIZE);
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return Sizer.calculateWidth(title, MINIMUM_TITLE_TEXT_SIZE);
+        return 2 * Sizer.calculateWidth(title, MINIMUM_TITLE_TEXT_SIZE);
     }
 
     @Override
