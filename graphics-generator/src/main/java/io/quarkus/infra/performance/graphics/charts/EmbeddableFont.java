@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 
 public class EmbeddableFont {
@@ -53,9 +57,29 @@ public class EmbeddableFont {
     }
 
     private static byte[] downloadFont(String fontUrl) throws URISyntaxException, IOException {
-        try (InputStream in = new URI(fontUrl).toURL().openStream()) {
-            return in.readAllBytes();
+        // Determine cache directory inside build folder
+        Path cacheDir = Paths.get("target", "fonts");
+        Files.createDirectories(cacheDir);
+
+        // Derive a safe file name from the URL
+        String fileName = Paths.get(new URI(fontUrl).getPath()).getFileName().toString();
+        Path cachedFont = cacheDir.resolve(fileName);
+
+        // If cached font exists, load from disk
+        if (Files.exists(cachedFont)) {
+            return Files.readAllBytes(cachedFont);
         }
+
+        // Otherwise download and cache it
+        byte[] data;
+        try (InputStream in = new URI(fontUrl).toURL().openStream()) {
+            data = in.readAllBytes();
+        }
+
+        // Save to cache
+        Files.write(cachedFont, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+        return data;
     }
 
     private static String generateFontFaceCSS(String fontName, String base64Font) {
