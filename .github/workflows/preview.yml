@@ -77,7 +77,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git add images/*svg
-          git commit -m "Images for #${{ steps.pr.outputs.id }}}"
+          git commit -m "Images for #${{ steps.pr.outputs.id }}"
           git push origin -u pr-images
       - name: Capture most recent hash on branch
         if: steps.changed.outputs.files_changed == 'true'
