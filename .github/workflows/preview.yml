@@ -41,7 +41,7 @@ jobs:
           git update-index --refresh
                   
           # Decide if any images has changed relative to origin/main (not just the head of this branch)
-          if ! git diff-index --quiet origin/main -- images; then
+          if ! git diff-index --quiet origin/main -- images/*svg; then
             echo "Changes detected."
             echo "files_changed=true" >> $GITHUB_OUTPUT
           else
@@ -52,7 +52,7 @@ jobs:
         id: branch_changed
         run: |
           # Decide if any images has changed on this branch
-          if [ -n "$(git status --porcelain images)" ]; then
+          if [ -n "$(git status --porcelain images/*svg)" ]; then
             echo "Changes detected."
             echo "branch_changed=true" >> $GITHUB_OUTPUT
           else
