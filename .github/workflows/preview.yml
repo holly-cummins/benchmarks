@@ -39,6 +39,8 @@ jobs:
           # Refresh index so git diff-index doesn't return true just because of timestamp changes
           git add images/*svg
           git update-index --refresh
+          
+          git diff-index origin/main -- images/*svg
                   
           # Decide if any images has changed relative to origin/main (not just the head of this branch)
           if ! git diff-index --quiet origin/main -- images/*svg; then
