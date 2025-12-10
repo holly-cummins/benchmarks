@@ -20,6 +20,8 @@ public class FinePrint implements ElasticElement {
     private static final int MINIMUM_PADDING = PADDING / 3;
     private static final int MAXIMUM_PADDING = PADDING * 3;
 
+    private static final int TOP_PADDING = 30;
+
     private final Config metadata;
     private final Label leftLabel;
     private final Label rightLabel;
@@ -108,7 +110,7 @@ public class FinePrint implements ElasticElement {
 
     @Override
     public int getMaximumVerticalSize() {
-        return Math.max(leftColumn.size(), rightColumn.size()) * MAXIMUM_FONT_SIZE;
+        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MAXIMUM_FONT_SIZE;
 
     }
 
@@ -120,7 +122,7 @@ public class FinePrint implements ElasticElement {
 
     @Override
     public int getMinimumVerticalSize() {
-        return Math.max(leftColumn.size(), rightColumn.size()) * MINIMUM_FONT_SIZE;
+        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MINIMUM_FONT_SIZE;
     }
 
     @Override
@@ -134,22 +136,25 @@ public class FinePrint implements ElasticElement {
 
         g.setPaint(theme.text());
 
-        leftLabel.setTargetHeight(g.getHeight());
-        leftLabel.draw(g);
+        Subcanvas padded = new Subcanvas(g, g.getWidth(), g.getHeight() - TOP_PADDING, 0, TOP_PADDING);
+
+        leftLabel.setTargetHeight(padded.getHeight());
+        leftLabel.draw(padded);
 
         int leftLabelWidth = leftLabel
                 .calculateWidth();
         int rightLabelX = leftLabelWidth
                 + PADDING;
-        rightLabel.setTargetHeight(g.getHeight());
-        Subcanvas rl = new Subcanvas(g, g.getWidth() - rightLabelX, g.getHeight(), rightLabelX, 0);
+        rightLabel.setTargetHeight(padded.getHeight());
+        Subcanvas rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
         int sw = rightLabel.calculateWidth("Source code:");
 
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
-            int logoX = g.getXOffset() + rightLabelX + sw + 2;
-            int logoY = g.getYOffset() + (rightColumn.size() - 1) * rightLabel.getLineHeight() + rightLabel.getDescent() / 4;
+            int logoX = padded.getXOffset() + rightLabelX + sw + 2;
+            int logoY = padded.getYOffset() + (rightColumn.size() - 1) * rightLabel.getLineHeight()
+                    + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
                     logoY);

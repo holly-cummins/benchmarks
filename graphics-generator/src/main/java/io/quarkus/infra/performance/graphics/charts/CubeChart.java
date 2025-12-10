@@ -57,7 +57,7 @@ public class CubeChart extends Chart {
     @Override
     protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
 
-        int finePrintHeight = 80;
+        int finePrintHeight = fineprint.getPreferredVerticalSize();
 
         canvasWithMargins.setPaint(theme.text());
 
