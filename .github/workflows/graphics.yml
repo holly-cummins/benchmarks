@@ -47,7 +47,7 @@ jobs:
       - name: Commit generated resources via PR
         if: github.repository == 'quarkusio/benchmarks' && endsWith(github.ref, '/main') && github.event_name != 'pull_request' 
         id: create-pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           add-paths: |
             images/**
