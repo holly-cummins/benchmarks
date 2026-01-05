@@ -1,5 +1,7 @@
 # Benchmarks
 
+This repository hosts results and generated graphics of benchmark executions from the Quarkus performance lab, along with the graphics code for generating charts.
+
 ## To generate your own charts 
 
 Assuming you have a file called `myfile.json` in the expected data format, you can run:
@@ -12,7 +14,9 @@ java -jar benchmarks/graphics-generator/target/quarkus-app/quarkus-run.jar myfil
 
 This will generate a set of plots in an `images` directory. 
 
-## spring-quarkus-perf-comparison
+## Results 
+
+### spring-quarkus-perf-comparison
 
 Benchmark source code: https://github.com/quarkusio/spring-quarkus-perf-comparison
 
