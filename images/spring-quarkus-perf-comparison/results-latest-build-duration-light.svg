@@ -24,21 +24,21 @@
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(70,149,235); font-size:16px; font-family:'Open Sans'; stroke:rgb(70,149,235);"
-    ><rect x="153" width="61" height="44" y="125" style="stroke:none;"
+    ><rect x="153" width="67" height="44" y="125" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="220" xml:space="preserve" y="155" style="stroke:none;"
-      >10 s</text
+    ><text x="226" xml:space="preserve" y="155" style="stroke:none;"
+      >11 s</text
       ><text x="51" y="198" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 4 + JIT</text
       ><text x="45" y="221" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(154,154,154); font-size:16px; font-family:'Open Sans'; stroke:rgb(154,154,154);"
-    ><rect x="153" width="36" height="44" y="181" style="stroke:none;"
+    ><rect x="153" width="35" height="44" y="181" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="195" xml:space="preserve" y="211" style="stroke:none;"
+    ><text x="194" xml:space="preserve" y="211" style="stroke:none;"
       >6 s</text
       ><text x="51" y="254" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 3 + JIT</text
@@ -68,22 +68,22 @@
       >(via OpenJDK)</text
     ></g
     ><g style="fill:rgb(182,182,182); font-size:16px; font-family:'Open Sans'; stroke:rgb(182,182,182);"
-    ><rect x="153" width="63" height="44" y="349" style="stroke:none;"
+    ><rect x="153" width="64" height="44" y="349" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="222" xml:space="preserve" y="379" style="stroke:none;"
-      >10 s</text
+    ><text x="223" xml:space="preserve" y="379" style="stroke:none;"
+      >11 s</text
       ><text x="18" y="422" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + Native</text
       ><text x="47" y="445" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >(via GraalVM)</text
     ></g
     ><g style="fill:red; font-size:16px; font-family:'Open Sans'; stroke:red;"
-    ><rect x="153" width="471" height="44" y="405" style="stroke:none;"
+    ><rect x="153" width="463" height="44" y="405" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="630" xml:space="preserve" y="435" style="stroke:none;"
-      >77 s</text
+    ><text x="622" xml:space="preserve" y="435" style="stroke:none;"
+      >76 s</text
       ><text x="20" y="478" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Spring 4 + Native</text
       ><text x="47" y="501" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
@@ -101,17 +101,17 @@
       >(via GraalVM)</text
     ></g
     ><g style="fill:rgb(210,210,210); font-size:16px; font-family:'Open Sans'; stroke:rgb(210,210,210);"
-    ><rect x="153" width="638" height="44" y="517" style="stroke:none;"
+    ><rect x="153" width="639" height="44" y="517" style="stroke:none;"
     /></g
     ><g style="font-family:'Open Sans'; font-size:21px; font-weight:bold;"
-    ><text x="797" xml:space="preserve" y="547" style="stroke:none;"
+    ><text x="798" xml:space="preserve" y="547" style="stroke:none;"
       >104 s</text
       ><text x="320" y="618" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Quarkus: 3.30.1</text
+      >Quarkus: 3.30.5</text
       ><text x="320" y="638" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring 3: 3.5.8</text
+      >Spring 3: 3.5.9</text
       ><text x="320" y="658" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      >Spring 4: 4.0.0</text
+      >Spring 4: 4.0.1</text
       ><text x="320" y="678" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >JVM: 25.0.1-tem</text
       ><text x="320" y="698" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
