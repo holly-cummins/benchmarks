@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.quarkus.infra.performance.graphics.PlotDefinition;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.model.Config;
 
@@ -23,12 +24,12 @@ public abstract class Chart implements ElasticElement {
     final int xmargins = 20;
     final int ymargins = 20;
 
-    protected Chart(String title, List<Datapoint> datasets, Config metadata) {
+    protected Chart(PlotDefinition plotDefinition, List<Datapoint> datasets, Config metadata) {
         this.data = datasets;
         this.metadata = metadata;
         children = new HashSet<>();
 
-        this.title = new Title(title);
+        this.title = new Title(plotDefinition.title(), plotDefinition.subtitle());
         children.add(this.title);
 
         maxValue = data.stream().map(d -> d.value().getValue()).max(Double::compare).orElse(1.0);

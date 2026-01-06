@@ -34,10 +34,7 @@ public class Subcanvas {
         this.yOffset = subcanvas.yOffset + yOffset;
 
         if (debug) {
-            Color originalColor = g.getColor();
-            g.setPaint(nextColor());
-            fillRect(0, 0, width, height);
-            g.setPaint(originalColor);
+            debugBorders();
         }
     }
 
@@ -82,5 +79,12 @@ public class Subcanvas {
     // This shouldn't need to be used much
     public int getYOffset() {
         return yOffset;
+    }
+
+    public void debugBorders() {
+        Color originalColor = g.getColor();
+        g.setPaint(nextColor());
+        fillRect(0, 0, width, height);
+        g.setPaint(originalColor);
     }
 }

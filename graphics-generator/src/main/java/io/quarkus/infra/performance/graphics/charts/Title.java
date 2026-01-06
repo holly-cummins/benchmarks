@@ -6,41 +6,71 @@ import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Title implements ElasticElement {
-    protected static final int MINIMUM_TITLE_TEXT_SIZE = 18;
-    protected static final int MAXIMUM_TITLE_TEXT_SIZE = 58;
+    protected static final int MINIMUM_TITLE_TEXT_SIZE = 12;
+    protected static final int MAXIMUM_TITLE_TEXT_SIZE = 48;
+    public static final int RATIO = 2;
+    protected static final int MINIMUM_SUBTITLE_TEXT_SIZE = MINIMUM_TITLE_TEXT_SIZE / RATIO;
+    protected static final int MAXIMUM_SUBTITLE_TEXT_SIZE = MAXIMUM_TITLE_TEXT_SIZE / 2;
     protected final String title;
+    protected final String subtitle;
 
     private final Label titleLabel;
+    private final Label subtitleLabel;
 
     public Title(String title) {
+        this(title, "");
+    }
+
+    public Title(String title, String subtitle) {
         this.title = title;
-        titleLabel = new Label(title).setStyle(Font.BOLD).setVerticalAlignment(VAlignment.MIDDLE);
+        titleLabel = new Label(title).setStyle(Font.BOLD).setVerticalAlignment(VAlignment.TOP);
+        this.subtitle = subtitle;
+        subtitleLabel = new Label(subtitle).setStyle(Font.ITALIC).setVerticalAlignment(VAlignment.TOP);
     }
 
     @Override
     public int getMaximumVerticalSize() {
-        return 2 * Sizer.calculateHeight(MAXIMUM_TITLE_TEXT_SIZE);
+        // Assume top and bottom margins equal to half the title height (each)
+        int subtitleHeight = hasSubtitle() ? Sizer.calculateHeight(MAXIMUM_SUBTITLE_TEXT_SIZE) : 0;
+        return 2 * Sizer.calculateHeight(MAXIMUM_TITLE_TEXT_SIZE) + subtitleHeight;
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return 2 * Sizer.calculateWidth(title, MAXIMUM_TITLE_TEXT_SIZE);
+        return 2 * Math.max(Sizer.calculateWidth(title, MAXIMUM_TITLE_TEXT_SIZE),
+                Sizer.calculateWidth(subtitle, MAXIMUM_TITLE_TEXT_SIZE));
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return 2 * Sizer.calculateHeight(MINIMUM_TITLE_TEXT_SIZE);
+        // Assume top and bottom margins equal to half the title height (each)
+        int subtitleHeight = hasSubtitle() ? Sizer.calculateHeight(MINIMUM_SUBTITLE_TEXT_SIZE) : 0;
+        return 2 * Sizer.calculateHeight(MINIMUM_TITLE_TEXT_SIZE) + subtitleHeight;
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return 2 * Sizer.calculateWidth(title, MINIMUM_TITLE_TEXT_SIZE);
+        return 2 * Math.max(Sizer.calculateWidth(title, MINIMUM_TITLE_TEXT_SIZE),
+                Sizer.calculateWidth(subtitle, MINIMUM_TITLE_TEXT_SIZE));
     }
 
     @Override
     public void draw(Subcanvas g, Theme theme) {
-        // Allow margins, so occupy half the area
-        titleLabel.setTargetHeight(g.getHeight() / 2);
-        titleLabel.draw(g, 0, g.getHeight() / 2);
+        int subtitleFactor = hasSubtitle() ? 1 : 0;
+        // Allow margins of half the main title height
+        int titleHeight = (RATIO * g.getHeight()) / (2 * RATIO + subtitleFactor);
+        titleLabel.setTargetHeight(titleHeight);
+        int topMargin = titleHeight / 2;
+        titleLabel.draw(g, 0, topMargin);
+
+        if (hasSubtitle()) {
+            int subtitleHeight = titleHeight / RATIO;
+            subtitleLabel.setTargetHeight(subtitleHeight);
+            subtitleLabel.draw(g, 0, topMargin + titleHeight);
+        }
+    }
+
+    private boolean hasSubtitle() {
+        return subtitle != null && subtitle.trim().length() > 0;
     }
 }

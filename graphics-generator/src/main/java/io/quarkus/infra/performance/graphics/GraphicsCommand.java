@@ -19,13 +19,15 @@ import picocli.CommandLine.Parameters;
 @Command(name = "graphics", mixinStandardHelpOptions = true)
 public class GraphicsCommand implements Runnable {
 
-    private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", framework -> framework.load()
-            .avThroughput());
-    private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS)",
+    private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", "(Higher is better)",
+            framework -> framework.load()
+                    .avThroughput());
+    private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS)", "(Smaller is better)",
             framework -> framework.rss().avFirstRequestRss());
     private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time",
+            "(Lower is better)",
             framework -> framework.startup().avStartTime());
-    private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration",
+    private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration", "(Lower is better)",
             framework -> framework.build().avBuildTime());
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
@@ -97,7 +99,7 @@ public class GraphicsCommand implements Runnable {
     }
 
     private void generate(File file, File qualifiedOutputDir,
-            TriFunction<String, List<Datapoint>, Config, Chart> chartConstructor,
+            TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor,
             BenchmarkData data, PlotDefinition plotDefinition) {
         try {
             {
