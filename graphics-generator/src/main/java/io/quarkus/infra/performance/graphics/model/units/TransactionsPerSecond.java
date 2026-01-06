@@ -8,6 +8,6 @@ public class TransactionsPerSecond extends DimensionalNumber {
 
     @Override
     public String getUnits() {
-        return "transactions/sec";
+        return "tps";
     }
 }
