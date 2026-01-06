@@ -15,9 +15,11 @@
   ><g
     ><rect x="0" width="878" height="878" y="0" style="stroke:none;"
     /></g
-    ><g style="fill:white; font-size:38px; font-weight:bold; font-family:'Open Sans'; stroke:white;"
-    ><text x="20" xml:space="preserve" y="87" style="stroke:none;"
+    ><g style="fill:white; font-size:30px; font-weight:bold; font-family:'Open Sans'; stroke:white;"
+    ><text x="20" xml:space="preserve" y="74" style="stroke:none;"
       >Build Duration</text
+      ><text x="20" y="99" style="font-size:15px; font-style:italic; stroke:none; font-weight:normal;" xml:space="preserve"
+      >(Lower is better)</text
       ><text x="20" y="142" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Quarkus + JIT</text
       ><text x="16" y="165" style="font-size:16px; font-weight:normal; stroke:none;" xml:space="preserve"
