@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import io.quarkus.infra.performance.graphics.PlotDefinition;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.model.Config;
 
@@ -14,8 +15,8 @@ public class CubeChart extends Chart {
     private final List<Cubes> cubes = new ArrayList<>();
     int numCubesPerColumn = 16;
 
-    public CubeChart(String title, List<Datapoint> data, Config metadata) {
-        super(title, data, metadata);
+    public CubeChart(PlotDefinition plotDefinition, List<Datapoint> data, Config metadata) {
+        super(plotDefinition, data, metadata);
 
         this.fineprint = new FinePrint(metadata);
         children.add(fineprint);

@@ -31,14 +31,15 @@ import io.quarkus.infra.performance.graphics.model.Config;
 public class ImageGenerator {
     private static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
-    public void generate(TriFunction<String, List<Datapoint>, Config, Chart> chartConstructor, BenchmarkData data,
+    public void generate(TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor, BenchmarkData data,
             PlotDefinition plotDefinition, File outFile, Theme theme)
             throws IOException {
         if (data != null && data.results() != null) {
             DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
             Document doc = impl.createDocument(svgNS, "svg", null);
 
-            Chart chart = chartConstructor.apply(plotDefinition.title(), data.results().getDatasets(plotDefinition.fun()),
+            Chart chart = chartConstructor.apply(plotDefinition,
+                    data.results().getDatasets(plotDefinition.fun()),
                     data.config());
 
             SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.quarkus.infra.performance.graphics.PlotDefinition;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.model.Config;
 
@@ -13,8 +14,8 @@ public class BarChart extends Chart {
     private final FinePrint fineprint;
     private final List<Bar> bars = new ArrayList<>();
 
-    public BarChart(String titleText, List<Datapoint> data, Config metadata) {
-        super(titleText, data, metadata);
+    public BarChart(PlotDefinition plotDefinition, List<Datapoint> data, Config metadata) {
+        super(plotDefinition, data, metadata);
 
         this.fineprint = new FinePrint(metadata);
         children.add(fineprint);
