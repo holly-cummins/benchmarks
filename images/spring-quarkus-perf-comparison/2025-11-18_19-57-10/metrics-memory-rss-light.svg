@@ -1635,7 +1635,7 @@
       ><text x="539" xml:space="preserve" y="439" style="font-size:14px; stroke:none;"
       >JVM args: -XX:ActiveProcessorCount=4</text
       ><text x="539" xml:space="preserve" y="459" style="font-size:14px; stroke:none;"
-      >CPUs: 4</text
+      > </text
       ><text x="539" xml:space="preserve" y="479" style="font-size:14px; stroke:none;"
       >Source code:      quarkusio/spring-quarkus-perf-comparison</text
     ></g
