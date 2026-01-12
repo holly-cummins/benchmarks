@@ -67,8 +67,6 @@ public class GraphicsCommand implements Runnable {
                 if (file.isFile()) {
                     if (file.getName().endsWith(".json")) {
                         processFile(file);
-                    } else {
-                        System.out.printf("Ignoring file %s (unexpected extension)\n", file.getName());
                     }
                 } else if (file.isDirectory()) {
                     processDirectory(file);
