@@ -88,7 +88,7 @@
       ><text x="539" y="470" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >JVM args: -XX:+UseNUMA</text
       ><text x="539" y="490" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      > </text
+      >CPUS: 4</text
       ><text x="539" y="510" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >Source code:      quarkusio/spring-quarkus-perf-comparison</text
     ></g

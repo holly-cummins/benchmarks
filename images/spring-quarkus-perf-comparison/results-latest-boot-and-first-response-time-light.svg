@@ -123,7 +123,7 @@
       ><text x="539" y="638" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       >JVM args: -XX:+UseNUMA</text
       ><text x="539" y="658" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
-      > </text
+      >CPUS: 4</text
       ><text x="539" y="678" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"
       > </text
       ><text x="539" y="698" style="font-size:14px; font-weight:normal; stroke:none;" xml:space="preserve"

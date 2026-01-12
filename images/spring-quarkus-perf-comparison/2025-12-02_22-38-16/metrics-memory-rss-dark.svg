@@ -2824,7 +2824,7 @@
       ><text x="539" xml:space="preserve" y="367" style="font-size:14px; stroke:none;"
       >JVM args: -XX:+UseNUMA</text
       ><text x="539" xml:space="preserve" y="387" style="font-size:14px; stroke:none;"
-      > </text
+      >CPUS: 4</text
       ><text x="539" xml:space="preserve" y="407" style="font-size:14px; stroke:none;"
       > </text
       ><text x="539" xml:space="preserve" y="427" style="font-size:14px; stroke:none;"
