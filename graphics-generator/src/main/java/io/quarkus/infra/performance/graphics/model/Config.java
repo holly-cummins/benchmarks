@@ -15,7 +15,7 @@ public record Config(
 
         @JsonProperty("profiler") Profiler profiler,
 
-        @JsonProperty("cgroup") Cgroup cgroup,
+        Resources resources,
 
         // Present for backwards compatibility
         FrameworkBuild springboot,

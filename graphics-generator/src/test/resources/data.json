@@ -357,35 +357,43 @@
   },
   "config": {
     "jvm": {
-      "args": "-XX:ActiveProcessorCount=4",
-      "memory": "-Xms512m -Xmx512m",
+      "args": "-XX:+UseNUMA",
+      "memory": "-Xmx512m -Xms512m",
       "graalvm": {
         "version": "25.0.1-graalce"
       },
       "version": "25.0.1-tem"
     },
-    "CMD_PREFIX": "",
     "num_iterations": 3,
     "quarkus": {
       "native_build_options": "",
       "version": "3.29.3"
     },
     "repo": {
+      "commit": "2fbd3683541eeff3264eefbce9b82cb16c3bcf84",
       "branch": "main",
       "url": "https://github.com/quarkusio/spring-quarkus-perf-comparison.git"
+    },
+    "springboot3": {
+      "native_build_options": "",
+      "version": "3.5.8"
+    },
+    "springboot4": {
+      "native_build_options": "",
+      "version": "4.0.0"
+    },
+    "resources": {
+      "cpu": {
+        "app": "0-3",
+        "1st_request": "10",
+        "load_generator": "7-9",
+        "db": "4-6"
+      },
+      "app_cpus": 4
     },
     "profiler": {
       "name": "none",
       "events": "cpu"
-    },
-    "cgroup": {
-      "mem_max": "",
-      "name": "spring-quarkus-perf-comparison",
-      "cpu": ""
-    },
-    "springboot": {
-      "native_build_options": "",
-      "version": "3.5.7"
     }
   }
 }
