@@ -37,6 +37,15 @@ class DataIngesterTest {
         assertEquals("25.0.1-graalce", data.config().jvm().graalVM().version());
         assertEquals("3.29.3", data.config().quarkus().version());
 
+        // Resources
+        assertNotNull(data.config().resources());
+        assertNotNull(data.config().resources().cpu());
+        assertEquals(4, data.config().resources().appCpus());
+        assertEquals("0-3", data.config().resources().cpu().app());
+        assertEquals("10", data.config().resources().cpu().firstRequest());
+        assertEquals("7-9", data.config().resources().cpu().loadGenerator());
+        assertEquals("4-6", data.config().resources().cpu().db());
+
         // Results
         assertEquals(18927.38, data.results().framework(Framework.QUARKUS3_JVM).load().avThroughput().getValue());
         assertEquals(7.183333333333334, data.results().framework(Framework.SPRING3_NATIVE).build().avNativeRSS().getValue());

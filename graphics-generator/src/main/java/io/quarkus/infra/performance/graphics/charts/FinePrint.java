@@ -70,10 +70,8 @@ public class FinePrint implements ElasticElement {
                 rightColumn.add("JVM args: "
                         + metadata.jvm().args());
             }
-            if (metadata.jvm().args() != null && metadata.jvm().args().contains("-XX:ActiveProcessorCount=")) {
-                // TODO risky calculation, what if the core is a cgroup or something else and not an arg?
-                rightColumn.add("CPUs: "
-                        + metadata.jvm().args().replace("-XX:ActiveProcessorCount=", ""));
+            if (metadata.resources() != null) {
+              rightColumn.add("CPUS: " + metadata.resources().appCpus());
             }
         }
 
