@@ -25,7 +25,7 @@ jobs:
           git fetch origin
           git branch --set-upstream-to=origin/pr-images  pr-images || true
           git checkout pr-images
-          git reset --hard upstream/main
+          git reset --hard origin/main
       - name: Check for changes from the reset
         id: reset_needed
         run: |
