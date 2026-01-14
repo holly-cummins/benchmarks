@@ -76,14 +76,13 @@ public class FinePrint implements ElasticElement {
         }
 
         if (metadata.repo() != null) {
-            rightColumn.add("Source code: "
-                    + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
+            if (metadata.repo().scenario() != null) {
+              rightColumn.add("Scenario: " + metadata.repo().scenario());
+            }
+
+            rightColumn.add("Source:      " +
+                metadata.repo().url().replace("https://github.com/", "").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
-        }
-
-        if (metadata.repo() != null && !"main".equals(metadata.repo().branch())) {
-            rightColumn.add("Branch: " + metadata.repo().branch());
-
         }
 
         // Make sure font sizes are the same

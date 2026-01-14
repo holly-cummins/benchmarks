@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.inject.Inject;
 
@@ -13,6 +14,8 @@ import io.quarkus.infra.performance.graphics.charts.CubeChart;
 import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
+import io.quarkus.infra.performance.graphics.model.Repo;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -102,11 +105,11 @@ public class GraphicsCommand implements Runnable {
         try {
             {
                 File outFile = new File(qualifiedOutputDir,
-                        deriveOutputFilename(file, plotDefinition, Theme.LIGHT));
+                        deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.LIGHT));
                 generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
             }
             {
-                File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, Theme.DARK));
+                File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.DARK));
                 generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
             }
         } catch (IOException e) {
@@ -118,10 +121,14 @@ public class GraphicsCommand implements Runnable {
         }
     }
 
-    private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Theme mode) {
-        String chartTitle = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and")
-                .replaceAll("\\(", "").replaceAll("\\)", "");
+    private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Repo repo, Theme mode) {
+        String chartTitle = plotDefinition.title().toLowerCase()
+            .replaceAll(" ", "-")
+            .replaceAll("\\+", "and")
+            .replaceAll("\\(", "")
+            .replaceAll("\\)", "");
+
         return file.getName().replace(".json",
-                "-" + chartTitle + "-" + mode.name() + ".svg");
+                "-%s-%s-%s.svg".formatted(Optional.ofNullable(repo.scenario()).orElse("tuned"), chartTitle, mode.name()));
     }
 }
