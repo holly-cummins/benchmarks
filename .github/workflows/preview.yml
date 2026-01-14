@@ -39,7 +39,7 @@ jobs:
           fi
       - name: Push to temporary branch
         if: steps.reset_needed.outputs.reset_needed == 'true'
-        id: push
+        id: push_reset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
