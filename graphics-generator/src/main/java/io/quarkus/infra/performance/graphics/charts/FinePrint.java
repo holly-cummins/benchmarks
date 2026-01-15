@@ -13,6 +13,7 @@ import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.Repo;
 
 public class FinePrint implements ElasticElement {
+    private static final String SOURCE_CODE_LABEL = "Source:";
 
     private static final int MAXIMUM_FONT_SIZE = 30;
     private static final int MINIMUM_FONT_SIZE = 8;
@@ -73,13 +74,14 @@ public class FinePrint implements ElasticElement {
                 middleColumn.add("JVM args: "
                         + metadata.jvm().args());
             }
-            if (metadata.resources() != null) {
-              middleColumn.add("CPUS: " + metadata.resources().appCpus());
-            }
+        }
+
+        if (metadata.resources() != null) {
+            middleColumn.add("CPUS: " + metadata.resources().appCpus());
         }
 
         if (metadata.repo() != null) {
-            rightColumn.add("Source: "
+            rightColumn.add(SOURCE_CODE_LABEL + " "
                     + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
 
@@ -94,19 +96,29 @@ public class FinePrint implements ElasticElement {
 
         // Make sure font sizes are the same
         // TODO this can go away when we have label groups
-        doSizing(middleColumn, leftColumn);
-        doSizing(rightColumn, middleColumn);
+        var maxRows = Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size()));
+        adjustToSameRows(leftColumn, maxRows);
+        adjustToSameRows(middleColumn, maxRows);
+        adjustToSameRows(rightColumn, maxRows);
+//        doSizing(middleColumn, leftColumn);
+//        doSizing(rightColumn, middleColumn);
         leftLabel = new Label(leftColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
 
         middleLabel = new Label(middleColumn.toArray(String[]::new))
-                .setHorizontalAlignment(Alignment.CENTER)
+                .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
 
         rightLabel = new Label(rightColumn.toArray(String[]::new))
-                .setHorizontalAlignment(Alignment.RIGHT)
+                .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
+    }
+
+    private static void adjustToSameRows(List<String> labels, int maxRows) {
+      while (labels.size() < maxRows) {
+        labels.add(" ");
+      }
     }
 
     private static void doSizing(List<String> labels, List<String> columnToLeft) {
@@ -150,22 +162,21 @@ public class FinePrint implements ElasticElement {
 
         int leftLabelWidth = leftLabel.calculateWidth();
         int middleLabelX = leftLabelWidth + PADDING;
-        int rightLabelX = middleLabelX + PADDING;
         middleLabel.setTargetHeight(padded.getHeight());
         Subcanvas ml = new Subcanvas(padded, padded.getWidth() - middleLabelX, padded.getHeight(), middleLabelX, 0);
         middleLabel.draw(ml);
 
+        int rightLabelX = middleLabelX + middleLabel.calculateWidth() + PADDING;
         rightLabel.setTargetHeight(padded.getHeight());
-        var rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
+        var rl = new Subcanvas(padded, padded.getWidth() - ml.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
 
-        int sw = rightLabel.calculateWidth("Source:");
+        int sw = rightLabel.calculateWidth(SOURCE_CODE_LABEL);
 
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = padded.getXOffset() + rightLabelX + sw + 2;
-            int logoY = padded.getYOffset() + /*(rightColumn.size() - 2) **/ rightLabel.getLineHeight()
-                    + rightLabel.getDescent() / 4;
+            int logoY = padded.getYOffset() + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
                     logoY);

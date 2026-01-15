@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class Sizer {
     private static String longestString(Collection<String> strings) {
         return strings.stream()
                 .flatMap(s -> Arrays.stream(s.split("\n")))
-                .max((a, b) -> Integer.compare(a.length(), b.length()))
+                .max(Comparator.comparingInt(String::length))
                 .orElse("");
     }
 
