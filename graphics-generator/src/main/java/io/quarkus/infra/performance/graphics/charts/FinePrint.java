@@ -76,15 +76,21 @@ public class FinePrint implements ElasticElement {
         }
 
         if (metadata.repo() != null) {
+            var branchScenario = new StringBuilder();
+
             if (metadata.repo().scenario() != null) {
-              rightColumn.add("Scenario: " + metadata.repo().scenario());
+              branchScenario.append("Scenario: " + metadata.repo().scenario() + "   ");
             }
 
-          if (metadata.repo().branch() != null) {
-            rightColumn.add("Branch: " + metadata.repo().branch());
-          }
+            if (metadata.repo().branch() != null) {
+              branchScenario.append("Branch: " + metadata.repo().branch());
+            }
 
-            rightColumn.add("Source code: "
+            if (!branchScenario.isEmpty()) {
+             rightColumn.add(branchScenario.toString());
+            }
+
+            rightColumn.add("Source: "
                     + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
         }
@@ -149,7 +155,7 @@ public class FinePrint implements ElasticElement {
         rightLabel.setTargetHeight(padded.getHeight());
         Subcanvas rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
-        int sw = rightLabel.calculateWidth("Source code:");
+        int sw = rightLabel.calculateWidth("Source:");
 
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
