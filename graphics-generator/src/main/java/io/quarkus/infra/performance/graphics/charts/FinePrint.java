@@ -155,7 +155,7 @@ public class FinePrint implements ElasticElement {
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = padded.getXOffset() + rightLabelX + sw + 2;
-            int logoY = padded.getYOffset() + (rightColumn.size() - 3) * rightLabel.getLineHeight()
+            int logoY = padded.getYOffset() + (rightColumn.size() - 2) * rightLabel.getLineHeight()
                     + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
@@ -168,7 +168,7 @@ public class FinePrint implements ElasticElement {
     }
 
     private static boolean hasBranch(Repo repo) {
-      return (repo.branch() != null) && !"main".equals(repo.branch());
+      return (repo.branch() != null);// && !"main".equals(repo.branch());
     }
 
     private static String getPath(Theme theme) {
