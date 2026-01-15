@@ -25,9 +25,11 @@ public class FinePrint implements ElasticElement {
 
     private final Config metadata;
     private final Label leftLabel;
+    private final Label middleLabel;
     private final Label rightLabel;
     private InlinedSVG svg;
     private final List<String> leftColumn = new ArrayList<>();
+    private final List<String> middleColumn = new ArrayList<>();
     private final List<String> rightColumn = new ArrayList<>();
 
     public FinePrint(Config metadata) {
@@ -64,15 +66,15 @@ public class FinePrint implements ElasticElement {
                         + metadata.jvm().graalVM().version());
             }
             if (metadata.jvm().memory() != null) {
-                rightColumn.add("Memory: "
+                middleColumn.add("Memory: "
                         + metadata.jvm().memory());
             }
             if (metadata.jvm().args() != null) {
-                rightColumn.add("JVM args: "
+                middleColumn.add("JVM args: "
                         + metadata.jvm().args());
             }
             if (metadata.resources() != null) {
-              rightColumn.add("CPUS: " + metadata.resources().appCpus());
+              middleColumn.add("CPUS: " + metadata.resources().appCpus());
             }
         }
 
@@ -92,44 +94,51 @@ public class FinePrint implements ElasticElement {
 
         // Make sure font sizes are the same
         // TODO this can go away when we have label groups
-        while (rightColumn.size() < leftColumn.size()) {
-            // Put the padding before the last source control line
-            rightColumn.add(Math.max(0, rightColumn.size() - 1), " ");
-        }
-        while (rightColumn.size() > leftColumn.size()) {
-            leftColumn.add(" ");
-        }
-
+        doSizing(middleColumn, leftColumn);
+        doSizing(rightColumn, middleColumn);
         leftLabel = new Label(leftColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
 
-        rightLabel = new Label(rightColumn.toArray(String[]::new))
-                .setHorizontalAlignment(Alignment.LEFT)
+        middleLabel = new Label(middleColumn.toArray(String[]::new))
+                .setHorizontalAlignment(Alignment.CENTER)
                 .setVerticalAlignment(VAlignment.TOP);
 
+        rightLabel = new Label(rightColumn.toArray(String[]::new))
+                .setHorizontalAlignment(Alignment.RIGHT)
+                .setVerticalAlignment(VAlignment.TOP);
+    }
+
+    private static void doSizing(List<String> labels, List<String> columnToLeft) {
+      while (labels.size() < columnToLeft.size()) {
+        labels.add(Math.max(0, labels.size() - 1), " ");
+      }
+
+      while (labels.size() > columnToLeft.size()) {
+        columnToLeft.add(" ");
+      }
     }
 
     @Override
     public int getMaximumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MAXIMUM_FONT_SIZE;
+        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MAXIMUM_FONT_SIZE;
 
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
+        return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(middleColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
 
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MINIMUM_FONT_SIZE;
+        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MINIMUM_FONT_SIZE;
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return calculateWidth(leftColumn, MINIMUM_FONT_SIZE) + calculateWidth(rightColumn, MINIMUM_FONT_SIZE) + MINIMUM_PADDING;
+        return calculateWidth(leftColumn, MINIMUM_FONT_SIZE) + calculateWidth(middleColumn, MINIMUM_FONT_SIZE) + calculateWidth(rightColumn, MINIMUM_FONT_SIZE) + MINIMUM_PADDING;
     }
 
     public void draw(Subcanvas g, Theme theme) {
@@ -147,15 +156,16 @@ public class FinePrint implements ElasticElement {
                 .calculateWidth();
         int rightLabelX = leftLabelWidth
                 + PADDING;
-        rightLabel.setTargetHeight(padded.getHeight());
+        middleLabel.setTargetHeight(padded.getHeight());
         Subcanvas rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
-        rightLabel.draw(rl);
+        middleLabel.draw(rl);
+
         int sw = rightLabel.calculateWidth("Source:");
 
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = padded.getXOffset() + rightLabelX + sw + 2;
-            int logoY = padded.getYOffset() + (rightColumn.size() - 2) * rightLabel.getLineHeight()
+            int logoY = padded.getYOffset() + /*(rightColumn.size() - 2) **/ rightLabel.getLineHeight()
                     + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
