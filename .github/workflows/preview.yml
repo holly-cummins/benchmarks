@@ -162,7 +162,7 @@ jobs:
           for f in $FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
-          echo "svgs_added_md=$MD" >> $GITHUB_OUTPUT
+          printf "svgs_added_md=$MD" >> $GITHUB_OUTPUT
 
       - name: Prepare markdown for removed SVGs
         if: steps.push.outputs.svgs_removed != ''
@@ -173,7 +173,7 @@ jobs:
           for f in $(echo "$FILES" | tr ',' '\n'); do
             MD="$MD  \n- $f"
           done
-          echo "svgs_removed_md=$MD" >> $GITHUB_OUTPUT
+          printf "svgs_removed_md=$MD" >> $GITHUB_OUTPUT
 
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
