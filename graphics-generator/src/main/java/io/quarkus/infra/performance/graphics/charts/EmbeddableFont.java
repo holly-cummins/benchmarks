@@ -13,16 +13,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EmbeddableFont {
 
     // Java GraphicsEnvironment needs a ttf font, not a woff, so read from the github repo
-    public static final EmbeddableFont OPENSANS = new EmbeddableFont("Open Sans",
+    public static final EmbeddableFont OPENSANS = new EmbeddableFont("Open Sans", List.of("Segoe UI", "Roboto", "Arial", "Noto Sans", "sans-serif"),
             "https://github.com/googlefonts/opensans/raw/refs/heads/main/fonts/variable/OpenSans%5Bwdth,wght%5D.ttf");
     private final String css;
+    private final String familyDeclaration;
     private final String fontName;
 
-    private EmbeddableFont(String fontName, String fontUrl) {
+    private EmbeddableFont(String fontName, List<String> fallbacks, String fontUrl) {
 
         this.fontName = fontName;
         try {
@@ -42,6 +45,7 @@ public class EmbeddableFont {
             String base64Font = Base64.getEncoder().encodeToString(fontBytes);
 
             css = generateFontFaceCSS(fontName, base64Font);
+            familyDeclaration = "\"" + fontName + "\", " + fallbacks.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(", ")).replaceAll("\"sans-serif\"", "sans-serif");
 
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
@@ -83,14 +87,22 @@ public class EmbeddableFont {
     }
 
     private static String generateFontFaceCSS(String fontName, String base64Font) {
+        // To try out the fallback visually, just mangle what goes into the url: line
         return """
-                @font-face {
-                  font-family: '%s';
-                  src: url('data:font/ttf;base64, %s') format('truetype');
-                  font-weight: 300 600;
-                  font-style: normal;
-                }
-                """.formatted(fontName, base64Font);
+                  @font-face {
+                    font-family: '%s';
+                    src:
+                      local(%s),
+                      local(%s),
+                      url('data:font/ttf;base64,%s') format('truetype');
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+                   font-weight: 300 600;
+                    font-style: normal;
+                  }
+                """.formatted(fontName, fontName, fontName.replaceAll(" ", ""), base64Font);
     }
 
+    public String getFamilyDeclaration() {
+        return familyDeclaration;
+    }
 }
