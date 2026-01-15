@@ -80,8 +80,8 @@ public class FinePrint implements ElasticElement {
               rightColumn.add("Scenario: " + metadata.repo().scenario());
             }
 
-            rightColumn.add("Source:      " +
-                metadata.repo().url().replace("https://github.com/", "").replaceAll(".git$", ""));
+            rightColumn.add("Source: "
+                    + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
         }
 
