@@ -311,6 +311,7 @@
 			"version": "3.28.4"
 		},
 		"repo": {
+			"scenario": "ootb",
 			"branch": "open-benchmarks",
 			"url": "https://github.com/edeandrea/spring-quarkus-perf-comparison.git"
 		},

@@ -150,7 +150,7 @@ public class GraphicsCommandTest {
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");
         assertTrue(nestedDir.exists());
-        File image3 = new File(nestedDir, "data3-open-benchmarks-throughput-light.svg");
+        File image3 = new File(nestedDir, "data3-ootb-throughput-light.svg");
         assertTrue(image3.exists());
     }
 
