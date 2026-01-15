@@ -46,6 +46,12 @@ jobs:
           git add images/*svg
           git commit -m "Reset while processing #${{ steps.pr.outputs.id }}"
           git push origin -u pr-images-reset --force
+      - name: Tidy existing files
+        id: tidy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git rm images/*svg
       - name: Download PR Artifact
         uses: actions/download-artifact@v7
         with:
@@ -98,8 +104,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Stage all SVG files
           git add images/*svg
-          git commit -m "Images for #${{ steps.pr.outputs.id }}"
+        
+          # Get added SVG files
+          ADDED=$(git diff --cached --name-status | grep -E '^A\s+images/.*\.svg' | awk '{print $2}' | paste -sd "," -)
+          if [ -n "$ADDED" ]; then
+            echo "svgs_added=$ADDED" >> $GITHUB_OUTPUT
+          else
+            echo "svgs_added=" >> $GITHUB_OUTPUT
+          fi
+        
+          # Get removed SVG files
+          REMOVED=$(git diff --cached --name-status | grep -E '^D\s+images/.*\.svg' | awk '{print $2}' | paste -sd "," -)
+          if [ -n "$REMOVED" ]; then
+            echo "svgs_removed=$REMOVED" >> $GITHUB_OUTPUT
+          else
+            echo "svgs_removed=" >> $GITHUB_OUTPUT
+          fi
+        
+          # Commit and push (won't fail if no changes)
+          git commit -m "Images for #${{ steps.pr.outputs.id }}" || echo "No changes to commit"
           git push origin -u pr-images --force
       - name: Capture most recent hash on branch
         if: steps.changed.outputs.files_changed == 'true'
@@ -114,7 +139,23 @@ jobs:
           body: |
             🚀 This is what some of the generated images would look like with this change. 
             ![generated throughput image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-tuned-throughput-light.svg?raw=true)
-            ![generated rss image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-main-tuned-rss-dark.svg?raw=true)
+            ![generated rss image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-tuned-rss-dark.svg?raw=true)
+        
+            ${{ 
+              steps.push.outputs.svgs_added != '' 
+              && '#### There are some new filenames:\n' + steps.git_svg.outputs.svgs_added
+                  .split(',')
+                  .slice(0, 4)  # limit to 4 files
+                  .map(f => "![](" + "../blob/" + steps.hash.outputs.hash + "/" + f + "?raw=true)") 
+                  .join('\n') 
+              || ''
+            }}
+          
+            ${{ 
+              steps.push.outputs.svgs_removed != '' 
+              && '#### Some files will no longer be generated:\n' + steps.git_svg.outputs.svgs_removed.split(',').join('\n') 
+              || ''
+            }}
           number: ${{ steps.pr.outputs.id }}
       - name: Update PR status comment with absence of link
         if: steps.changed.outputs.files_changed == 'false'
