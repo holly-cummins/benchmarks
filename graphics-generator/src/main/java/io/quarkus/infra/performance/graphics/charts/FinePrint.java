@@ -10,6 +10,7 @@ import java.util.List;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 import io.quarkus.infra.performance.graphics.model.Config;
+import io.quarkus.infra.performance.graphics.model.Repo;
 
 public class FinePrint implements ElasticElement {
 
@@ -76,23 +77,17 @@ public class FinePrint implements ElasticElement {
         }
 
         if (metadata.repo() != null) {
-            var branchScenario = new StringBuilder();
-
-            if (metadata.repo().scenario() != null) {
-              branchScenario.append("Scenario: " + metadata.repo().scenario() + "   ");
-            }
-
-            if (metadata.repo().branch() != null) {
-              branchScenario.append("Branch: " + metadata.repo().branch());
-            }
-
-            if (!branchScenario.isEmpty()) {
-             rightColumn.add(branchScenario.toString());
-            }
-
             rightColumn.add("Source: "
                     + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
+
+            if (hasScenario(metadata.repo())) {
+              rightColumn.add("Scenario: " + metadata.repo().scenario() + "   ");
+            }
+
+            if (hasBranch(metadata.repo())) {
+              rightColumn.add("Branch: " + metadata.repo().branch());
+            }
         }
 
         // Make sure font sizes are the same
@@ -160,12 +155,20 @@ public class FinePrint implements ElasticElement {
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = padded.getXOffset() + rightLabelX + sw + 2;
-            int logoY = padded.getYOffset() + (rightColumn.size() - 1) * rightLabel.getLineHeight()
+            int logoY = padded.getYOffset() + (rightColumn.size() - 3) * rightLabel.getLineHeight()
                     + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
                     logoY);
         }
+    }
+
+    private static boolean hasScenario(Repo repo) {
+      return repo.scenario() != null;
+    }
+
+    private static boolean hasBranch(Repo repo) {
+      return (repo.branch() != null) && !"main".equals(repo.branch());
     }
 
     private static String getPath(Theme theme) {
