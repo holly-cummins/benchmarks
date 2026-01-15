@@ -53,7 +53,7 @@ public class BarChart extends Chart {
 
         int y = 0;
 
-        int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
+        int finePrintPadding = 125; // TODO Arbitrary fudge padding, remove when scaling work is done
         Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, barArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
                 finePrintPadding,
                 barArea.getHeight() + titleCanvas.getHeight());

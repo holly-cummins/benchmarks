@@ -13,6 +13,7 @@ import io.quarkus.infra.performance.graphics.charts.CubeChart;
 import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
+import io.quarkus.infra.performance.graphics.model.Repo;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
@@ -87,35 +88,45 @@ public class GraphicsCommand implements Runnable {
         qualifiedOutputDir = new File(outputDirectory, relative.toString());
       }
     }
+    
     generate(file, qualifiedOutputDir, CubeChart::new, data, RSS);
     generate(file, qualifiedOutputDir, BarChart::new, data, TIME_TO_FIRST_REQUEST);
     generate(file, qualifiedOutputDir, BarChart::new, data, THROUGHPUT);
     generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
   }
 
-  private void generate(File file, File qualifiedOutputDir, TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor, BenchmarkData data, PlotDefinition plotDefinition) {
-    try {
-      {
-        File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, Theme.LIGHT));
-        generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
-      }
-      {
-        File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, Theme.DARK));
-        generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
-      }
+    private void generate(File file, File qualifiedOutputDir,
+            TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor,
+            BenchmarkData data, PlotDefinition plotDefinition) {
+        try {
+            {
+                File outFile = new File(qualifiedOutputDir,
+                        deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.LIGHT));
+                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
+            }
+            {
+                File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.DARK));
+                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (MissingDataException e) {
+            if (!tolerateMissingData) {
+                throw e;
+            }
+        }
     }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    catch (MissingDataException e) {
-      if (!tolerateMissingData) {
-        throw e;
-      }
-    }
-  }
 
-  private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Theme mode) {
-    String chartTitle = plotDefinition.title().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and").replaceAll("\\(", "").replaceAll("\\)", "");
-    return file.getName().replace(".json", "-" + chartTitle + "-" + mode.name() + ".svg");
-  }
+    private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Repo repo, Theme mode) {
+        String chartTitle = plotDefinition.title().toLowerCase()
+            .replaceAll(" ", "-")
+            .replaceAll("\\+", "and")
+            .replaceAll("\\(", "")
+            .replaceAll("\\)", "");
+
+        return (repo.scenario() != null) ?
+          file.getName().replace(".json", "-%s-%s-%s.svg".formatted(repo.scenario(), chartTitle, mode.name())) :
+          file.getName().replace(".json", "-%s-%s.svg".formatted(chartTitle, mode.name()));
+
+    }
 }

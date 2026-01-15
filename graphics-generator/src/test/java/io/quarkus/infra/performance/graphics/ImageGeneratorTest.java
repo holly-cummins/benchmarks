@@ -77,7 +77,7 @@ class ImageGeneratorTest {
     private static void addConfig(BenchmarkData data) {
         Config config = mock(Config.class);
         when(data.config()).thenReturn(config);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.quarkus()).thenReturn(new FrameworkBuild("", "3.28.3"));
     }
 
@@ -108,6 +108,7 @@ class ImageGeneratorTest {
         String contents = getImageFileContents();
         assertTrue(contents.contains("somerepo"), contents); // Repo
         assertTrue(contents.contains("3.28.3"), contents); // Quarkus version
+        assertTrue(contents.contains("ootb"), contents); // Scenario
     }
 
     @Test

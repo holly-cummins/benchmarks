@@ -15,7 +15,7 @@ class FinePrintTest extends ElasticElementTest {
     @Test
     public void quarkusVersionIsPresent() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.quarkus()).thenReturn(new FrameworkBuild("", "3.28.3"));
 
         FinePrint p = new FinePrint(config);
@@ -26,7 +26,7 @@ class FinePrintTest extends ElasticElementTest {
     @Test
     public void quarkusVersionIsLabelled() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.quarkus()).thenReturn(new FrameworkBuild("", "3.28.3"));
 
         FinePrint p = new FinePrint(config);
@@ -37,7 +37,7 @@ class FinePrintTest extends ElasticElementTest {
     @Test
     public void unqualifiedSpringVersionIsLabelled() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.springboot()).thenReturn(new FrameworkBuild("", "3.10.3"));
 
         FinePrint p = new FinePrint(config);
@@ -48,7 +48,7 @@ class FinePrintTest extends ElasticElementTest {
     @Test
     public void qualifiedSpringVersionIsLabelledForSpring3() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.springboot3()).thenReturn(new FrameworkBuild("", "3.10.3"));
         FinePrint p = new FinePrint(config);
         String s = drawSvg(p);
@@ -59,18 +59,17 @@ class FinePrintTest extends ElasticElementTest {
     @Test
     public void qualifiedSpringVersionIsLabelledForSpring4() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.springboot4()).thenReturn(new FrameworkBuild("", "4.10.3"));
         FinePrint p = new FinePrint(config);
         String s = drawSvg(p);
         assertTrue(s.contains("Spring: 4.10.3"), s);
-
     }
 
     @Test
     public void springVersionsHaveDistinctLabelsWhenMultipleArePresent() {
         Config config = mock(Config.class);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
         when(config.springboot3()).thenReturn(new FrameworkBuild("", "3.10.3"));
         when(config.springboot4()).thenReturn(new FrameworkBuild("", "4.10.3"));
         FinePrint p = new FinePrint(config);
@@ -80,4 +79,14 @@ class FinePrintTest extends ElasticElementTest {
 
     }
 
+    @Test
+    void scenarioIncluded() {
+      var config = mock(Config.class);
+      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
+
+      var finePrint = new FinePrint(config);
+      var s = drawSvg(finePrint);
+
+      assertTrue(s.contains("Scenario: ootb"));
+    }
 }

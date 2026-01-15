@@ -579,6 +579,7 @@
     "repo": {
       "commit": "2fbd3683541eeff3264eefbce9b82cb16c3bcf84",
       "branch": "main",
+      "scenario": "tuned",
       "url": "https://github.com/quarkusio/spring-quarkus-perf-comparison.git"
     },
     "springboot3": {

@@ -97,7 +97,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
         assertTrue(image.exists());
     }
 
@@ -107,7 +107,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("tempfile.json"), output);
 
-        File image = new File("target/test-output/filename/tempfile-throughput-light.svg");
+        File image = new File("target/test-output/filename/tempfile-tuned-throughput-light.svg");
         assertTrue(image.exists());
     }
 
@@ -117,7 +117,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
         assertTrue(image.exists());
     }
 
@@ -127,11 +127,11 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("tempfile.json"), output);
 
-        File image = new File("target/test-output/filename/data-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
         assertTrue(image.exists());
 
         // Check parentheseses are stripped
-        image = new File("target/test-output/filename/data-memory-rss-dark.svg");
+        image = new File("target/test-output/filename/data-tuned-memory-rss-dark.svg");
         assertTrue(image.exists());
     }
 
@@ -143,14 +143,14 @@ public class GraphicsCommandTest {
         assertTrue(output.contains("eight-framework.json"), output);
 
         File dir = new File("target/test-output/directory/");
-        File image1 = new File(dir, "data-throughput-light.svg");
+        File image1 = new File(dir, "data-tuned-throughput-light.svg");
         assertTrue(image1.exists());
-        File image2 = new File(dir, "eight-framework-throughput-light.svg");
+        File image2 = new File(dir, "eight-framework-tuned-throughput-light.svg");
         assertTrue(image2.exists());
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");
         assertTrue(nestedDir.exists());
-        File image3 = new File(nestedDir, "data3-throughput-light.svg");
+        File image3 = new File(nestedDir, "data3-ootb-throughput-light.svg");
         assertTrue(image3.exists());
     }
 
@@ -160,7 +160,7 @@ public class GraphicsCommandTest {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-throughput-dark.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-dark.svg");
         assertTrue(image.exists());
     }
 

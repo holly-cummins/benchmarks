@@ -8,6 +8,10 @@ on:
     branches-ignore:
       - 'main'
 
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   preview:
     runs-on: ubuntu-latest

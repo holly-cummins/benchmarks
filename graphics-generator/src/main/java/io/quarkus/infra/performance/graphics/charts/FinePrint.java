@@ -10,8 +10,10 @@ import java.util.List;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 import io.quarkus.infra.performance.graphics.model.Config;
+import io.quarkus.infra.performance.graphics.model.Repo;
 
 public class FinePrint implements ElasticElement {
+    private static final String SOURCE_CODE_LABEL = "Source:";
 
     private static final int MAXIMUM_FONT_SIZE = 30;
     private static final int MINIMUM_FONT_SIZE = 8;
@@ -24,9 +26,11 @@ public class FinePrint implements ElasticElement {
 
     private final Config metadata;
     private final Label leftLabel;
+    private final Label middleLabel;
     private final Label rightLabel;
     private InlinedSVG svg;
     private final List<String> leftColumn = new ArrayList<>();
+    private final List<String> middleColumn = new ArrayList<>();
     private final List<String> rightColumn = new ArrayList<>();
 
     public FinePrint(Config metadata) {
@@ -63,75 +67,81 @@ public class FinePrint implements ElasticElement {
                         + metadata.jvm().graalVM().version());
             }
             if (metadata.jvm().memory() != null) {
-                rightColumn.add("Memory: "
+                middleColumn.add("Memory: "
                         + metadata.jvm().memory());
             }
             if (metadata.jvm().args() != null) {
-                rightColumn.add("JVM args: "
+                middleColumn.add("JVM args: "
                         + metadata.jvm().args());
             }
-            if (metadata.resources() != null) {
-              rightColumn.add("CPUS: " + metadata.resources().appCpus());
-            }
+        }
+
+        if (metadata.resources() != null) {
+            middleColumn.add("CPUS: " + metadata.resources().appCpus());
         }
 
         if (metadata.repo() != null) {
-            rightColumn.add("Source code: "
+            rightColumn.add(SOURCE_CODE_LABEL + " "
                     + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
-        }
 
-        if (metadata.repo() != null && !"main".equals(metadata.repo().branch())) {
-            rightColumn.add("Branch: " + metadata.repo().branch());
+            if (hasScenario(metadata.repo())) {
+              rightColumn.add("Scenario: " + metadata.repo().scenario() + "   ");
+            }
 
+            if (hasBranch(metadata.repo())) {
+              rightColumn.add("Branch: " + metadata.repo().branch());
+            }
         }
 
         // Make sure font sizes are the same
         // TODO this can go away when we have label groups
-        while (rightColumn.size() < leftColumn.size()) {
-            // Put the padding before the last source control line
-            rightColumn.add(Math.max(0, rightColumn.size() - 1), " ");
-        }
-        while (rightColumn.size() > leftColumn.size()) {
-            leftColumn.add(" ");
-        }
+        var maxRows = Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size()));
+        adjustToSameRows(leftColumn, maxRows);
+        adjustToSameRows(middleColumn, maxRows);
+        adjustToSameRows(rightColumn, maxRows);
 
         leftLabel = new Label(leftColumn.toArray(String[]::new))
+                .setHorizontalAlignment(Alignment.LEFT)
+                .setVerticalAlignment(VAlignment.TOP);
+
+        middleLabel = new Label(middleColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
 
         rightLabel = new Label(rightColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
+    }
 
+    private static void adjustToSameRows(List<String> labels, int maxRows) {
+      while (labels.size() < maxRows) {
+        labels.add(" ");
+      }
     }
 
     @Override
     public int getMaximumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MAXIMUM_FONT_SIZE;
-
+        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MAXIMUM_FONT_SIZE;
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
-
+        return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(middleColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
     }
 
     @Override
     public int getMinimumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), rightColumn.size()) * MINIMUM_FONT_SIZE;
+        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MINIMUM_FONT_SIZE;
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return calculateWidth(leftColumn, MINIMUM_FONT_SIZE) + calculateWidth(rightColumn, MINIMUM_FONT_SIZE) + MINIMUM_PADDING;
+        return calculateWidth(leftColumn, MINIMUM_FONT_SIZE) + calculateWidth(middleColumn, MINIMUM_FONT_SIZE) + calculateWidth(rightColumn, MINIMUM_FONT_SIZE) + MINIMUM_PADDING;
     }
 
     public void draw(Subcanvas g, Theme theme) {
-
         g.setPaint(theme.background());
-
         g.setPaint(theme.text());
 
         Subcanvas padded = new Subcanvas(g, g.getWidth(), g.getHeight() - TOP_PADDING, 0, TOP_PADDING);
@@ -139,24 +149,35 @@ public class FinePrint implements ElasticElement {
         leftLabel.setTargetHeight(padded.getHeight());
         leftLabel.draw(padded);
 
-        int leftLabelWidth = leftLabel
-                .calculateWidth();
-        int rightLabelX = leftLabelWidth
-                + PADDING;
+        int leftLabelWidth = leftLabel.calculateWidth();
+        int middleLabelX = leftLabelWidth + PADDING;
+        middleLabel.setTargetHeight(padded.getHeight());
+        Subcanvas ml = new Subcanvas(padded, padded.getWidth() - middleLabelX, padded.getHeight(), middleLabelX, 0);
+        middleLabel.draw(ml);
+
+        int rightLabelX = middleLabelX + middleLabel.calculateWidth() + PADDING;
         rightLabel.setTargetHeight(padded.getHeight());
-        Subcanvas rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
+        var rl = new Subcanvas(padded, padded.getWidth() - ml.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
-        int sw = rightLabel.calculateWidth("Source code:");
+
+        int sw = rightLabel.calculateWidth(SOURCE_CODE_LABEL);
 
         if (metadata.repo() != null) {
             int logoSize = rightLabel.getAscent();
             int logoX = padded.getXOffset() + rightLabelX + sw + 2;
-            int logoY = padded.getYOffset() + (rightColumn.size() - 1) * rightLabel.getLineHeight()
-                    + rightLabel.getDescent() / 4;
+            int logoY = padded.getYOffset() + rightLabel.getDescent() / 4;
             this.svg = new InlinedSVG(getPath(theme), logoSize,
                     logoX,
                     logoY);
         }
+    }
+
+    private static boolean hasScenario(Repo repo) {
+      return repo.scenario() != null;
+    }
+
+    private static boolean hasBranch(Repo repo) {
+      return (repo.branch() != null) && !"main".equals(repo.branch());
     }
 
     private static String getPath(Theme theme) {
