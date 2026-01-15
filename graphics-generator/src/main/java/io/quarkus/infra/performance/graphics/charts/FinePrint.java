@@ -122,13 +122,11 @@ public class FinePrint implements ElasticElement {
     @Override
     public int getMaximumVerticalSize() {
         return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MAXIMUM_FONT_SIZE;
-
     }
 
     @Override
     public int getMaximumHorizontalSize() {
         return calculateWidth(leftColumn, MAXIMUM_FONT_SIZE) + calculateWidth(middleColumn, MAXIMUM_FONT_SIZE) + calculateWidth(rightColumn, MAXIMUM_FONT_SIZE) + MAXIMUM_PADDING;
-
     }
 
     @Override
@@ -142,9 +140,7 @@ public class FinePrint implements ElasticElement {
     }
 
     public void draw(Subcanvas g, Theme theme) {
-
         g.setPaint(theme.background());
-
         g.setPaint(theme.text());
 
         Subcanvas padded = new Subcanvas(g, g.getWidth(), g.getHeight() - TOP_PADDING, 0, TOP_PADDING);
@@ -152,13 +148,16 @@ public class FinePrint implements ElasticElement {
         leftLabel.setTargetHeight(padded.getHeight());
         leftLabel.draw(padded);
 
-        int leftLabelWidth = leftLabel
-                .calculateWidth();
-        int rightLabelX = leftLabelWidth
-                + PADDING;
+        int leftLabelWidth = leftLabel.calculateWidth();
+        int middleLabelX = leftLabelWidth + PADDING;
+        int rightLabelX = middleLabelX + PADDING;
         middleLabel.setTargetHeight(padded.getHeight());
-        Subcanvas rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
-        middleLabel.draw(rl);
+        Subcanvas ml = new Subcanvas(padded, padded.getWidth() - middleLabelX, padded.getHeight(), middleLabelX, 0);
+        middleLabel.draw(ml);
+
+        rightLabel.setTargetHeight(padded.getHeight());
+        var rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
+        rightLabel.draw(rl);
 
         int sw = rightLabel.calculateWidth("Source:");
 
