@@ -136,6 +136,9 @@ jobs:
           ADDED=$(printf "%s\n%s" "$ADDED" "$RENAMED_NEW" | sed '/^$/d' | paste -sd "," -)
           REMOVED=$(printf "%s\n%s" "$REMOVED" "$RENAMED_OLD" | sed '/^$/d' | paste -sd "," -)
 
+          echo Files added: $ADDED
+          echo Files removed: $REMOVED
+          
           echo "svgs_added=$ADDED" >> $GITHUB_OUTPUT
           echo "svgs_removed=$REMOVED" >> $GITHUB_OUTPUT
 
@@ -157,20 +160,20 @@ jobs:
           FILES=$(echo "$FILES" | tr ',' '\n' | head -n4)
           MD=""
           for f in $FILES; do
-            MD="$MD![]('../blob/$HASH/$f?raw=true')\n"
+            MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
-          echo "svgs_added_md=$MD" >> $GITHUB_OUTPUT
+          echo -e "svgs_added_md=$MD" >> $GITHUB_OUTPUT
 
       - name: Prepare markdown for removed SVGs
         if: steps.push.outputs.svgs_removed != ''
         id: svgs_removed_md
         run: |
           FILES="${{ steps.push.outputs.svgs_removed }}"
-          MD="#### Some files will no longer be generated:\n"
+          MD="#### Some files will no longer be generated:"
           for f in $(echo "$FILES" | tr ',' '\n'); do
-            MD="$MD$f\n"
+            MD="$MD  \n- $f"
           done
-          echo "svgs_removed_md=$MD" >> $GITHUB_OUTPUT
+          echo -e "svgs_removed_md=$MD" >> $GITHUB_OUTPUT
 
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
