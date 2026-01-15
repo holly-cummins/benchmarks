@@ -100,8 +100,7 @@ public class FinePrint implements ElasticElement {
         adjustToSameRows(leftColumn, maxRows);
         adjustToSameRows(middleColumn, maxRows);
         adjustToSameRows(rightColumn, maxRows);
-//        doSizing(middleColumn, leftColumn);
-//        doSizing(rightColumn, middleColumn);
+
         leftLabel = new Label(leftColumn.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
                 .setVerticalAlignment(VAlignment.TOP);
@@ -118,16 +117,6 @@ public class FinePrint implements ElasticElement {
     private static void adjustToSameRows(List<String> labels, int maxRows) {
       while (labels.size() < maxRows) {
         labels.add(" ");
-      }
-    }
-
-    private static void doSizing(List<String> labels, List<String> columnToLeft) {
-      while (labels.size() < columnToLeft.size()) {
-        labels.add(Math.max(0, labels.size() - 1), " ");
-      }
-
-      while (labels.size() > columnToLeft.size()) {
-        columnToLeft.add(" ");
       }
     }
 
