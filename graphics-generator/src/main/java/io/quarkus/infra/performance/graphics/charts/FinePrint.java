@@ -168,7 +168,7 @@ public class FinePrint implements ElasticElement {
     }
 
     private static boolean hasBranch(Repo repo) {
-      return (repo.branch() != null);// && !"main".equals(repo.branch());
+      return (repo.branch() != null) && !"main".equals(repo.branch());
     }
 
     private static String getPath(Theme theme) {
