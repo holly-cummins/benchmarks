@@ -111,8 +111,30 @@ jobs:
           # Stage all SVG files
           git add images/*svg
           
-          ADDED=$(git diff --cached --name-status | grep -E '^A\s+images/.*\.svg' | awk '{print $2}' | paste -sd "," -)
-          REMOVED=$(git diff --cached --name-status | grep -E '^D\s+images/.*\.svg' | awk '{print $2}' | paste -sd "," -)
+          DIFF=$(git diff --cached --name-status)
+          
+          # Added SVGs
+          ADDED=$(echo "$DIFF" \
+            | grep -E '^A\s+images/.*\.svg' \
+            | awk '{print $2}')
+          
+          # Removed SVGs
+          REMOVED=$(echo "$DIFF" \
+            | grep -E '^D\s+images/.*\.svg' \
+            | awk '{print $2}')
+
+          # Renamed SVGs: old -> removed, new -> added
+          RENAMED_OLD=$(echo "$DIFF" \
+            | grep -E '^R[0-9]*\s+images/.*\.svg\s+images/.*\.svg' \
+            | awk '{print $2}')
+          
+          RENAMED_NEW=$(echo "$DIFF" \
+            | grep -E '^R[0-9]*\s+images/.*\.svg\s+images/.*\.svg' \
+            | awk '{print $3}')
+
+          # Merge lists and convert to comma-separated
+          ADDED=$(printf "%s\n%s" "$ADDED" "$RENAMED_NEW" | sed '/^$/d' | paste -sd "," -)
+          REMOVED=$(printf "%s\n%s" "$REMOVED" "$RENAMED_OLD" | sed '/^$/d' | paste -sd "," -)
 
           echo "svgs_added=$ADDED" >> $GITHUB_OUTPUT
           echo "svgs_removed=$REMOVED" >> $GITHUB_OUTPUT
