@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.inject.Inject;
 
@@ -125,8 +124,9 @@ public class GraphicsCommand implements Runnable {
             .replaceAll("\\(", "")
             .replaceAll("\\)", "");
 
-        return file.getName().replace(".json",
-                "-%s-%s-%s.svg".formatted(Optional.ofNullable(repo.scenario()).orElse("tuned"), chartTitle, mode.name()));
+        return (repo.scenario() != null) ?
+          file.getName().replace(".json", "-%s-%s-%s.svg".formatted(repo.scenario(), chartTitle, mode.name())) :
+          file.getName().replace(".json", "-%s-%s.svg".formatted(chartTitle, mode.name()));
 
     }
 }
