@@ -45,7 +45,7 @@ jobs:
         run: |
           git add images/*svg
           git commit -m "Reset while processing #${{ steps.pr.outputs.id }}"
-          git push origin -u pr-images-reset
+          git push origin -u pr-images-reset --force
       - name: Download PR Artifact
         uses: actions/download-artifact@v7
         with:
@@ -100,7 +100,7 @@ jobs:
         run: |
           git add images/*svg
           git commit -m "Images for #${{ steps.pr.outputs.id }}"
-          git push origin -u pr-images
+          git push origin -u pr-images --force
       - name: Capture most recent hash on branch
         if: steps.changed.outputs.files_changed == 'true'
         id: hash
