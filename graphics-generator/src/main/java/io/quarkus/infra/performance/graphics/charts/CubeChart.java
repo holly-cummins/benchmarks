@@ -11,6 +11,7 @@ import io.quarkus.infra.performance.graphics.model.Config;
 
 public class CubeChart extends Chart {
 
+    private static final int MINIMUM_PADDING_BETWEEN_DATASETS = 10;
     private final FinePrint fineprint;
     private final List<Cubes> cubes = new ArrayList<>();
     int numCubesPerColumn = 16;
@@ -75,7 +76,7 @@ public class CubeChart extends Chart {
 
         int dataPadding = workOutCubeSizes(canvasWithMargins);
 
-        while (dataPadding <= 0) {
+        while (dataPadding <= MINIMUM_PADDING_BETWEEN_DATASETS) {
             // If it doesn't fit, shrink fonts
             for (Cubes c : cubes) {
                 c.decrementFonts();
@@ -132,7 +133,7 @@ public class CubeChart extends Chart {
 
         int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
                 ? (availableWidth - widthOfThinSections) / totalColumnsContributingToWidth
-                : smallestCubeSize;
+                :smallestCubeSize;
         // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
 
         int actualOccupiedArea = 0;

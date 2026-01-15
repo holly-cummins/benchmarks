@@ -1,9 +1,5 @@
 package io.quarkus.infra.performance.graphics;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -11,11 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
-
 import jakarta.inject.Inject;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
@@ -29,6 +21,12 @@ import io.quarkus.infra.performance.graphics.model.Results;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class ImageGeneratorTest {
@@ -110,6 +108,15 @@ class ImageGeneratorTest {
         String contents = getImageFileContents();
         assertTrue(contents.contains("somerepo"), contents); // Repo
         assertTrue(contents.contains("3.28.3"), contents); // Quarkus version
+    }
+
+    @Test
+    public void testFallbackFonts() throws IOException {
+        String contents = getImageFileContents();
+        String font = "sans-serif";
+        assertTrue(contents.indexOf(font)
+                        !=contents.lastIndexOf(font),
+                "Fallback font declaration should appear more than once");
     }
 
     private String getImageFileContents() throws IOException {

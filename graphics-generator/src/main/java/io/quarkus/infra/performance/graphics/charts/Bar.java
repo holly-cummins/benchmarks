@@ -1,11 +1,11 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import static java.lang.Math.round;
-
 import java.awt.Font;
 
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
+
+import static java.lang.Math.round;
 
 public class Bar implements ElasticElement {
     static final int BAR_THICKNESS = 44;
@@ -19,7 +19,7 @@ public class Bar implements ElasticElement {
     public static final int RIGHT_LABEL_SIZE = Sizer.calculateFontSize(VALUE_LABEL_HEIGHT);
 
     private static final int barSpacing = 12;
-    private static final int labelPadding = 6;
+    private static final int labelPadding = 12;
 
     private final String valueLabelText;
     private final Label valueLabel;

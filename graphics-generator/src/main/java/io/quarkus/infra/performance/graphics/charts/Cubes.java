@@ -1,14 +1,15 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import static io.quarkus.infra.performance.graphics.charts.Bar.BAR_THICKNESS;
-
 import java.awt.Font;
 
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.VAlignment;
 
+import static io.quarkus.infra.performance.graphics.charts.Bar.BAR_THICKNESS;
+
 public class Cubes implements ElasticElement {
     private static final int LABEL_HEIGHT = BAR_THICKNESS;
+    public static final double DECREMENT_INCREMENT = 0.97;
     private final Datapoint d;
     private static int numCubesPerColumn = 16;
     private static final int CUBE_PADDING = 1;
@@ -96,7 +97,7 @@ public class Cubes implements ElasticElement {
         for (int i = 0; i < numCubes; i++) {
             cubeArea.fillRect(cx, cy, cubeSize, cubeSize);
             cy -= totalCubeSize;
-            if ((i + 1) % numCubesPerColumn == 0) {
+            if ((i + 1) % numCubesPerColumn==0) {
                 cx += totalCubeSize;
                 cy = startingY;
             }
@@ -119,7 +120,7 @@ public class Cubes implements ElasticElement {
     }
 
     public void decrementFonts() {
-        frameworkLabel.setTargetHeight((int) (frameworkLabel.getTargetHeight() * 0.95));
-        valueLabel.setTargetHeight((int) (valueLabel.getTargetHeight() * 0.95));
+        frameworkLabel.setTargetHeight((int) (frameworkLabel.getTargetHeight() * DECREMENT_INCREMENT));
+        valueLabel.setTargetHeight((int) (valueLabel.getTargetHeight() * DECREMENT_INCREMENT));
     }
 }
