@@ -187,7 +187,7 @@ jobs:
           body: |
             🚀 This is what some of the generated images would look like with this change. 
             ![generated throughput image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-throughput-light.svg?raw=true)
-            ![generated rss image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-rss-dark.svg?raw=true)
+            ![generated rss image](../blob/${{ steps.hash.outputs.hash }}/images/spring-quarkus-perf-comparison-latest-memory-rss-dark.svg?raw=true)
 
             ${{ steps.svgs_added_md.outputs.svgs_added_md }}
             ${{ steps.svgs_removed_md.outputs.svgs_removed_md }}
