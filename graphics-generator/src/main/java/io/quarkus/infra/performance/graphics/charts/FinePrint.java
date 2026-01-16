@@ -85,6 +85,10 @@ public class FinePrint implements ElasticElement {
                     + metadata.repo().url().replace("https://github.com/", "     ").replaceAll(".git$", ""));
             // Use a few spaces to leave room for a logo
 
+            if (hasCommit(metadata.repo())) {
+              rightColumn.add("Commit: " + metadata.repo().commit());
+            }
+
             if (hasScenario(metadata.repo())) {
               rightColumn.add("Scenario: " + metadata.repo().scenario() + "   ");
             }
@@ -170,6 +174,10 @@ public class FinePrint implements ElasticElement {
                     logoX,
                     logoY);
         }
+    }
+
+    private static boolean hasCommit(Repo repo) {
+      return repo.commit() != null;
     }
 
     private static boolean hasScenario(Repo repo) {
