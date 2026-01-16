@@ -22,7 +22,7 @@ import picocli.CommandLine.Parameters;
 public class GraphicsCommand implements Runnable {
 
   private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", "(Higher is better)", framework -> framework.load().avThroughput());
-  private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS after 1st request)", "memory-rss", "(Smaller is better)", framework -> framework.rss().avFirstRequestRss());
+  private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS after first request)", "memory-rss", "(Smaller is better)", framework -> framework.rss().avFirstRequestRss());
   private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time", "(Lower is better)", framework -> framework.startup().avStartTime());
   private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration", "(Shorter is better)", framework -> framework.build().avBuildTime());
 
