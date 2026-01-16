@@ -179,7 +179,11 @@ jobs:
           for f in $CUBE_FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
-          echo "svgs_changed_md=$MD" >> $GITHUB_OUTPUT
+          {
+            echo "svgs_changed_md<<EOF"
+            echo -e "$MD"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Prepare markdown for added SVGs
         if: steps.push.outputs.svgs_added != ''
@@ -192,7 +196,11 @@ jobs:
           for f in $FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
-          printf "svgs_added_md=$MD" >> $GITHUB_OUTPUT
+          {
+            echo "svgs_added_md<<EOF"
+            echo -e "$MD"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Prepare markdown for removed SVGs
         if: steps.push.outputs.svgs_removed != ''
@@ -203,7 +211,11 @@ jobs:
           for f in $(echo "$FILES" | tr ',' '\n'); do
             MD="$MD  \n- $f"
           done
-          printf "svgs_removed_md=$MD" >> $GITHUB_OUTPUT
+          {
+            echo "svgs_removed_md<<EOF"
+            echo -e "$MD"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Update PR status comment with link
         if: steps.changed.outputs.files_changed == 'true'
