@@ -17,9 +17,19 @@ public record Repo(
       url,
       scenario,
       commit,
-      Optional.ofNullable(commit)
+      deriveShortCommit(commit));
+  }
+
+  public Repo {
+    if (shortCommit == null) {
+      shortCommit = deriveShortCommit(commit);
+    }
+  }
+
+  private static String deriveShortCommit(String commit) {
+    return Optional.ofNullable(commit)
         .filter(c -> c.length() >= 10)
         .map(c -> c.substring(0, 10))
-        .orElse(commit));
+        .orElse(commit);
   }
 }
