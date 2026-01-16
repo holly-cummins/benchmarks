@@ -24,7 +24,7 @@ public class GraphicsCommand implements Runnable {
   private static final PlotDefinition THROUGHPUT = new PlotDefinition("Throughput", "(Higher is better)", framework -> framework.load().avThroughput());
   private static final PlotDefinition RSS = new PlotDefinition("Memory (RSS after 1st request)", "memory-rss", "(Smaller is better)", framework -> framework.rss().avFirstRequestRss());
   private static final PlotDefinition TIME_TO_FIRST_REQUEST = new PlotDefinition("Boot + First Response Time", "(Lower is better)", framework -> framework.startup().avStartTime());
-  private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration", "(Lower is better)", framework -> framework.build().avBuildTime());
+  private static final PlotDefinition BUILD_TIME = new PlotDefinition("Build Duration", "(Shorter is better)", framework -> framework.build().avBuildTime());
 
   @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
   Path filename;
@@ -88,44 +88,38 @@ public class GraphicsCommand implements Runnable {
         qualifiedOutputDir = new File(outputDirectory, relative.toString());
       }
     }
-    
+
     generate(file, qualifiedOutputDir, CubeChart::new, data, RSS);
     generate(file, qualifiedOutputDir, BarChart::new, data, TIME_TO_FIRST_REQUEST);
     generate(file, qualifiedOutputDir, BarChart::new, data, THROUGHPUT);
     generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
   }
 
-    private void generate(File file, File qualifiedOutputDir,
-            TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor,
-            BenchmarkData data, PlotDefinition plotDefinition) {
-        try {
-            {
-                File outFile = new File(qualifiedOutputDir,
-                        deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.LIGHT));
-                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
-            }
-            {
-                File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.DARK));
-                generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (MissingDataException e) {
-            if (!tolerateMissingData) {
-                throw e;
-            }
-        }
+  private void generate(File file, File qualifiedOutputDir, TriFunction<PlotDefinition, List<Datapoint>, Config, Chart> chartConstructor, BenchmarkData data, PlotDefinition plotDefinition) {
+    try {
+      {
+        File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.LIGHT));
+        generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.LIGHT);
+      }
+      {
+        File outFile = new File(qualifiedOutputDir, deriveOutputFilename(file, plotDefinition, data.config().repo(), Theme.DARK));
+        generator.generate(chartConstructor, data, plotDefinition, outFile, Theme.DARK);
+      }
     }
-
-    private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Repo repo, Theme mode) {
-        String filename = plotDefinition.filename().toLowerCase()
-            .replaceAll(" ", "-")
-            .replaceAll("\\+", "and")
-            .replaceAll("\\(", "")
-            .replaceAll("\\)", "");
-
-        return (repo.scenario() != null) ?
-          file.getName().replace(".json", "-%s-%s-%s.svg".formatted(repo.scenario(), filename, mode.name())) :
-          file.getName().replace(".json", "-%s-%s.svg".formatted(filename, mode.name()));
+    catch (IOException e) {
+      throw new RuntimeException(e);
     }
+    catch (MissingDataException e) {
+      if (!tolerateMissingData) {
+        throw e;
+      }
+    }
+  }
+
+  private static String deriveOutputFilename(File file, PlotDefinition plotDefinition, Repo repo, Theme mode) {
+    String filename = plotDefinition.filename().toLowerCase().replaceAll(" ", "-").replaceAll("\\+", "and").replaceAll("\\(", "").replaceAll("\\)", "");
+
+    return (repo.scenario() != null) ? file.getName().replace(".json", "-%s-%s-%s.svg".formatted(repo.scenario(), filename, mode.name()))
+                                     : file.getName().replace(".json", "-%s-%s.svg".formatted(filename, mode.name()));
+  }
 }
