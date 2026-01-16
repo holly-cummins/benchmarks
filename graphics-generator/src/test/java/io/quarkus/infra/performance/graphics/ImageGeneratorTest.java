@@ -1,5 +1,9 @@
 package io.quarkus.infra.performance.graphics;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -7,7 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
+
 import jakarta.inject.Inject;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
@@ -21,12 +29,6 @@ import io.quarkus.infra.performance.graphics.model.Results;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
 import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class ImageGeneratorTest {
@@ -77,7 +79,7 @@ class ImageGeneratorTest {
     private static void addConfig(BenchmarkData data) {
         Config config = mock(Config.class);
         when(data.config()).thenReturn(config);
-        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb"));
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
         when(config.quarkus()).thenReturn(new FrameworkBuild("", "3.28.3"));
     }
 
@@ -109,6 +111,7 @@ class ImageGeneratorTest {
         assertTrue(contents.contains("somerepo"), contents); // Repo
         assertTrue(contents.contains("3.28.3"), contents); // Quarkus version
         assertTrue(contents.contains("ootb"), contents); // Scenario
+        assertTrue(contents.contains("1234"), contents); // Commit
     }
 
     @Test

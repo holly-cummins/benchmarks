@@ -92,6 +92,10 @@ public class FinePrint implements ElasticElement {
             if (hasBranch(metadata.repo())) {
               rightColumn.add("Branch: " + metadata.repo().branch());
             }
+
+            if (hasCommit(metadata.repo())) {
+              rightColumn.add("Commit: " + metadata.repo().shortCommit());
+            }
         }
 
         // Make sure font sizes are the same
@@ -170,6 +174,10 @@ public class FinePrint implements ElasticElement {
                     logoX,
                     logoY);
         }
+    }
+
+    private static boolean hasCommit(Repo repo) {
+      return repo.shortCommit() != null;
     }
 
     private static boolean hasScenario(Repo repo) {
