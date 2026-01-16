@@ -179,7 +179,7 @@ jobs:
           for f in $CUBE_FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
-          echo "svgs_added_md=$MD" >> $GITHUB_OUTPUT
+          echo "svgs_changed_md=$MD" >> $GITHUB_OUTPUT
 
       - name: Prepare markdown for added SVGs
         if: steps.push.outputs.svgs_added != ''
