@@ -145,6 +145,8 @@ jobs:
           ADDED=$(printf "%s\n%s" "$ADDED" "$RENAMED_NEW" | sed '/^$/d' | paste -sd "," -)
           REMOVED=$(printf "%s\n%s" "$REMOVED" "$RENAMED_OLD" | sed '/^$/d' | paste -sd "," -)
 
+          CHANGED=$(printf "%s" "CHANGED" | sed '/^$/d' | paste -sd "," -)
+
           echo Files changed: $CHANGED
           echo Files added: $ADDED
           echo Files removed: $REMOVED
