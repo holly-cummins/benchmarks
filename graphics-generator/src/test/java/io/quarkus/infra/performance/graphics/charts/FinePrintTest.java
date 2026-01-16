@@ -100,4 +100,26 @@ class FinePrintTest extends ElasticElementTest {
 
       assertTrue(s.contains("Commit: 1234"));
     }
+
+    @Test
+    void derivedShortCommitIncluded() {
+      var config = mock(Config.class);
+      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655"));
+
+      var finePrint = new FinePrint(config);
+      var s = drawSvg(finePrint);
+
+      assertTrue(s.contains("Commit: 1234569871"));
+    }
+
+    @Test
+    void shortCommitIncluded() {
+      var config = mock(Config.class);
+      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655", "1234"));
+
+      var finePrint = new FinePrint(config);
+      var s = drawSvg(finePrint);
+
+      assertTrue(s.contains("Commit: 1234"));
+    }
 }

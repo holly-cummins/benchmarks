@@ -94,7 +94,7 @@ public class FinePrint implements ElasticElement {
             }
 
             if (hasCommit(metadata.repo())) {
-              rightColumn.add("Commit: " + metadata.repo().commit());
+              rightColumn.add("Commit: " + metadata.repo().shortCommit());
             }
         }
 
@@ -177,7 +177,7 @@ public class FinePrint implements ElasticElement {
     }
 
     private static boolean hasCommit(Repo repo) {
-      return repo.commit() != null;
+      return repo.shortCommit() != null;
     }
 
     private static boolean hasScenario(Repo repo) {
