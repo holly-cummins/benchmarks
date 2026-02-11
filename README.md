@@ -14,6 +14,12 @@ java -jar benchmarks/graphics-generator/target/quarkus-app/quarkus-run.jar myfil
 
 This will generate a set of plots in an `images` directory. 
 
+## Architecture & Workflow
+
+This diagram shows the architecture & workflow of how the benchmarking executes.
+
+![Workflow](https://raw.githubusercontent.com/quarkusio/spring-quarkus-perf-comparison/refs/heads/main/docs/benchmark-workflow.png)
+
 ## Results 
 
 ### spring-quarkus-perf-comparison
