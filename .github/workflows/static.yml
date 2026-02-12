@@ -36,6 +36,7 @@ jobs:
       - name: Clone a 404 page # because this is a separate site, it shows the default GitHub 404
         run: |
           curl https://quarkus.io/404.html > images/404.html
+          sed -i 's/You have found nowhere/There is no measurement/g' images/404.html
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3
