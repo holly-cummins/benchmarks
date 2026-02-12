@@ -1,6 +1,5 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import java.awt.Font;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,6 +16,16 @@ import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Timing;
 
 import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
+import java.awt.Font;
+
+import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
+
+import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
+import static io.quarkus.infra.performance.graphics.model.Category.JVM;
+import static io.quarkus.infra.performance.graphics.model.Category.NATIVE;
+import static io.quarkus.infra.performance.graphics.model.Category.OLD;
+import static io.quarkus.infra.performance.graphics.model.Category.QUARKUS;
+import static io.quarkus.infra.performance.graphics.model.Category.SPRING;
 
 public class FinePrint implements ElasticElement {
     static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -45,43 +54,55 @@ public class FinePrint implements ElasticElement {
         this.metadata = bmData.config();
         this.timing = bmData.timing();
 
-        if (metadata.quarkus() != null) {
-            leftColumn.add("Quarkus: "
-                    + metadata.quarkus().version());
+        if (bmData.group().containsAny(QUARKUS)) {
+            if (metadata.quarkus() != null) {
+                leftColumn.add("Quarkus: "
+                        + metadata.quarkus().version());
+            }
         }
-        if (metadata.springboot() != null) {
-            leftColumn.add("Spring: "
-                    + metadata.springboot().version());
-            // If there's only one Spring, strip the qualifier
-            // Assume the truth is in the data, and what's in the data set is what is being plotted
-        } else if (metadata.springboot3() != null && metadata.springboot4() == null) {
-            leftColumn.add("Spring: "
-                    + metadata.springboot3().version());
-        } else if (metadata.springboot4() != null && metadata.springboot3() == null) {
-            leftColumn.add("Spring: "
-                    + metadata.springboot4().version());
-        } else if (metadata.springboot3() != null && metadata.springboot4() != null) {
-            leftColumn.add("Spring 3: "
-                    + metadata.springboot3().version());
-            leftColumn.add("Spring 4: "
-                    + metadata.springboot4().version());
+        if (bmData.group().containsAny(SPRING)) {
+            // This is a bit brittle, but it seems to be the best way of checking if we are plotting two springs or one; the metadata is not sufficient
+            if (bmData.group().containsAny(OLD) && metadata.springboot3() != null && metadata.springboot4() != null) {
+                leftColumn.add("Spring 3: "
+                        + metadata.springboot3().version());
+                leftColumn.add("Spring 4: "
+                        + metadata.springboot4().version());
+            } else {
+                if (metadata.springboot() != null) {
+                    leftColumn.add("Spring: "
+                            + metadata.springboot().version());
+                    // Assume if the group doesn't include old stuff that we want Spring 4
+                } else if (metadata.springboot4() != null) {
+                    leftColumn.add("Spring: "
+                            + metadata.springboot4().version());
+
+                } else if (metadata.springboot3() != null) { // Edge case, Spring 3 but no Spring 4
+                    leftColumn.add("Spring: "
+                            + metadata.springboot3().version());
+
+                }
+            }
         }
         if (metadata.jvm() != null) {
-
-            leftColumn.add("JVM: "
-                    + metadata.jvm().version());
-
-            if (metadata.jvm().graalVM() != null) {
-                leftColumn.add("GraalVM: "
-                        + metadata.jvm().graalVM().version());
+            if (bmData.group().containsAny(JVM)) {
+                leftColumn.add("JVM: "
+                        + metadata.jvm().version());
+            }
+            if (bmData.group().containsAny(NATIVE)) {
+                if (metadata.jvm().graalVM() != null) {
+                    leftColumn.add("GraalVM: "
+                            + metadata.jvm().graalVM().version());
+                }
             }
             if (metadata.jvm().memory() != null) {
                 middleColumn.add("Memory: "
                         + metadata.jvm().memory());
             }
-            if (metadata.jvm().args() != null) {
-                middleColumn.add("JVM args: "
-                        + metadata.jvm().args());
+            if (bmData.group().containsAny(JVM)) {
+                if (metadata.jvm().args() != null) {
+                    middleColumn.add("JVM args: "
+                            + metadata.jvm().args());
+                }
             }
         }
 

@@ -4,16 +4,16 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import io.quarkus.infra.performance.graphics.MissingDataException;
 import io.quarkus.infra.performance.graphics.charts.Datapoint;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 
 public class Results {
 
-    private final Map<Framework, Result> frameworks = new EnumMap<>(Framework.class);
+    private final Map<Framework, Result> frameworks;
 
     @JsonAnySetter
     public void addFramework(String key, Result result) {
@@ -25,9 +25,22 @@ public class Results {
         }
     }
 
+    public Results() {
+        this.frameworks = new EnumMap<>(Framework.class);
+    }
+
+    private Results(Map<Framework, Result> frameworks) {
+        this.frameworks = frameworks;
+    }
+
+    public int size() {
+        return frameworks.size();
+    }
+
     public Result framework(Framework type) {
         return frameworks.get(type);
     }
+
 
     public List<Datapoint> getDatasets(Function<Result, ? extends DimensionalNumber> fun) {
         // Adjust the frameworks to unqualified ones if there's not different versions of the same framework
@@ -71,7 +84,7 @@ public class Results {
     }
 
     private static Datapoint getDatapoint(Map.Entry<Framework, Result> entry,
-            Function<Result, ? extends DimensionalNumber> fun) {
+                                          Function<Result, ? extends DimensionalNumber> fun) {
         Framework framework = entry.getKey();
         try {
             return new Datapoint(framework, fun.apply(entry.getValue()));
@@ -80,5 +93,17 @@ public class Results {
             throw new MissingDataException(
                     "Data was missing for the " + framework.getName() + " framework: " + e.getMessage());
         }
+    }
+
+
+    public Results subgroup(Group group) {
+        Map<Framework, Result> filtered = frameworks.entrySet()
+                .stream()
+                .filter(a -> a.getKey()
+                        .isInGroup(group))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing,
+                        () -> new EnumMap<>(Framework.class)));
+
+        return new Results(filtered);
     }
 }

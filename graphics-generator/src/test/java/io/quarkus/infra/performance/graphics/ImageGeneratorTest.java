@@ -1,9 +1,5 @@
 package io.quarkus.infra.performance.graphics;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -11,17 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
-
 import jakarta.inject.Inject;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.Framework;
 import io.quarkus.infra.performance.graphics.model.FrameworkBuild;
+import io.quarkus.infra.performance.graphics.model.Group;
 import io.quarkus.infra.performance.graphics.model.Load;
 import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Result;
@@ -29,6 +22,12 @@ import io.quarkus.infra.performance.graphics.model.Results;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 class ImageGeneratorTest {
@@ -55,6 +54,7 @@ class ImageGeneratorTest {
             BenchmarkData data = mock(BenchmarkData.class);
             Results results = new Results();
             when(data.results()).thenReturn(results);
+            when(data.group()).thenReturn(Group.ALL);
             addDatapoint(data, Framework.QUARKUS3_JVM, THROUGHPUT);
             addDatapoint(data, Framework.SPRING3_JVM, 267.87);
             addConfig(data);
@@ -119,7 +119,7 @@ class ImageGeneratorTest {
         String contents = getImageFileContents();
         String font = "sans-serif";
         assertTrue(contents.indexOf(font)
-                        !=contents.lastIndexOf(font),
+                        != contents.lastIndexOf(font),
                 "Fallback font declaration should appear more than once");
     }
 

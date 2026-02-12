@@ -76,7 +76,7 @@ public class CubeChart extends Chart {
 
         int dataPadding = workOutCubeSizes(canvasWithMargins);
 
-        while (dataPadding <= MINIMUM_PADDING_BETWEEN_DATASETS) {
+        while (dataPadding < MINIMUM_PADDING_BETWEEN_DATASETS) {
             // If it doesn't fit, shrink fonts
             for (Cubes c : cubes) {
                 c.decrementFonts();
@@ -108,44 +108,47 @@ public class CubeChart extends Chart {
         int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
 
         int numGutters = data.size() - 1;
-        int gutterPadding = minimumDataPadding * numGutters;
-        int availableWidth = canvasWithMargins.getWidth() - gutterPadding;
+        if (numGutters > 0) {
+            int gutterPadding = minimumDataPadding * numGutters;
+            int availableWidth = canvasWithMargins.getWidth() - gutterPadding;
 
-        int minColumnWidth = availableWidth / (maxColumns * data.size());
-        int widthOfThinSections = 0;
+            int minColumnWidth = availableWidth / (maxColumns * data.size());
+            int widthOfThinSections = 0;
 
-        int smallestCubeSize = Integer.MAX_VALUE;
+            int smallestCubeSize = Integer.MAX_VALUE;
 
-        for (Cubes c : cubes) {
-            // Iterate to a correct value; to start off with, set a column width
-            c.setCubeSize(minColumnWidth);
+            for (Cubes c : cubes) {
+                // Iterate to a correct value; to start off with, set a column width
+                c.setCubeSize(minColumnWidth);
 
-            // Estimate the likely width of a column, assuming evenly spaced sections
-            if (c.getActualHorizontalSize() > c.getColumnCount() * minColumnWidth) {
-                widthOfThinSections += c.getMinimumHorizontalSize();
-                int cubeSizeForThisSection = c.getMinimumHorizontalSize() / c.getColumnCount();
+                // Estimate the likely width of a column, assuming evenly spaced sections
+                if (c.getActualHorizontalSize() > c.getColumnCount() * minColumnWidth) {
+                    widthOfThinSections += c.getMinimumHorizontalSize();
+                    int cubeSizeForThisSection = c.getMinimumHorizontalSize() / c.getColumnCount();
 
-                smallestCubeSize = Math.min(smallestCubeSize, cubeSizeForThisSection);
-            } else {
-                totalColumnsContributingToWidth += c.getColumnCount();
+                    smallestCubeSize = Math.min(smallestCubeSize, cubeSizeForThisSection);
+                } else {
+                    totalColumnsContributingToWidth += c.getColumnCount();
+                }
             }
+
+            int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
+                    ? (availableWidth - widthOfThinSections) / totalColumnsContributingToWidth
+                    :smallestCubeSize;
+            // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
+
+            int actualOccupiedArea = 0;
+
+            // Work out how much space is used, so we can space the sections evenly
+            for (Cubes c : cubes) {
+                c.setCubeSize(cubeWithPaddingSize);
+                int width = c.getActualHorizontalSize();
+                actualOccupiedArea += width;
+            }
+
+            return (canvasWithMargins.getWidth() - actualOccupiedArea) / numGutters;
         }
-
-        int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
-                ? (availableWidth - widthOfThinSections) / totalColumnsContributingToWidth
-                :smallestCubeSize;
-        // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
-
-        int actualOccupiedArea = 0;
-
-        // Work out how much space is used, so we can space the sections evenly
-        for (Cubes c : cubes) {
-            c.setCubeSize(cubeWithPaddingSize);
-            int width = c.getActualHorizontalSize();
-            actualOccupiedArea += width;
-        }
-
-        return (canvasWithMargins.getWidth() - actualOccupiedArea) / numGutters;
+        return MINIMUM_PADDING_BETWEEN_DATASETS;
     }
 
     @Override
