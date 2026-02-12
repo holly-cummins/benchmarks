@@ -1,9 +1,11 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Workflow for deploying static content to GitHub Pages
+name: Build and deploy to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
+  workflow_run:
+    workflows: [ "Generate graphics" ]
+    types:
+      - completed
     branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -22,21 +24,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  # Build job
+  assemble:
+    name: Publish all images
+    if: github.repository == 'quarkusio/benchmarks'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        # At some point, the directory size will exceed the 1GB official limit and 10GB unofficial limit, and we will have to be more selective about what's included
+        # (the graphics generator workflow might be where we want to do the discrimination)
+        with:
+          path: ./images/
+
+  # Deploy job
   deploy:
+    # Add a dependency to the build job
+    needs: assemble
+
+    # Deploy to the github-pages environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'foobar'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
