@@ -1,21 +1,22 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.time.Instant;
 import java.time.ZoneOffset;
-
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.FrameworkBuild;
 import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Timing;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class FinePrintTest extends ElasticElementTest {
+
+    private static final String TEXT_TAG = "\\s*</text\\s*><text[^>]*>";
 
     @Test
     public void quarkusVersionIsPresent() {
@@ -25,7 +26,7 @@ class FinePrintTest extends ElasticElementTest {
 
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("3.28.3"), s);
+        assertSvgContainsText("3.28.3", s);
     }
 
     @Test
@@ -36,7 +37,7 @@ class FinePrintTest extends ElasticElementTest {
 
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("Quarkus: 3.28.3"), s);
+        assertSvgContainsText("Quarkus: 3.28.3", s);
     }
 
     @Test
@@ -47,8 +48,9 @@ class FinePrintTest extends ElasticElementTest {
 
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("Spring: 3.10.3"), s);
+        assertSvgContainsText("Spring: 3.10.3", s);
     }
+
 
     @Test
     public void qualifiedSpringVersionIsLabelledForSpring3() {
@@ -57,7 +59,7 @@ class FinePrintTest extends ElasticElementTest {
         when(config.springboot3()).thenReturn(new FrameworkBuild("", "3.10.3"));
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("Spring: 3.10.3"), s);
+        assertSvgContainsText("Spring: 3.10.3", s);
 
     }
 
@@ -68,7 +70,7 @@ class FinePrintTest extends ElasticElementTest {
         when(config.springboot4()).thenReturn(new FrameworkBuild("", "4.10.3"));
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("Spring: 4.10.3"), s);
+        assertSvgContainsText("Spring: 4.10.3", s);
     }
 
     @Test
@@ -79,65 +81,70 @@ class FinePrintTest extends ElasticElementTest {
         when(config.springboot4()).thenReturn(new FrameworkBuild("", "4.10.3"));
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
-        assertTrue(s.contains("Spring 3: 3.10.3"), s);
-        assertTrue(s.contains("Spring 4: 4.10.3"), s);
+        assertSvgContainsText("Spring 3: 3.10.3", s);
+        assertSvgContainsText("Spring 4: 4.10.3", s);
 
     }
 
     @Test
     void scenarioIncluded() {
-      var config = mock(Config.class);
-      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        var config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
 
-      var finePrint = new FinePrint(new BenchmarkData(null, null, config));
-      var s = drawSvg(finePrint);
+        var finePrint = new FinePrint(new BenchmarkData(null, null, config));
+        var s = drawSvg(finePrint);
 
-      assertTrue(s.contains("Scenario: ootb"));
+        assertSvgContainsText("Scenario: ootb", s);
     }
 
     @Test
     void commitIncluded() {
-      var config = mock(Config.class);
-      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        var config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
 
-      var finePrint = new FinePrint(new BenchmarkData(null, null, config));
-      var s = drawSvg(finePrint);
+        var finePrint = new FinePrint(new BenchmarkData(null, null, config));
+        var s = drawSvg(finePrint);
 
-      assertTrue(s.contains("Commit: 1234"));
+        assertSvgContainsText("Commit: 1234", s);
     }
 
     @Test
     void derivedShortCommitIncluded() {
-      var config = mock(Config.class);
-      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655"));
+        var config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655"));
 
-      var finePrint = new FinePrint(new BenchmarkData(null, null, config));
-      var s = drawSvg(finePrint);
+        var finePrint = new FinePrint(new BenchmarkData(null, null, config));
+        var s = drawSvg(finePrint);
 
-      assertTrue(s.contains("Commit: 1234569871"));
+        assertSvgContainsText("Commit: 1234569871", s);
     }
 
     @Test
     void shortCommitIncluded() {
-      var config = mock(Config.class);
-      when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655", "1234"));
+        var config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "12345698712665655", "1234"));
 
-      var finePrint = new FinePrint(new BenchmarkData(null, null, config));
-      var s = drawSvg(finePrint);
+        var finePrint = new FinePrint(new BenchmarkData(null, null, config));
+        var s = drawSvg(finePrint);
 
-      assertTrue(s.contains("Commit: 1234"));
+        assertSvgContainsText("Commit: 1234", s);
     }
 
     @Test
     void benchmarkDateIncluded() {
-      var timing = mock(Timing.class);
-      var config = mock(Config.class);
-      var now = Instant.now();
-      when(timing.stop()).thenReturn(now);
+        var timing = mock(Timing.class);
+        var config = mock(Config.class);
+        var now = Instant.now();
+        when(timing.stop()).thenReturn(now);
 
-      var finePrint = new FinePrint(new BenchmarkData(timing, null, config));
-      var s = drawSvg(finePrint);
+        var finePrint = new FinePrint(new BenchmarkData(timing, null, config));
+        var s = drawSvg(finePrint);
 
-      assertTrue(s.contains("Execution date: " + now.atZone(ZoneOffset.UTC).format(FinePrint.DATE_TIME_FORMATTER)));
+        assertSvgContainsText("Execution date: " + now.atZone(ZoneOffset.UTC).format(FinePrint.DATE_TIME_FORMATTER), s);
     }
+
+    private static void assertSvgContainsText(String text, String svg) {
+        assertTrue(svg.matches("(?s).*" + text.replace(": ", ": " + TEXT_TAG) + "(?s).*"), svg);
+    }
+
 }
