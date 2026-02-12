@@ -9,12 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.quarkus.infra.performance.graphics.Theme;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-
-import io.quarkus.infra.performance.graphics.Theme;
 
 public class Sizer {
     // The g.getGraphics().getFontMetrics().getHeight() number is 39-40% bigger than the notional font size; use it to estimate what font size we might need to set
@@ -31,8 +30,9 @@ public class Sizer {
 
         g = new SVGGraphics2D(doc);
     }
+
     private static final Map<Integer, Font> fonts = new HashMap<>();
-    private static final Map<Integer, Font> boldFonts = new HashMap<>();;
+    private static final Map<Integer, Font> boldFonts = new HashMap<>();
 
     private static String longestString(Collection<String> strings) {
         return strings.stream()
@@ -58,12 +58,16 @@ public class Sizer {
 
     private static int calculateWidthNoLineBreaks(String longest, int fontSize, int fontStyle) {
         Font font = getFont(fontSize, fontStyle);
+        return calculateWidth(longest, font);
+    }
+
+    public static int calculateWidth(String longest, Font font) {
         FontMetrics fm = g.getFontMetrics(font);
         return fm.stringWidth(longest);
     }
 
     private static Font getFont(int fontSize, int fontStyle) {
-        if (fontStyle == Font.BOLD) {
+        if (fontStyle==Font.BOLD) {
             return boldFonts.computeIfAbsent(fontSize, s -> new Font(Theme.FONT.getName(), Font.BOLD, s));
         } else {
             return fonts.computeIfAbsent(fontSize, s -> new Font(Theme.FONT.getName(), Font.PLAIN, s));

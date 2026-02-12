@@ -27,6 +27,7 @@ public class Cubes implements ElasticElement {
         frameworkLabel = new Label(d.framework().getExpandedName())
                 .setHorizontalAlignment(Alignment.CENTER)
                 .setVerticalAlignment(VAlignment.TOP)
+                .setStyles(new int[]{Font.BOLD, Font.PLAIN})
                 .setTargetHeight(LABEL_HEIGHT);
         valueLabel = new Label(String.format("%d %s", Math.round(val), d.value().getUnits()))
                 .setHorizontalAlignment(Alignment.CENTER)

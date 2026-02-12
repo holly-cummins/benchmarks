@@ -15,12 +15,13 @@ public class Label {
     private final String[] strings;
     private int targetHeight = 24; // Arbitrary default
     private final double lineSpacing = 1;
-    private int style = Font.PLAIN;
+    private int[] styles = new int[]{Font.PLAIN};
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
     private int lineHeight;
     private FontMetrics fontMetrics;
-    private Font font;
+    private Font baseFont;
+    private Font[] fonts;
 
     /**
      * @param text Use \n for multiline text
@@ -41,12 +42,12 @@ public class Label {
 
     public void draw(Subcanvas g, int x, int y) {
 
-        g.getGraphics().setFont(font);
+        g.getGraphics().setFont(baseFont);
 
         // The SVG attribute alignment-baseline="middle" is not supported by Batik.
         // The value we pass in to drawString is the position of the bottom baseline
 
-        // Four variables describe the height of a font: leading (pronounced like the metal), ascent, descent, and height. Leading is the amount of space required between lines of the same font. Ascent is the space above the baseline required by the tallest character in the font. Descent is the space required below the baseline by the lowest descender (the "tail" of a character like "y"). Height is the total of the three: ascent, baseline, and descent. 
+        // Four variables describe the height of a font: leading (pronounced like the metal), ascent, descent, and height. Leading is the amount of space required between lines of the same font. Ascent is the space above the baseline required by the tallest character in the font. Descent is the space required below the baseline by the lowest descender (the "tail" of a character like "y"). Height is the total of the three: ascent, baseline, and descent.
 
         // Should be the same as the targetHeight, but recalculate in case of rounding errors
         fontMetrics = g.getGraphics().getFontMetrics();
@@ -60,16 +61,24 @@ public class Label {
             case MIDDLE -> y - textBlockHeight / 2 + getAscent();
         };
 
-        for (String string : strings) {
-            int width = fontMetrics.stringWidth(string);
+        for (int i = 0; i < strings.length; i++) {
+            Font font = fonts[i % fonts.length];
+            g.getGraphics().setFont(font);
+            FontMetrics metrics = g.getGraphics().getFontMetrics(font);
+
+            String string = strings[i];
+            // String bounds is a bit more accurate than getWidth() for alignment
+            int width = (int) Math.round(metrics.getStringBounds(string, g.getGraphics()).getWidth());
+
             int alignedX = switch (alignment) {
                 case LEFT -> x;
                 case RIGHT -> x - width;
                 case CENTER -> x - width / 2;
             };
             g.drawString(string, alignedX, yPosition);
-            yPosition += lineHeight;
+            yPosition += metrics.getHeight() * lineSpacing; // Recalculate the line height in case the style affected the height slighly
         }
+
 
     }
 
@@ -80,10 +89,16 @@ public class Label {
     // We will need to have a labelGroup abstraction to keep sizes consistent, and perhaps also set a maximum width
     public Label setTargetHeight(int height) {
         this.targetHeight = height;
-        int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing)))
-                : Sizer.calculateFontSize(targetHeight);
-        font = new Font(Theme.FONT.getName(), style, size);
+        int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing))):Sizer.calculateFontSize(targetHeight);
+        baseFont = new Font(Theme.FONT.getName(), styles[0], size);
+        initialiseFonts();
         return this;
+    }
+
+    private void initialiseFonts() {
+        fonts = Arrays.stream(styles)
+                .mapToObj(s -> new Font(Theme.FONT.getName(), s, baseFont.getSize()))
+                .toArray(Font[]::new);
     }
 
     public int getTargetHeight() {
@@ -99,7 +114,18 @@ public class Label {
      * Should be one of the constants declared in #Font or their combination
      */
     public Label setStyle(int style) {
-        this.style = style;
+        setStyles(new int[]{style});
+        return this;
+    }
+
+    /**
+     * Should be one of the constants declared in #Font or their combination
+     * The different styles are applied to different parts of the text, with the default delimiter being \n
+     */
+    public Label setStyles(int[] styles) {
+        this.styles = styles;
+        initialiseFonts();
+
         return this;
     }
 
@@ -113,11 +139,10 @@ public class Label {
     }
 
     public int calculateWidth(String s) {
-
-        if (fontMetrics != null) {
+        if (fontMetrics!=null) {
             return fontMetrics.stringWidth(s);
         } else {
-            return Sizer.calculateWidth(s, font.getSize());
+            return Sizer.calculateWidth(s, baseFont.getSize());
         }
     }
 
@@ -126,7 +151,12 @@ public class Label {
     }
 
     public int calculateWidth() {
-        return calculateWidth(getLongestText());
+        String longestText = getLongestText();
+        int index = Arrays.asList(strings).indexOf(longestText);
+        Font font = fonts[index % fonts.length];
+
+
+        return Sizer.calculateWidth(longestText, font);
     }
 
     private String getLongestText() {

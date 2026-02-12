@@ -37,10 +37,10 @@ public class Bar implements ElasticElement {
         frameworkLabel = new Label(frameworkLabelText)
                 .setHorizontalAlignment(Alignment.RIGHT)
                 .setVerticalAlignment(VAlignment.MIDDLE)
+                .setStyles(new int[]{Font.BOLD, Font.PLAIN})
                 .setTargetHeight(BAR_THICKNESS);
         valueLabelText = String.format("%d %s", round(val), d.value().getUnits());
-        valueLabel = new Label(valueLabelText).setStyle(Font.BOLD)
-                .setTargetHeight(VALUE_LABEL_HEIGHT);
+        valueLabel = new Label(valueLabelText).setStyle(Font.BOLD).setTargetHeight(VALUE_LABEL_HEIGHT);
 
         // This will probably be overridden, but set a value
         leftLabelWidth = Sizer.calculateWidth(frameworkLabelText, LEFT_LABEL_SIZE);
@@ -99,8 +99,7 @@ public class Bar implements ElasticElement {
         Subcanvas frameworkSubcanvas = new Subcanvas(barArea, leftLabelWidth, frameworkLabel.getTargetHeight(), 0, 0);
         frameworkLabel.draw(frameworkSubcanvas, leftLabelWidth, labelY);
         int xOffset = frameworkSubcanvas.getWidth() + labelPadding;
-        Subcanvas barSubcanvas = new Subcanvas(barArea, barArea.getWidth() - xOffset,
-                frameworkLabel.getTargetHeight(), xOffset, 0);
+        Subcanvas barSubcanvas = new Subcanvas(barArea, barArea.getWidth() - xOffset, frameworkLabel.getTargetHeight(), xOffset, 0);
 
         // If this framework isn't found, it will just be the text colour, which is fine
         barSubcanvas.setPaint(theme.chartElements().get(d.framework()));
@@ -109,8 +108,7 @@ public class Bar implements ElasticElement {
 
         barSubcanvas.setPaint(theme.text());
 
-        valueLabel.setTargetHeight(BAR_THICKNESS * 2 / 3).draw(barSubcanvas, length + labelPadding,
-                labelY);
+        valueLabel.setTargetHeight(BAR_THICKNESS * 2 / 3).draw(barSubcanvas, length + labelPadding, labelY);
     }
 
     public int getMaximumBarWidth(Subcanvas barArea) {
