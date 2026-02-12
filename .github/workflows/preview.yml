@@ -191,9 +191,13 @@ jobs:
         run: |
           HASH=${{ steps.hash.outputs.hash }}
           FILES="${{ steps.push.outputs.svgs_added }}"
-          FILES=$(echo "$FILES" | tr ',' '\n' | head -n4)
+          BAR_FILES=$(echo "$FILES" | tr ',' '\n' | grep -v "memory" | head -n2)
+          CUBE_FILES=$(echo "$FILES" | tr ',' '\n' | grep "memory" | head -n2)
           MD=""
-          for f in $FILES; do
+          for f in $BAR_FILES; do
+            MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
+          done
+          for f in $CUBE_FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
           done
           {
