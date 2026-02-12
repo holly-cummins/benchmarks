@@ -33,6 +33,9 @@ jobs:
       - uses: actions/checkout@v6
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Clone a 404 page # because this is a separate site, it shows the default GitHub 404
+        run: |
+          curl https://quarkus.io/404.html > images/404.html
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3
