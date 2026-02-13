@@ -20,7 +20,7 @@ public enum Group {
             QUARKUS3_JVM, SPRING4_JVM, QUARKUS3_NATIVE, SPRING4_NATIVE
     ), null),
 
-    AOT_COMPARISON(Set.of(JVM, AOT)),
+    AOT_COMPARISON(EnumSet.noneOf(Framework.class), Set.of(JVM, AOT), EnumSet.of(Category.VIRTUAL_THREADS)),
 
     JAVA_FRAMEWORKS_WITH_COMPATIBILITY(EnumSet.of(JVM, COMPATIBILITY)),
 
@@ -28,10 +28,10 @@ public enum Group {
             Category.QUARKUS
     )),
 
-    VIRTUAL_THREADS(EnumSet.of(
+    VIRTUAL_THREADS(EnumSet.noneOf(Framework.class), EnumSet.of(
             Category.VIRTUAL_THREADS,
             JVM
-    )),
+    ), EnumSet.of(Category.AOT)),
 
     JAVA_AND_NATIVE_FRAMEWORKS(EnumSet.noneOf(Framework.class), EnumSet.of(
             JVM, NATIVE
