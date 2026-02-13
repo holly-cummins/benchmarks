@@ -2,6 +2,8 @@
 
 This repository hosts results and generated graphics of benchmark executions from the Quarkus performance lab, along with the graphics code for generating charts.
 
+Images from this repository have https://quarkus.io/benchmarks urls. To construct a URL, use the path of the image relative to the `images` subdirectory. For example, http://quarkus.io/benchmarks/spring-quarkus-perf-comparison/tuned/results-latest-tuned-throughput-for-main-comparison-light.svg.
+
 ## To generate your own charts 
 
 Assuming you have a file called `myfile.json` in the expected data format, you can run:
