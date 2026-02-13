@@ -48,6 +48,10 @@ public class Subcanvas {
         g.setPaint(color);
     }
 
+    public void fill() {
+        fillRect(0, 0, getWidth(), getHeight());
+    }
+
     public void fillRect(int x, int y, int width, int height) {
         g.fillRect(x + xOffset, y + yOffset, width, height);
     }
@@ -86,7 +90,7 @@ public class Subcanvas {
     public void debugBorders() {
         Color originalColor = g.getColor();
         g.setPaint(nextColor());
-        fillRect(0, 0, width, height);
+        fill();
         g.setPaint(originalColor);
     }
 

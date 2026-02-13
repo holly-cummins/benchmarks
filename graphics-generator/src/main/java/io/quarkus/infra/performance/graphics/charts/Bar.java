@@ -92,7 +92,7 @@ public class Bar implements ElasticElement {
     public void draw(Subcanvas barArea, Theme theme) {
         double val = d.value().getValue();
         // Vertically align text with the centre of the bars
-        int labelY = BAR_THICKNESS / 2;
+        int labelY = barArea.getHeight() / 2;
 
         barArea.setPaint(theme.text());
 
@@ -104,7 +104,8 @@ public class Bar implements ElasticElement {
         // If this framework isn't found, it will just be the text colour, which is fine
         barSubcanvas.setPaint(theme.chartElements().get(d.framework()));
         int length = (int) (val * scale);
-        barSubcanvas.fillRect(0, 0, length, BAR_THICKNESS);
+        int y = (barArea.getHeight() - BAR_THICKNESS) / 2;
+        barSubcanvas.fillRect(0, y, length, BAR_THICKNESS);
 
         barSubcanvas.setPaint(theme.text());
 

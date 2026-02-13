@@ -17,15 +17,16 @@ import static io.quarkus.infra.performance.graphics.model.Category.NATIVE;
 import static io.quarkus.infra.performance.graphics.model.Category.OLD;
 import static io.quarkus.infra.performance.graphics.model.Category.QUARKUS;
 import static io.quarkus.infra.performance.graphics.model.Category.SPRING;
+import static io.quarkus.infra.performance.graphics.model.Category.VANILLA_JIT;
 import static io.quarkus.infra.performance.graphics.model.Category.VIRTUAL_THREADS;
 
 
 public enum Framework {
     // The order of these determines the natural order in the charts
-    QUARKUS3_JVM("quarkus3-jvm", "Quarkus\nJIT (via OpenJDK)", EnumSet.of(QUARKUS, JVM)),
-    SPRING4_JVM("spring4-jvm", "Spring 4\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM)),
-    SPRING_JVM("spring-jvm", "Spring\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM)),
-    SPRING3_JVM("spring3-jvm", "Spring 3\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM, OLD)),
+    QUARKUS3_JVM("quarkus3-jvm", "Quarkus\nJIT (via OpenJDK)", EnumSet.of(QUARKUS, JVM, VANILLA_JIT)),
+    SPRING4_JVM("spring4-jvm", "Spring 4\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM, VANILLA_JIT)),
+    SPRING_JVM("spring-jvm", "Spring\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM, VANILLA_JIT)),
+    SPRING3_JVM("spring3-jvm", "Spring 3\nJIT (via OpenJDK)", EnumSet.of(SPRING, JVM, OLD, VANILLA_JIT)),
     SPRING4_JVM_AOT("spring4-jvm-aot", "Spring 4\nAOT (via OpenJDK)", EnumSet.of(SPRING, JVM, AOT)),
     SPRING_JVM_AOT("spring-jvm-aot", "Spring\nAOT (via OpenJDK)", EnumSet.of(SPRING, JVM, AOT)),
     SPRING3_JVM_AOT("spring3-jvm-aot", "Spring 3\nAOT (via OpenJDK)", EnumSet.of(SPRING, JVM, AOT, OLD)),
@@ -78,5 +79,9 @@ public enum Framework {
 
     public boolean hasCategory(Category category) {
         return categories.contains(category);
+    }
+
+    public Category getPartitionableCategory() {
+        return categories.stream().filter(c -> c.isPartitionable()).findFirst().orElse(null);
     }
 }
