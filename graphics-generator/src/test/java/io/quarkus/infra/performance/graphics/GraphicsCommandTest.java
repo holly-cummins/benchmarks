@@ -1,8 +1,5 @@
 package io.quarkus.infra.performance.graphics;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,15 +10,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 
+import io.quarkus.test.junit.main.Launch;
+import io.quarkus.test.junit.main.LaunchResult;
+import io.quarkus.test.junit.main.QuarkusMainLauncher;
+import io.quarkus.test.junit.main.QuarkusMainTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.main.Launch;
-import io.quarkus.test.junit.main.LaunchResult;
-import io.quarkus.test.junit.main.QuarkusMainLauncher;
-import io.quarkus.test.junit.main.QuarkusMainTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusMainTest
 public class GraphicsCommandTest {
@@ -68,27 +67,26 @@ public class GraphicsCommandTest {
     }
 
     private static void deleteDir(Path dir) throws IOException {
-      if (Files.isDirectory(dir)) {
-          Files.walk(dir)
-            .sorted(Comparator.reverseOrder())
-            .forEach(path -> {
-            try {
-              Files.delete(path);
-            }
-            catch (IOException e) {
-              // Eat it and move on
-            }
-          });
+        if (Files.isDirectory(dir)) {
+            Files.walk(dir)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(path -> {
+                        try {
+                            Files.delete(path);
+                        } catch (IOException e) {
+                            // Eat it and move on
+                        }
+                    });
         }
     }
 
     private static void deleteSvgFiles(Path targetDir) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-light.svg")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-for-all-light.svg")) {
             for (Path file : stream) {
                 Files.deleteIfExists(file);
             }
         }
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-dark.svg")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(targetDir, "*-for-all-dark.svg")) {
             for (Path file : stream) {
                 Files.deleteIfExists(file);
             }
@@ -109,75 +107,83 @@ public class GraphicsCommandTest {
     }
 
     @Test
-    @Launch({ "src/test/resources/data.json", "target/test-output/filename" })
+    @Launch({"src/test/resources/data.json", "target/test-output/filename"})
     public void testLaunchWithFilename(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-for-all-light.svg");
         assertTrue(image.exists());
+
+        // Check groups
+        image = new File("target/test-output/filename/data-tuned-throughput-for-quarkus-dark.svg");
+        assertTrue(image.exists());
+
+        image = new File("target/test-output/filename/data-tuned-throughput-for-main-comparison-light.svg");
+        assertTrue(image.exists());
+
     }
 
     @Test
-    @Launch({ "tempfile.json", "target/test-output/filename" })
+    @Launch({"tempfile.json", "target/test-output/filename"})
     public void testLaunchWithUnqualifiedFilename(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("tempfile.json"), output);
 
-        File image = new File("target/test-output/filename/tempfile-tuned-throughput-light.svg");
+        File image = new File("target/test-output/filename/tempfile-tuned-throughput-for-all-light.svg");
         assertTrue(image.exists());
     }
 
     @Test
-    @Launch({ "../graphics-generator/src/test/resources/data.json", "target/test-output/filename" })
+    @Launch({"../graphics-generator/src/test/resources/data.json", "target/test-output/filename"})
     public void testLaunchWithRelativeInputFilename(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-for-all-light.svg");
         assertTrue(image.exists());
     }
 
     @Test
-    @Launch({ "tempfile.json", "../graphics/generator/target/test-output/filename" })
+    @Launch({"tempfile.json", "../graphics/generator/target/test-output/filename"})
     public void testLaunchWithRelativeOutputPath(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("tempfile.json"), output);
 
-        File image = new File("target/test-output/filename/data-tuned-throughput-light.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-for-all-light.svg");
         assertTrue(image.exists());
 
         // Check parentheseses are stripped
-        image = new File("target/test-output/filename/data-tuned-memory-rss-dark.svg");
+        image = new File("target/test-output/filename/data-tuned-memory-rss-for-all-dark.svg");
         assertTrue(image.exists());
     }
 
     @Test
-    @Launch({ "src/test/resources", "target/test-output/directory" })
+    @Launch({"src/test/resources", "target/test-output/directory"})
     public void testLaunchWithDirectory(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
         assertTrue(output.contains("eight-framework.json"), output);
 
         File dir = new File("target/test-output/directory/");
-        File image1 = new File(dir, "data-tuned-throughput-light.svg");
+        File image1 = new File(dir, "data-tuned-throughput-for-all-light.svg");
         assertTrue(image1.exists());
-        File image2 = new File(dir, "eight-framework-tuned-throughput-light.svg");
+        File image2 = new File(dir, "eight-framework-tuned-throughput-for-all-light.svg");
         assertTrue(image2.exists());
 
         File nestedDir = new File("target/test-output/directory/nested/more-nested");
         assertTrue(nestedDir.exists());
-        File image3 = new File(nestedDir, "data3-ootb-throughput-light.svg");
+        File image3 = new File(nestedDir, "data3-ootb-throughput-for-all-light.svg");
         assertTrue(image3.exists());
     }
 
     @Test
-    @Launch({ "src/test/resources/data.json", "target/test-output/filename" })
+    @Launch({"src/test/resources/data.json", "target/test-output/filename"})
     public void testDarkMode(LaunchResult result) {
         String output = result.getOutput();
         assertTrue(output.contains("data.json"), output);
 
-        File image = new File("target/test-output/filename/data-tuned-throughput-dark.svg");
+        File image = new File("target/test-output/filename/data-tuned-throughput-for-all-dark.svg");
         assertTrue(image.exists());
     }
 

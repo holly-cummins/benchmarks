@@ -6,10 +6,14 @@ import java.time.ZoneOffset;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.FrameworkBuild;
+import io.quarkus.infra.performance.graphics.model.GraalVM;
+import io.quarkus.infra.performance.graphics.model.Group;
+import io.quarkus.infra.performance.graphics.model.Jvm;
 import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Timing;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,6 +42,18 @@ class FinePrintTest extends ElasticElementTest {
         FinePrint p = new FinePrint(new BenchmarkData(null, null, config));
         String s = drawSvg(p);
         assertSvgContainsText("Quarkus: 3.28.3", s);
+    }
+
+    @Test
+    public void springVersionIsNotPresentForQuarkusOnlyRun() {
+        Config config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        Group group = Group.QUARKUS;
+        when(config.springboot()).thenReturn(new FrameworkBuild("", "3.10.3"));
+
+        FinePrint p = new FinePrint(new BenchmarkData(null, null, config, group));
+        String s = drawSvg(p);
+        assertFalse(s.contains("Spring"), s);
     }
 
     @Test
@@ -84,6 +100,46 @@ class FinePrintTest extends ElasticElementTest {
         assertSvgContainsText("Spring 3: 3.10.3", s);
         assertSvgContainsText("Spring 4: 4.10.3", s);
 
+    }
+
+    @Test
+    public void springVersionsDoNotHaveDistinctLabelsWhenGroupNarrowsItDown() {
+        Config config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        when(config.springboot3()).thenReturn(new FrameworkBuild("", "3.10.3"));
+        when(config.springboot4()).thenReturn(new FrameworkBuild("", "4.10.3"));
+        FinePrint p = new FinePrint(new BenchmarkData(null, null, config, Group.MAIN_COMPARISON));
+        String s = drawSvg(p);
+        assertSvgDoesNotContainText("Spring 3: 3.10.3", s);
+        assertSvgDoesNotContainText("Spring 4: 4.10.3", s);
+        assertSvgContainsText("Spring: 4.10.3", s);
+
+    }
+
+    @Test
+    public void graalvmVersionIsPresent() {
+        Config config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        Group group = Group.QUARKUS;
+        GraalVM graal = new GraalVM("6.10.3");
+        when(config.jvm()).thenReturn(new Jvm(null, null, graal, null));
+
+        FinePrint p = new FinePrint(new BenchmarkData(null, null, config, group));
+        String s = drawSvg(p);
+        assertSvgContainsText("GraalVM: 6.10.3", s);
+    }
+
+    @Test
+    public void graalvmVersionIsNotPresentForJVMOnlyRun() {
+        Config config = mock(Config.class);
+        when(config.repo()).thenReturn(new Repo("main", "somerepo", "ootb", "1234"));
+        Group group = Group.VIRTUAL_THREADS;
+        GraalVM graal = new GraalVM("6.10.3");
+        when(config.jvm()).thenReturn(new Jvm(null, null, graal, null));
+
+        FinePrint p = new FinePrint(new BenchmarkData(null, null, config, group));
+        String s = drawSvg(p);
+        assertSvgDoesNotContainText("GraalVM: 6.10.3", s);
     }
 
     @Test
@@ -145,6 +201,10 @@ class FinePrintTest extends ElasticElementTest {
 
     private static void assertSvgContainsText(String text, String svg) {
         assertTrue(svg.matches("(?s).*" + text.replace(": ", ": " + TEXT_TAG) + "(?s).*"), svg);
+    }
+
+    private static void assertSvgDoesNotContainText(String text, String svg) {
+        assertFalse(svg.matches("(?s).*" + text.replace(": ", ": " + TEXT_TAG) + "(?s).*"), svg);
     }
 
 }
