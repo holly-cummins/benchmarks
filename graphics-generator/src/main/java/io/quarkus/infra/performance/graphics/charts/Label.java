@@ -10,12 +10,13 @@ import io.quarkus.infra.performance.graphics.VAlignment;
 
 public class Label {
 
+    public static final String LINE_BREAK = "\n";
     private static final int DEFAULT_TARGET_HEIGHT = 24;
 
     private final String[] strings;
     private int targetHeight = 24; // Arbitrary default
     private final double lineSpacing = 1;
-    private int[] styles = new int[]{Font.PLAIN};
+    private DelimitedStyles styles = new DelimitedStyles(new int[]{Font.PLAIN}, LINE_BREAK);
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
     private int lineHeight;
@@ -27,7 +28,7 @@ public class Label {
      * @param text Use \n for multiline text
      */
     public Label(String text) {
-        this(text.split("\n"));
+        this(text.split(LINE_BREAK));
 
     }
 
@@ -62,11 +63,13 @@ public class Label {
         };
 
         for (int i = 0; i < strings.length; i++) {
-            Font font = fonts[i % fonts.length];
-            g.getGraphics().setFont(font);
-            FontMetrics metrics = g.getGraphics().getFontMetrics(font);
 
             String string = strings[i];
+            // Set a base font for the line height
+            Font font = fonts[i % fonts.length];
+            g.setFont(font);
+            FontMetrics metrics = g.getFontMetrics(font);
+
             // String bounds is a bit more accurate than getWidth() for alignment
             int width = (int) Math.round(metrics.getStringBounds(string, g.getGraphics()).getWidth());
 
@@ -75,8 +78,31 @@ public class Label {
                 case RIGHT -> x - width;
                 case CENTER -> x - width / 2;
             };
-            g.drawString(string, alignedX, yPosition);
+
+            // Now we may need to split further; if the delimiter was a line-break, this will be a no-op
+            String[] segments = string.split(styles.delimiter());
+            int segmentX = alignedX;
+
+            for (int j = 0; j < segments.length; j++) {
+                // Chaos; which index we use depends on the delimiter
+                int index = (LINE_BREAK.equals(styles.delimiter())) ? i:j;
+                font = fonts[index % fonts.length];
+                g.getGraphics().setFont(font);
+                metrics = g.getGraphics().getFontMetrics(font);
+
+                String segment = segments[j];
+                // Add back the delimiter, except at the end
+                if (j < segments.length - 1) {
+                    segment += styles.delimiter();
+                }
+                // String bounds is a bit more accurate than getWidth() for alignment
+                int segmentWidth = (int) Math.round(metrics.getStringBounds(segment, g.getGraphics()).getWidth());
+
+                g.drawString(segment, segmentX, yPosition);
+                segmentX += segmentWidth;
+            }
             yPosition += metrics.getHeight() * lineSpacing; // Recalculate the line height in case the style affected the height slighly
+
         }
 
 
@@ -90,13 +116,13 @@ public class Label {
     public Label setTargetHeight(int height) {
         this.targetHeight = height;
         int size = strings.length > 1 ? Sizer.calculateFontSize((int) (targetHeight / (strings.length * lineSpacing))):Sizer.calculateFontSize(targetHeight);
-        baseFont = new Font(Theme.FONT.getName(), styles[0], size);
+        baseFont = new Font(Theme.FONT.getName(), styles.styles()[0], size);
         initialiseFonts();
         return this;
     }
 
     private void initialiseFonts() {
-        fonts = Arrays.stream(styles)
+        fonts = Arrays.stream(styles.styles())
                 .mapToObj(s -> new Font(Theme.FONT.getName(), s, baseFont.getSize()))
                 .toArray(Font[]::new);
     }
@@ -114,8 +140,7 @@ public class Label {
      * Should be one of the constants declared in #Font or their combination
      */
     public Label setStyle(int style) {
-        setStyles(new int[]{style});
-        return this;
+        return setStyles(new int[]{style});
     }
 
     /**
@@ -123,7 +148,17 @@ public class Label {
      * The different styles are applied to different parts of the text, with the default delimiter being \n
      */
     public Label setStyles(int[] styles) {
-        this.styles = styles;
+        return setStyles(styles, LINE_BREAK);
+    }
+
+
+    /*
+     *    Note that if a style delimiter is set (other than a line break), line breaks will no longer be style delimiters.
+     */
+    public Label setStyles(int[] styles, String newDelimiter) {
+
+        this.styles = new DelimitedStyles(styles, newDelimiter);
+
         initialiseFonts();
 
         return this;
@@ -139,7 +174,7 @@ public class Label {
     }
 
     public int calculateWidth(String s) {
-        if (fontMetrics!=null) {
+        if (fontMetrics != null) {
             return fontMetrics.stringWidth(s);
         } else {
             return Sizer.calculateWidth(s, baseFont.getSize());
@@ -167,4 +202,8 @@ public class Label {
     public String toString() {
         return "Label[" + getLongestText() + "]";
     }
+
+    private record DelimitedStyles(int[] styles, String delimiter) {
+    }
+
 }

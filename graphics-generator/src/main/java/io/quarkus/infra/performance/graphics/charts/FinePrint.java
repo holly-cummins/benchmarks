@@ -1,7 +1,6 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
-
+import java.awt.Font;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,6 +15,8 @@ import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Timing;
+
+import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
 
 public class FinePrint implements ElasticElement {
     static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -94,23 +95,23 @@ public class FinePrint implements ElasticElement {
             // Use a few spaces to leave room for a logo
 
             if (hasScenario(metadata.repo())) {
-              rightColumn.add("Scenario: " + metadata.repo().scenario() + "   ");
+                rightColumn.add("Scenario: " + metadata.repo().scenario() + "   ");
             }
 
             if (hasBranch(metadata.repo())) {
-              rightColumn.add("Branch: " + metadata.repo().branch());
+                rightColumn.add("Branch: " + metadata.repo().branch());
             }
 
             if (hasCommit(metadata.repo())) {
-              rightColumn.add("Commit: " + metadata.repo().shortCommit());
+                rightColumn.add("Commit: " + metadata.repo().shortCommit());
             }
         }
 
         // Add date/time
         Optional.ofNullable(this.timing)
-          .map(Timing::stop)
-          .map(stopTime -> stopTime.atZone(ZoneOffset.UTC).format(DATE_TIME_FORMATTER))
-          .ifPresent(stopTime -> rightColumn.add("Execution date: %s".formatted(stopTime)));
+                .map(Timing::stop)
+                .map(stopTime -> stopTime.atZone(ZoneOffset.UTC).format(DATE_TIME_FORMATTER))
+                .ifPresent(stopTime -> rightColumn.add("Execution date: %s".formatted(stopTime)));
 
         // Make sure font sizes are the same
         // TODO this can go away when we have label groups
@@ -119,23 +120,24 @@ public class FinePrint implements ElasticElement {
         adjustToSameRows(middleColumn, maxRows);
         adjustToSameRows(rightColumn, maxRows);
 
-        leftLabel = new Label(leftColumn.toArray(String[]::new))
-                .setHorizontalAlignment(Alignment.LEFT)
-                .setVerticalAlignment(VAlignment.TOP);
+        leftLabel = createLabel(leftColumn);
 
-        middleLabel = new Label(middleColumn.toArray(String[]::new))
-                .setHorizontalAlignment(Alignment.LEFT)
-                .setVerticalAlignment(VAlignment.TOP);
+        middleLabel = createLabel(middleColumn);
 
-        rightLabel = new Label(rightColumn.toArray(String[]::new))
+        rightLabel = createLabel(rightColumn);
+    }
+
+    private Label createLabel(List<String> column) {
+        return new Label(column.toArray(String[]::new))
                 .setHorizontalAlignment(Alignment.LEFT)
-                .setVerticalAlignment(VAlignment.TOP);
+                .setVerticalAlignment(VAlignment.TOP)
+                .setStyles(new int[]{Font.BOLD, Font.PLAIN}, ": ");
     }
 
     private static void adjustToSameRows(List<String> labels, int maxRows) {
-      while (labels.size() < maxRows) {
-        labels.add(" ");
-      }
+        while (labels.size() < maxRows) {
+            labels.add(" ");
+        }
     }
 
     @Override
@@ -191,15 +193,15 @@ public class FinePrint implements ElasticElement {
     }
 
     private static boolean hasCommit(Repo repo) {
-      return repo.shortCommit() != null;
+        return repo.shortCommit() != null;
     }
 
     private static boolean hasScenario(Repo repo) {
-      return repo.scenario() != null;
+        return repo.scenario() != null;
     }
 
     private static boolean hasBranch(Repo repo) {
-      return (repo.branch() != null) && !"main".equals(repo.branch());
+        return (repo.branch() != null) && ! "main".equals(repo.branch());
     }
 
     private static String getPath(Theme theme) {
