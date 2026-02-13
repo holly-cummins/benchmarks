@@ -170,10 +170,10 @@ jobs:
         run: |
           HASH=${{ steps.hash.outputs.hash }}
           FILES="${{ steps.push.outputs.svgs_changed }}"
-          BAR_FILES=$(echo "$FILES" | tr ',' '\n' | grep -v "memory" | head -n2)
-          CUBE_FILES=$(echo "$FILES" | tr ',' '\n' | grep "memory" | head -n2)
-          SUBSET_BAR_FILES=$(echo "$FILES" | tr ',' '\n' | grep -v "memory" | grep -v "main" | head -n2)
-          SUBSET_CUBE_FILES=$(echo "$FILES" | tr ',' '\n' | grep "memory" | grep -v "main" | head -n2)
+          BAR_FILES=$(echo "$FILES" | tr ',' '\n' | grep -v "memory" | | grep -v "main" | head -n2)
+          CUBE_FILES=$(echo "$FILES" | tr ',' '\n' | grep "memory" | | grep -v "main" | head -n2)
+          SUBSET_BAR_FILES=$(echo "$FILES" | tr ',' '\n' | grep -v "memory" | grep "main" | head -n2)
+          SUBSET_CUBE_FILES=$(echo "$FILES" | tr ',' '\n' | grep "memory" | grep "main" | head -n2)
           MD=""
            for f in $SUBSET_BAR_FILES; do
             MD="$MD  \n-![$f](../blob/$HASH/$f?raw=true)\n"
