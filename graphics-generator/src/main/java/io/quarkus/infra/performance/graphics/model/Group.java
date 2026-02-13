@@ -14,6 +14,10 @@ import static io.quarkus.infra.performance.graphics.model.Framework.QUARKUS3_NAT
 import static io.quarkus.infra.performance.graphics.model.Framework.SPRING4_JVM;
 import static io.quarkus.infra.performance.graphics.model.Framework.SPRING4_NATIVE;
 
+/**
+ * A group of franeworks for plotting.
+ * You can define a group by explicitly listing the frameworks in it, by listing frameworks (which can be empty) and also categories for inclusion (by OR), or frameworks, categories, and categories which should be excluded.
+ */
 public enum Group {
 
     MAIN_COMPARISON(EnumSet.of(

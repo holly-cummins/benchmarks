@@ -1,5 +1,6 @@
 package io.quarkus.infra.performance.graphics.charts;
 
+import java.awt.Font;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,11 +15,6 @@ import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.Repo;
 import io.quarkus.infra.performance.graphics.model.Timing;
-
-import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
-import java.awt.Font;
-
-import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
 
 import static io.quarkus.infra.performance.graphics.charts.Sizer.calculateWidth;
 import static io.quarkus.infra.performance.graphics.model.Category.JVM;

@@ -43,4 +43,12 @@ class FrameworkTest {
         assertFalse(Framework.SPRING3_JVM.isInGroup(Group.QUARKUS));
     }
 
+    @Test
+    void partitionableCategory() {
+        assertEquals(Framework.SPRING3_JVM.getPartitionableCategory(), Category.VANILLA_JIT);
+        assertEquals(Framework.SPRING3_NATIVE.getPartitionableCategory(), Category.NATIVE);
+        assertEquals(Framework.SPRING3_VIRTUAL.getPartitionableCategory(), Category.VIRTUAL_THREADS);
+        assertEquals(Framework.QUARKUS3_VIRTUAL.getPartitionableCategory(), Category.VIRTUAL_THREADS);
+    }
+
 }
