@@ -16,7 +16,7 @@ public abstract class Chart implements ElasticElement {
 
     protected final List<Datapoint> data;
     protected final Config metadata;
-    // For size calculations, the assumption is that these are stacked vertically
+    // Adding elements into this collection includes them in size calculations. For size calculations, the assumption is that these are stacked vertically
     protected final Set<ElasticElement> children;
     protected final Title title;
 

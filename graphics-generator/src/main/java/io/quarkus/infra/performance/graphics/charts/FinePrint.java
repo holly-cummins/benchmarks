@@ -30,11 +30,9 @@ public class FinePrint implements ElasticElement {
     private static final int MAXIMUM_FONT_SIZE = 30;
     private static final int MINIMUM_FONT_SIZE = 8;
 
-    private static final int PADDING = 60;
-    private static final int MINIMUM_PADDING = PADDING / 3;
-    private static final int MAXIMUM_PADDING = PADDING * 3;
-
-    private static final int TOP_PADDING = 30;
+    private static final int GUTTER = 60;
+    private static final int MINIMUM_PADDING = GUTTER / 3;
+    private static final int MAXIMUM_PADDING = GUTTER * 3;
 
     private final Config metadata;
     private final Timing timing;
@@ -132,7 +130,7 @@ public class FinePrint implements ElasticElement {
 
         // Make sure font sizes are the same
         // TODO this can go away when we have label groups
-        var maxRows = Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size()));
+        var maxRows = getHighestLineCount();
         adjustToSameRows(leftColumn, maxRows);
         adjustToSameRows(middleColumn, maxRows);
         adjustToSameRows(rightColumn, maxRows);
@@ -159,7 +157,8 @@ public class FinePrint implements ElasticElement {
 
     @Override
     public int getMaximumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MAXIMUM_FONT_SIZE;
+        // Allow one line's worth of padding at the top
+        return MAXIMUM_FONT_SIZE + getHighestLineCount() * MAXIMUM_FONT_SIZE;
     }
 
     @Override
@@ -169,7 +168,12 @@ public class FinePrint implements ElasticElement {
 
     @Override
     public int getMinimumVerticalSize() {
-        return TOP_PADDING + Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size())) * MINIMUM_FONT_SIZE;
+        // Allow one line's worth of padding at the top
+        return MINIMUM_FONT_SIZE + getHighestLineCount() * MINIMUM_FONT_SIZE;
+    }
+
+    private int getHighestLineCount() {
+        return Math.max(leftColumn.size(), Math.max(middleColumn.size(), rightColumn.size()));
     }
 
     @Override
@@ -178,21 +182,24 @@ public class FinePrint implements ElasticElement {
     }
 
     public void draw(Subcanvas g, Theme theme) {
-        g.setPaint(theme.background());
-        g.setPaint(theme.text());
+        int targetHeight = g.getHeight();
 
-        Subcanvas padded = new Subcanvas(g, g.getWidth(), g.getHeight() - TOP_PADDING, 0, TOP_PADDING);
+        int topPadding = calculateTopPadding(targetHeight);
+
+        Subcanvas padded = new Subcanvas(g, g.getWidth(), targetHeight - topPadding, 0, topPadding);
+
+        g.setPaint(theme.text());
 
         leftLabel.setTargetHeight(padded.getHeight());
         leftLabel.draw(padded);
 
         int leftLabelWidth = leftLabel.calculateWidth();
-        int middleLabelX = leftLabelWidth + PADDING;
+        int middleLabelX = leftLabelWidth + GUTTER;
         middleLabel.setTargetHeight(padded.getHeight());
         Subcanvas ml = new Subcanvas(padded, padded.getWidth() - middleLabelX, padded.getHeight(), middleLabelX, 0);
         middleLabel.draw(ml);
 
-        int rightLabelX = middleLabelX + middleLabel.calculateWidth() + PADDING;
+        int rightLabelX = middleLabelX + middleLabel.calculateWidth() + GUTTER;
         rightLabel.setTargetHeight(padded.getHeight());
         var rl = new Subcanvas(padded, padded.getWidth() - ml.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
@@ -207,6 +214,14 @@ public class FinePrint implements ElasticElement {
                     logoX,
                     logoY);
         }
+    }
+
+    private int calculateTopPadding(int targetHeight) {
+        // Add one and a bit line's worth of padding at the top, so it's proportional
+        double topPaddingInLines = 1.5;
+        double heightOfOneLine = targetHeight / (getHighestLineCount() + topPaddingInLines);
+        int topPadding = (int) (topPaddingInLines * heightOfOneLine);
+        return topPadding;
     }
 
     private static boolean hasCommit(Repo repo) {
@@ -234,5 +249,22 @@ public class FinePrint implements ElasticElement {
             return Collections.emptyList();
         }
         return List.of(svg);
+    }
+
+    public int getActualHorizontalSize(int targetHeight) {
+        int topPadding = calculateTopPadding(targetHeight);
+        int heightLessPadding = targetHeight - topPadding;
+
+        leftLabel.setTargetHeight(heightLessPadding);
+        int leftLabelWidth = leftLabel.calculateWidth();
+
+        middleLabel.setTargetHeight(heightLessPadding);
+        int middleLabelWidth = middleLabel.calculateWidth();
+
+        rightLabel.setTargetHeight(heightLessPadding);
+        int rightLabelWidth = rightLabel.calculateWidth();
+
+        return leftLabelWidth + middleLabelWidth + rightLabelWidth + 2 * GUTTER;
+
     }
 }

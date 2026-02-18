@@ -19,7 +19,6 @@ public class Label {
     private DelimitedStyles styles = new DelimitedStyles(new int[]{Font.PLAIN}, LINE_BREAK);
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
-    private int lineHeight;
     private FontMetrics fontMetrics;
     private Font baseFont;
     private Font[] fonts;
@@ -52,16 +51,16 @@ public class Label {
 
         // Should be the same as the targetHeight, but recalculate in case of rounding errors
         fontMetrics = g.getGraphics().getFontMetrics();
-        lineHeight = (int) (fontMetrics.getHeight() * lineSpacing);
+        int lineHeight = (int) (fontMetrics.getHeight() * lineSpacing);
         int textBlockHeight = lineHeight * strings.length;
 
         // Compute starting y to vertically center the text block
         int yPosition = switch (valignment) {
-            case TOP -> y + g.getGraphics().getFontMetrics().getAscent();
-            case BOTTOM -> y - getAscent();
-            case MIDDLE -> y - textBlockHeight / 2 + getAscent();
+            case TOP -> y + fontMetrics.getAscent();
+            case BOTTOM -> y;
+            case MIDDLE -> y - textBlockHeight / 2 + fontMetrics.getAscent();
         };
-
+        
         for (int i = 0; i < strings.length; i++) {
 
             String string = strings[i];
@@ -170,7 +169,11 @@ public class Label {
     }
 
     public int getLineHeight() {
-        return lineHeight;
+        if (fontMetrics != null) {
+            return fontMetrics.getHeight();
+        } else {
+            return baseFont.getSize();
+        }
     }
 
     public int calculateWidth(String s) {
@@ -179,6 +182,11 @@ public class Label {
         } else {
             return Sizer.calculateWidth(s, baseFont.getSize());
         }
+    }
+
+
+    public int getActualHeight() {
+        return (int) (strings.length * lineSpacing * getLineHeight());
     }
 
     public int getDescent() {

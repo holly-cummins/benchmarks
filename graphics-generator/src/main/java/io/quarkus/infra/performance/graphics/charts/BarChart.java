@@ -86,10 +86,6 @@ public class BarChart extends Chart {
 
         int y = 0;
 
-        int finePrintPadding = 125; // TODO Arbitrary fudge padding, remove when scaling work is done
-        Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, barArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
-                finePrintPadding,
-                barArea.getHeight() + titleCanvas.getHeight());
         canvasWithMargins.setPaint(theme.text());
 
         for (Bar bar : bars) {
@@ -104,7 +100,12 @@ public class BarChart extends Chart {
 
         }
 
-        fineprint.draw(finePrintArea, theme);
+            int finePrintWidth = Math.min(barArea.getWidth(), fineprint.getActualHorizontalSize(finePrintHeight));
+            int finePrintPadding = (barArea.getWidth() - finePrintWidth) / 2;
+            Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, finePrintWidth, finePrintHeight,
+                    finePrintPadding,
+                    barArea.getHeight() + titleCanvas.getHeight());
+            fineprint.draw(finePrintArea, theme);
     }
 
     @Override

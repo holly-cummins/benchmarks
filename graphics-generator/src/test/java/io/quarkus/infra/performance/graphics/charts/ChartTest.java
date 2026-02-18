@@ -45,7 +45,7 @@ public abstract class ChartTest {
 
     }
 
-    private static PlotDefinition createPlotDefinition() {
+    protected PlotDefinition createPlotDefinition() {
         Function<Result, ? extends DimensionalNumber> fun = framework -> framework.load().avThroughput();
         PlotDefinition plotDefinition = new PlotDefinition("test plot", "some subtitle", fun);
         return plotDefinition;
