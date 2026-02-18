@@ -87,6 +87,7 @@ public class Cubes implements ElasticElement {
 
         Subcanvas labelArea = new Subcanvas(dataArea, dataArea.getWidth(), dataArea.getHeight() - cubeArea.getHeight(), 0,
                 cubeArea.getHeight());
+        System.out.println();
 
         int startingY = cubeArea.getHeight() - totalCubeSize;
 
@@ -98,7 +99,7 @@ public class Cubes implements ElasticElement {
         for (int i = 0; i < numCubes; i++) {
             cubeArea.fillRect(cx, cy, cubeSize, cubeSize);
             cy -= totalCubeSize;
-            if ((i + 1) % numCubesPerColumn==0) {
+            if ((i + 1) % numCubesPerColumn == 0) {
                 cx += totalCubeSize;
                 cy = startingY;
             }
@@ -106,9 +107,9 @@ public class Cubes implements ElasticElement {
         }
 
         labelArea.setPaint(theme.text());
-        int labelY = 0;
         frameworkLabel.draw(labelArea, labelArea.getWidth() / 2, 0);
-        valueLabel.draw(labelArea, labelArea.getWidth() / 2, labelY + LABEL_HEIGHT);
+        // If we have extra space, leave it at the the bottom, rather than awkwardly between the two labels
+        valueLabel.draw(labelArea, labelArea.getWidth() / 2, frameworkLabel.getActualHeight());
     }
 
     // Includes the padding

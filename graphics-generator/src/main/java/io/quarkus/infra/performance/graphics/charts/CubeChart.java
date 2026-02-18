@@ -69,10 +69,6 @@ public class CubeChart extends Chart {
 
         Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
                 canvasWithMargins.getHeight() - titleCanvas.getHeight() - finePrintHeight, 0, titleCanvas.getHeight());
-        int finePrintPadding = 300; // TODO Arbitrary fudge padding, remove when scaling work is done
-        Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, plotArea.getWidth() - 2 * finePrintPadding, finePrintHeight,
-                finePrintPadding,
-                plotArea.getHeight() + titleCanvas.getHeight());
 
         int dataPadding = workOutCubeSizes(canvasWithMargins);
 
@@ -96,7 +92,12 @@ public class CubeChart extends Chart {
             x += dataArea.getWidth() + dataPadding;
 
         }
-        fineprint.draw(finePrintArea, theme);
+            int finePrintWidth = Math.min(plotArea.getWidth(), fineprint.getActualHorizontalSize(finePrintHeight));
+            int finePrintPadding = (plotArea.getWidth() - finePrintWidth) / 2;
+            Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, finePrintWidth, finePrintHeight,
+                    finePrintPadding,
+                    plotArea.getHeight() + titleCanvas.getHeight());
+            fineprint.draw(finePrintArea, theme);
     }
 
     private int workOutCubeSizes(Subcanvas canvasWithMargins) {
@@ -115,7 +116,7 @@ public class CubeChart extends Chart {
             int minColumnWidth = availableWidth / (maxColumns * data.size());
             int widthOfThinSections = 0;
 
-            int smallestCubeSize = Integer.MAX_VALUE;
+            int smallestCubeSize = canvasWithMargins.getHeight();
 
             for (Cubes c : cubes) {
                 // Iterate to a correct value; to start off with, set a column width
