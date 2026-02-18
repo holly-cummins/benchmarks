@@ -43,12 +43,13 @@ public class Sizer {
 
     public static int calculateWidth(Collection<String> strings, int fontSize) {
         String longest = longestString(strings);
-        return calculateWidthNoLineBreaks(longest, fontSize, Font.PLAIN);
+        return calculateWidth(longest, fontSize);
     }
 
     public static int calculateWidth(String string, int fontSize) {
         String longest = longestString(List.of(string.split("\n")));
-        return calculateWidthNoLineBreaks(longest, fontSize, Font.PLAIN);
+        // If we don't know the font, guess bold, because it's better to have too much whitespace than too little
+        return calculateWidthNoLineBreaks(longest, fontSize, Font.BOLD);
     }
 
     public static int calculateWidth(String string, int fontSize, int fontStyle) {
@@ -67,7 +68,7 @@ public class Sizer {
     }
 
     private static Font getFont(int fontSize, int fontStyle) {
-        if (fontStyle==Font.BOLD) {
+        if (fontStyle == Font.BOLD) {
             return boldFonts.computeIfAbsent(fontSize, s -> new Font(Theme.FONT.getName(), Font.BOLD, s));
         } else {
             return fonts.computeIfAbsent(fontSize, s -> new Font(Theme.FONT.getName(), Font.PLAIN, s));
