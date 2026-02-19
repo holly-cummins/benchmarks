@@ -89,7 +89,6 @@ public class CubeChart extends Chart {
 
         title.draw(titleCanvas, theme);
 
-        System.out.println("HOLLY drawing into width " + canvasWithMargins.getWidth());
         Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
                 plotHeight, 0, titleCanvas.getHeight());
 

@@ -15,7 +15,7 @@ public class Label {
 
     private final String[] strings;
     private int targetHeight = 24; // Arbitrary default
-    private final double lineSpacing = 1;
+    private double lineSpacing = 1;
     private DelimitedStyles styles = new DelimitedStyles(new int[]{Font.PLAIN}, LINE_BREAK);
     private Alignment alignment = Alignment.LEFT;
     private VAlignment valignment = VAlignment.MIDDLE;
@@ -172,7 +172,7 @@ public class Label {
         if (fontMetrics != null) {
             return fontMetrics.getHeight();
         } else {
-            return baseFont.getSize();
+            return Sizer.calculateHeight(baseFont.getSize());
         }
     }
 
@@ -216,6 +216,10 @@ public class Label {
 
     public String toString() {
         return "Label[" + getLongestText() + "]";
+    }
+
+    public void setLineSpacing(int l) {
+        this.lineSpacing = l;
     }
 
 
