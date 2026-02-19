@@ -199,9 +199,9 @@ public class FinePrint implements ElasticElement {
         Subcanvas ml = new Subcanvas(padded, padded.getWidth() - middleLabelX, padded.getHeight(), middleLabelX, 0);
         middleLabel.draw(ml);
 
-        int rightLabelX = middleLabelX + middleLabel.calculateWidth() + GUTTER;
+        int rightLabelX = leftLabel.calculateWidth() + middleLabel.calculateWidth() + 2 * GUTTER;
         rightLabel.setTargetHeight(padded.getHeight());
-        var rl = new Subcanvas(padded, padded.getWidth() - ml.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
+        var rl = new Subcanvas(padded, padded.getWidth() - rightLabelX, padded.getHeight(), rightLabelX, 0);
         rightLabel.draw(rl);
 
         int sw = rightLabel.calculateWidth(SOURCE_CODE_LABEL);
