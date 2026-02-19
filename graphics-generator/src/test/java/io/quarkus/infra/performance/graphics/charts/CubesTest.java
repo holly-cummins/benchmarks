@@ -15,7 +15,7 @@ class CubesTest {
         Memory m = new Memory(315);
         Datapoint d = new Datapoint(Framework.SPRING3_JVM, m);
 
-        Cubes chart = new Cubes(d);
+        Cubes chart = new Cubes(d, new CubeGroup());
 
         int preferredWidth = chart.getPreferredHorizontalSize();
         int preferredHeight = chart.getPreferredVerticalSize();
@@ -38,7 +38,7 @@ class CubesTest {
         Memory m = new Memory(70);
         Datapoint d = new Datapoint(Framework.QUARKUS3_VIRTUAL, m);
 
-        Cubes chart = new Cubes(d);
+        Cubes chart = new Cubes(d, new CubeGroup());
 
         int preferredWidth = chart.getPreferredHorizontalSize();
         int preferredHeight = chart.getPreferredVerticalSize();
