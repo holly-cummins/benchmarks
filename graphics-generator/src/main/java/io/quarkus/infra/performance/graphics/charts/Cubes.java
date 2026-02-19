@@ -120,7 +120,7 @@ public class Cubes implements ElasticElement {
 
         labelArea.setPaint(theme.text());
         frameworkLabel.draw(labelArea, labelArea.getWidth() / 2, 0);
-        // If we have extra space, leave it at the the bottom, rather than awkwardly between the two labels
+        // If we have extra space, have the gap at the the bottom, rather than awkwardly between the two labels
         valueLabel.draw(labelArea, labelArea.getWidth() / 2, frameworkLabel.getActualHeight());
     }
 
