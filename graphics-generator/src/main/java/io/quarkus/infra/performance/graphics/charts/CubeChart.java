@@ -4,17 +4,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import io.quarkus.infra.performance.graphics.PlotDefinition;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
 
+import static io.quarkus.infra.performance.graphics.charts.Cubes.MAXIMUM_CUBE_SIZE;
+
 public class CubeChart extends Chart {
 
-    private static final int MINIMUM_PADDING_BETWEEN_DATASETS = 10;
+    //    The ideal ratio between space for cubes and space for labels
+    private static final int TARGET_CUBE_LABEL_RATIO = 4;
     private final FinePrint fineprint;
     private final List<Cubes> cubes = new ArrayList<>();
-    int numCubesPerColumn = 16;
+    private final Optional<Cubes> tallestCube;
+    private final CubeGroup cubeGroup;
 
     public CubeChart(PlotDefinition plotDefinition, List<Datapoint> data, BenchmarkData bmData) {
         super(plotDefinition, data, bmData);
@@ -22,40 +27,35 @@ public class CubeChart extends Chart {
         this.fineprint = new FinePrint(bmData);
         children.add(fineprint);
 
-        Cubes.setNumCubesPerColumn(numCubesPerColumn);
-
-        // Make sure the preferred size calculations don't return something absurdly huge for the number of datasets
-        int approximateTotalNumberOfColumns = (int) (data.stream().mapToDouble(d -> d.value().getValue()).sum()
-                / numCubesPerColumn);
-        if (approximateTotalNumberOfColumns > 0) {
-            Cubes.setMaxCubeSize(2000 / approximateTotalNumberOfColumns);
-        }
+        cubeGroup = new CubeGroup();
+        cubeGroup.setNumCubesPerColumn(16);
 
         for (Datapoint d : data) {
-            Cubes c = new Cubes(d);
+            Cubes c = new Cubes(d, cubeGroup);
             cubes.add(c);
 
         }
 
         // Add the tallest cube to the children, for height calculations
-        cubes.stream()
-                .max(Comparator.comparing(Cubes::getPreferredVerticalSize))
-                .ifPresent(children::add);
+        tallestCube = cubes.stream()
+                .max(Comparator.comparing(Cubes::getPreferredVerticalSize));
+
+        tallestCube.ifPresent(children::add);
     }
 
     @Override
     public int getMaximumHorizontalSize() {
-        return cubes.stream().mapToInt(ElasticElement::getMaximumHorizontalSize).sum() + 2 * xmargins;
+        return Math.max(Math.max(fineprint.getMaximumHorizontalSize(), cubes.stream().mapToInt(ElasticElement::getMaximumHorizontalSize).sum()), title.getMaximumHorizontalSize()) + 2 * xmargins;
     }
 
     @Override
     public int getMinimumHorizontalSize() {
-        return cubes.stream().mapToInt(ElasticElement::getMinimumHorizontalSize).sum() + 2 * xmargins;
+        return Math.max(Math.max(fineprint.getMinimumHorizontalSize(), cubes.stream().mapToInt(ElasticElement::getMinimumHorizontalSize).sum()), title.getMinimumHorizontalSize()) + 2 * xmargins;
     }
 
     @Override
     public int getPreferredHorizontalSize() {
-        return cubes.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).sum() + 2 * xmargins;
+        return Math.max(Math.max(fineprint.getPreferredHorizontalSize(), cubes.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).sum()), title.getPreferredHorizontalSize()) + 2 * xmargins;
     }
 
     @Override
@@ -70,27 +70,14 @@ public class CubeChart extends Chart {
         // ... but then check if that actually fits
         int plotHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
 
-        int minumumCubeSize = cubes.stream()
-                .max(Comparator.comparing(Cubes::getMinimumVerticalSize))
-                .map(Cubes::getMinimumVerticalSize).orElse(0);
+        int minimumCubesSize = tallestCube.map(Cubes::getMinimumVerticalSize).orElse(0);
 
         // If it doesn't fit, shrink the fine print and title so the actual plot has the minimum it needs
-        if (plotHeight < minumumCubeSize) {
-            int delta = minumumCubeSize - plotHeight;
+        if (plotHeight < minimumCubesSize) {
+            int delta = minimumCubesSize - plotHeight;
             finePrintHeight -= delta / 2;
             titleHeight -= delta / 2;
             plotHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
-        }
-
-        // Now check in the cube bits themselves to adjust cube sizes and font sizes
-        int dataPadding = workOutCubeSizes(canvasWithMargins);
-
-        while (dataPadding < MINIMUM_PADDING_BETWEEN_DATASETS) {
-            // If it doesn't fit, shrink fonts
-            for (Cubes c : cubes) {
-                c.decrementFonts();
-            }
-            dataPadding = workOutCubeSizes(canvasWithMargins);
         }
 
         // Ok, hopefully we're good and can start drawing
@@ -102,69 +89,98 @@ public class CubeChart extends Chart {
 
         title.draw(titleCanvas, theme);
 
+        System.out.println("HOLLY drawing into width " + canvasWithMargins.getWidth());
         Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
                 plotHeight, 0, titleCanvas.getHeight());
+
+        // Now check in the cube bits themselves to adjust cube sizes and font sizes
+        int gutterSize = workOutCubeSizes(plotArea);
 
         for (Cubes c : cubes) {
             int width = c.getActualHorizontalSize();
             Subcanvas dataArea = new Subcanvas(plotArea, width, plotArea.getHeight(), x, 0);
             c.draw(dataArea, theme);
-            x += dataArea.getWidth() + dataPadding;
+            x += dataArea.getWidth() + gutterSize;
         }
 
         drawFinePrint(canvasWithMargins, theme, finePrintHeight, titleCanvas.getHeight() + plotArea.getHeight(), fineprint);
     }
 
-    private int workOutCubeSizes(Subcanvas canvasWithMargins) {
-        int minimumDataPadding = 8;
+    private int workOutCubeSizes(Subcanvas plotArea) {
+
+        // Here's the algorithm we follow to try and fit everything in, when everything affects everything else.
+        // 1. Does the text fit in horizontally? If not, shrink it until it fits – we can do this first.
+        // 2. Shrink the cubes until all the cubes fits in horizontally
+        // 3. Now check if things fit in vertically? If not, we have a choice between shrinking cubes, or shrinking text. That’s a decision we make based on how much vertical space each occupies.
+
+        int minimumGutter = 8;
 
         int totalColumnsContributingToWidth = 0;
 
         int unitsPerCube = 1; // For now, assume 1mb per square
-        int maxColumns = (int) Math.ceil(maxValue / (numCubesPerColumn * unitsPerCube));
+
+
+        int maxColumns = (int) Math.ceil(maxValue / (cubeGroup.getNumCubesPerColumn() * unitsPerCube));
 
         int numGutters = data.size() - 1;
-        if (numGutters > 0) {
-            int gutterPadding = minimumDataPadding * numGutters;
-            int availableWidth = canvasWithMargins.getWidth() - gutterPadding;
+        int gutterPadding = minimumGutter * numGutters;
 
-            int minColumnWidth = availableWidth / (maxColumns * data.size());
-            int widthOfThinSections = 0;
+        // Step 1 - make sure all the labels fit horizontally
+        int totalTextWidth = cubes.stream().mapToInt(Cubes::getTextWidth).sum();
 
-            int smallestCubeSize = canvasWithMargins.getHeight();
+        int availableWidth = plotArea.getWidth() - gutterPadding;
 
-            for (Cubes c : cubes) {
-                // Iterate to a correct value; to start off with, set a column width
-                c.setCubeSize(minColumnWidth);
-
-                // Estimate the likely width of a column, assuming evenly spaced sections
-                if (c.getActualHorizontalSize() > c.getColumnCount() * minColumnWidth) {
-                    widthOfThinSections += c.getMinimumHorizontalSize();
-                    int cubeSizeForThisSection = c.getMinimumHorizontalSize() / c.getColumnCount();
-
-                    smallestCubeSize = Math.min(smallestCubeSize, cubeSizeForThisSection);
-                } else {
-                    totalColumnsContributingToWidth += c.getColumnCount();
-                }
-            }
-
-            int cubeWithPaddingSize = totalColumnsContributingToWidth > 0
-                    ? (availableWidth - widthOfThinSections) / totalColumnsContributingToWidth
-                    :smallestCubeSize;
-            // If no columns go outside the border, then we use the maximum column count and divide it by the average width occupied by captions
-
-            int actualOccupiedArea = 0;
-
-            // Work out how much space is used, so we can space the sections evenly
-            for (Cubes c : cubes) {
-                c.setCubeSize(cubeWithPaddingSize);
-                int width = c.getActualHorizontalSize();
-                actualOccupiedArea += width;
-            }
-
-            return (canvasWithMargins.getWidth() - actualOccupiedArea) / numGutters;
+        while (totalTextWidth > availableWidth) {
+            decrementFonts();
+            totalTextWidth = cubes.stream().mapToInt(Cubes::getTextWidth).sum();
         }
-        return MINIMUM_PADDING_BETWEEN_DATASETS;
+
+        // Now make sure all the cubes fit horizontally
+        int cubeWithPaddingSize = MAXIMUM_CUBE_SIZE;
+        cubeGroup.setTotalCubeSize(cubeWithPaddingSize);
+        int totalWidth = cubes.stream().mapToInt(Cubes::getActualHorizontalSize).sum();
+
+        while (totalWidth > availableWidth) {
+            cubeGroup.decrementTotalCubeSize();
+            totalWidth = cubes.stream().mapToInt(Cubes::getActualHorizontalSize).sum();
+        }
+
+        if (tallestCube.isPresent()) {
+            // Almost there, but things might still not fit vertically
+            int height = tallestCube.map(Cubes::getActualVerticalSize).orElse(0);
+
+            // If it's too tall, decide whether to shrink the fonts or the cubes to get the best-looking result
+            while (height > plotArea.getHeight()) {
+                int cubesHeight = tallestCube.get().getActualCubesHeight();
+                int labelHeight = tallestCube.get().getActualLabelHeight();
+
+                if ((cubesHeight / labelHeight) > TARGET_CUBE_LABEL_RATIO) {
+                    cubeGroup.decrementTotalCubeSize();
+                } else {
+                    decrementFonts();
+                }
+                height = tallestCube.map(Cubes::getActualVerticalSize).orElse(0);
+            }
+        }
+
+        int actualOccupiedArea = 0;
+
+        // Work out how much space is used, so we can space the sections evenly
+        for (Cubes c : cubes) {
+            int width = c.getActualHorizontalSize();
+            actualOccupiedArea += width;
+        }
+
+        int actualGutterPadding = numGutters > 0 ? (plotArea.getWidth() - actualOccupiedArea) / numGutters:0;
+
+        return actualGutterPadding;
+    }
+
+    private void decrementFonts() {
+        // If it doesn't fit, shrink fonts
+        for (Cubes c : cubes) {
+            c.decrementFonts();
+        }
     }
 
     @Override
