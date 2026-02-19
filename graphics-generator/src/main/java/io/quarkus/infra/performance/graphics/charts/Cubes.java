@@ -18,6 +18,8 @@ public class Cubes implements ElasticElement {
     private final Label valueLabel;
     private final Label frameworkLabel;
     private static final int MINIMUM_CUBE_SIZE = 2;
+    private static final int MINIMUM_FONT_SIZE = 8;
+    private static final int MAXIMUM_FONT_SIZE = 24;
     private static int maximumCubeSize = 20;
 
     public Cubes(Datapoint d) {
@@ -51,7 +53,9 @@ public class Cubes implements ElasticElement {
 
     @Override
     public int getMaximumHorizontalSize() {
-        return (int) Math.ceil(d.value().getValue() / numCubesPerColumn * maximumCubeSize);
+        int cubesWidth = (int) Math.ceil(d.value().getValue() / numCubesPerColumn * maximumCubeSize);
+        double widestLabel = Math.max(valueLabel.calculateWidth(MAXIMUM_FONT_SIZE), frameworkLabel.calculateWidth(MAXIMUM_FONT_SIZE));
+        return (int) Math.max(widestLabel, cubesWidth);
     }
 
     @Override
@@ -62,14 +66,13 @@ public class Cubes implements ElasticElement {
 
     @Override
     public int getMinimumHorizontalSize() {
-        // Assume we can shrink columns smaller than the label
-        int widestLabel = Math.max(valueLabel.calculateWidth(), frameworkLabel.calculateWidth());
+
+        double widestLabel = Math.max(valueLabel.calculateWidth(MINIMUM_FONT_SIZE), frameworkLabel.calculateWidth(MINIMUM_FONT_SIZE));
         int cubesWidth = (int) Math.ceil(d.value().getValue() / numCubesPerColumn * MINIMUM_CUBE_SIZE);
-        return Math.max(widestLabel, cubesWidth);
+        return (int) Math.max(widestLabel, cubesWidth);
     }
 
     public int getActualHorizontalSize() {
-        // Assume we can shrink columns smaller than the label
         int widestLabel = Math.max(valueLabel.calculateWidth(), frameworkLabel.calculateWidth());
         int cubesWidth = (int) Math.ceil(d.value().getValue() / numCubesPerColumn * totalCubeSize);
         return Math.max(widestLabel, cubesWidth);
@@ -87,7 +90,6 @@ public class Cubes implements ElasticElement {
 
         Subcanvas labelArea = new Subcanvas(dataArea, dataArea.getWidth(), dataArea.getHeight() - cubeArea.getHeight(), 0,
                 cubeArea.getHeight());
-        System.out.println();
 
         int startingY = cubeArea.getHeight() - totalCubeSize;
 

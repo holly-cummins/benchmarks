@@ -38,11 +38,11 @@ public abstract class Chart implements ElasticElement {
 
     public void draw(Subcanvas g, Theme theme) {
         if (getMinimumHorizontalSize() > g.getWidth()) {
-            throw new SizeException("Cannot fit " + getMinimumHorizontalSize() + "px of content into a " + g.getHeight()
+            throw new SizeException("Cannot fit " + getMinimumHorizontalSize() + "px of content into a " + g.getWidth()
                     + "px horizontal space.");
         }
         if (getMinimumVerticalSize() > g.getHeight()) {
-            throw new SizeException("Cannot fit " + getMinimumHorizontalSize() + "px of content into a " + g.getHeight()
+            throw new SizeException("Cannot fit " + getMinimumVerticalSize() + "px of content into a " + g.getHeight()
                     + "px vertical space.");
         }
 
@@ -59,6 +59,13 @@ public abstract class Chart implements ElasticElement {
     }
 
     protected abstract void drawNoCheck(Subcanvas g, Theme theme);
+
+    protected static void drawFinePrint(Subcanvas canvasWithMargins, Theme theme, int finePrintHeight, int yOffset, FinePrint fineprint) {
+        int finePrintWidth = Math.min(canvasWithMargins.getWidth(), fineprint.getActualHorizontalSize(finePrintHeight));
+        int finePrintPadding = (canvasWithMargins.getWidth() - finePrintWidth) / 2;
+        Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, finePrintWidth, finePrintHeight, finePrintPadding, yOffset);
+        fineprint.draw(finePrintArea, theme);
+    }
 
     // SVGs after to be done *after* the main drawing, because getting the document root before drawing causes all subsequent draws to be dropped.
     // This seems to be a characteristic of the Batik streaming model.

@@ -60,7 +60,7 @@ public class Label {
             case BOTTOM -> y;
             case MIDDLE -> y - textBlockHeight / 2 + fontMetrics.getAscent();
         };
-        
+
         for (int i = 0; i < strings.length; i++) {
 
             String string = strings[i];
@@ -202,6 +202,13 @@ public class Label {
         return Sizer.calculateWidth(longestText, font);
     }
 
+
+    public double calculateWidth(int fontSize) {
+        String longestText = getLongestText();
+        return Sizer.calculateWidth(longestText, fontSize);
+    }
+
+
     private String getLongestText() {
         // It would be cheaper to just count characters, but sometimes the longest string isn't the fattest – including for framework labels we are using
         return Arrays.stream(strings).max(Comparator.comparingInt(this::calculateWidth)).orElse("");
@@ -210,6 +217,7 @@ public class Label {
     public String toString() {
         return "Label[" + getLongestText() + "]";
     }
+
 
     private record DelimitedStyles(int[] styles, String delimiter) {
     }

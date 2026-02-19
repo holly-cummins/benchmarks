@@ -35,6 +35,13 @@ public class Subcanvas {
         this.xOffset = subcanvas.xOffset + xOffset;
         this.yOffset = subcanvas.yOffset + yOffset;
 
+        if (height < 0) {
+            throw new IllegalArgumentException("Cannot construct a canvas with negative height: " + height);
+        }
+        if (width < 0) {
+            throw new IllegalArgumentException("Cannot construct a canvas with negative width: " + width);
+        }
+
         if (debug) {
             debugBorders();
         }
