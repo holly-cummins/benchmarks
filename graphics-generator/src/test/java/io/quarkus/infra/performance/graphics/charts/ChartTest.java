@@ -1,6 +1,5 @@
 package io.quarkus.infra.performance.graphics.charts;
 
-import java.awt.Dimension;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -17,21 +16,66 @@ import io.quarkus.infra.performance.graphics.model.Result;
 import io.quarkus.infra.performance.graphics.model.Results;
 import io.quarkus.infra.performance.graphics.model.units.DimensionalNumber;
 import io.quarkus.infra.performance.graphics.model.units.TransactionsPerSecond;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
 
-import static org.apache.batik.util.SVGConstants.SVG_NAMESPACE_URI;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class ChartTest {
+public abstract class ChartTest extends ElasticElementTest {
 
     @Test
-    public void testCanDrawInMinimumDimensions() {
-        BenchmarkData data = mockBenchmarkData();
+    public void testBoundsOnDimensionsForSmallGroup() {
+        BenchmarkData data = mockBenchmarkData(2);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int preferredWidth = chart.getPreferredHorizontalSize();
+        int preferredHeight = chart.getPreferredVerticalSize();
+
+        int minimumWidth = chart.getMinimumHorizontalSize();
+        int minimumHeight = chart.getMinimumVerticalSize();
+
+        int maximumWidth = chart.getMaximumHorizontalSize();
+        int maximumHeight = chart.getMaximumVerticalSize();
+
+        assertTrue(preferredWidth <= maximumWidth, preferredWidth + " > " + maximumWidth);
+        assertTrue(preferredWidth >= minimumWidth, preferredWidth + " > " + minimumWidth);
+
+        assertTrue(preferredHeight <= maximumHeight, preferredHeight + " > " + maximumHeight);
+        assertTrue(preferredHeight >= minimumHeight, preferredHeight + " > " + minimumHeight);
+
+    }
+
+    @Test
+    public void testBoundsOnDimensionsForLargeGroup() {
+        BenchmarkData data = mockBenchmarkData(Framework.values().length);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int preferredWidth = chart.getPreferredHorizontalSize();
+        int preferredHeight = chart.getPreferredVerticalSize();
+
+        int minimumWidth = chart.getMinimumHorizontalSize();
+        int minimumHeight = chart.getMinimumVerticalSize();
+
+        int maximumWidth = chart.getMaximumHorizontalSize();
+        int maximumHeight = chart.getMaximumVerticalSize();
+
+        assertTrue(preferredWidth <= maximumWidth, preferredWidth + " > " + maximumWidth);
+        assertTrue(preferredWidth >= minimumWidth, preferredWidth + " > " + minimumWidth);
+
+        assertTrue(preferredHeight <= maximumHeight, preferredHeight + " > " + maximumHeight);
+        assertTrue(preferredHeight >= minimumHeight, preferredHeight + " > " + minimumHeight);
+
+    }
+
+    @Test
+    public void testCanDrawSmallGroupInMinimumDimensions() {
+        BenchmarkData data = mockBenchmarkData(3);
         PlotDefinition plotDefinition = createPlotDefinition();
 
         Chart chart = createChart(plotDefinition, data);
@@ -42,7 +86,81 @@ public abstract class ChartTest {
         SVGGraphics2D svgGenerator = getSvgGraphics2D(minWidth, minHeight);
         Theme theme = Theme.DARK;
         chart.draw(new Subcanvas(svgGenerator), theme);
+    }
 
+    @Test
+    public void testCanDrawLargeGroupInMinimumDimensions() {
+        BenchmarkData data = mockBenchmarkData(Framework.values().length);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int minHeight = chart.getMinimumVerticalSize();
+        int minWidth = chart.getMinimumHorizontalSize();
+
+        SVGGraphics2D svgGenerator = getSvgGraphics2D(minWidth, minHeight);
+        Theme theme = Theme.DARK;
+        chart.draw(new Subcanvas(svgGenerator), theme);
+    }
+
+    @Test
+    public void testCanDrawSmallGroupInPreferredDimensions() {
+        BenchmarkData data = mockBenchmarkData(3);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int width = chart.getPreferredHorizontalSize();
+        int height = chart.getPreferredVerticalSize();
+
+        SVGGraphics2D svgGenerator = getSvgGraphics2D(width, height);
+        Theme theme = Theme.LIGHT;
+        chart.draw(new Subcanvas(svgGenerator), theme);
+    }
+
+    @Test
+    public void testCanDrawLargeGroupInPreferredDimensions() {
+        BenchmarkData data = mockBenchmarkData(Framework.values().length);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int width = chart.getPreferredHorizontalSize();
+        int height = chart.getPreferredVerticalSize();
+
+        SVGGraphics2D svgGenerator = getSvgGraphics2D(width, height);
+        Theme theme = Theme.LIGHT;
+        chart.draw(new Subcanvas(svgGenerator), theme);
+    }
+
+    @Test
+    public void testCanDrawSoloGroupInPreferredDimensions() {
+        BenchmarkData data = mockBenchmarkData(1);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int width = chart.getPreferredHorizontalSize();
+        int height = chart.getPreferredVerticalSize();
+
+        SVGGraphics2D svgGenerator = getSvgGraphics2D(width, height);
+        Theme theme = Theme.LIGHT;
+        chart.draw(new Subcanvas(svgGenerator), theme);
+    }
+
+    @Test
+    public void testCanDrawEmptyGroupInPreferredDimensions() {
+        BenchmarkData data = mockBenchmarkData(0);
+        PlotDefinition plotDefinition = createPlotDefinition();
+
+        Chart chart = createChart(plotDefinition, data);
+
+        int width = chart.getPreferredHorizontalSize();
+        int height = chart.getPreferredVerticalSize();
+
+        SVGGraphics2D svgGenerator = getSvgGraphics2D(width, height);
+        Theme theme = Theme.LIGHT;
+        chart.draw(new Subcanvas(svgGenerator), theme);
     }
 
     protected PlotDefinition createPlotDefinition() {
@@ -52,12 +170,17 @@ public abstract class ChartTest {
     }
 
     private static BenchmarkData mockBenchmarkData() {
+        return mockBenchmarkData(4);
+    }
+
+    private static BenchmarkData mockBenchmarkData(int count) {
         BenchmarkData data = mock(BenchmarkData.class);
         Results results = new Results();
         when(data.results()).thenReturn(results);
         when(data.group()).thenReturn(Group.ALL);
-        addDatapoint(data, Framework.QUARKUS3_JVM, (double) new Random().nextInt());
-        addDatapoint(data, Framework.SPRING3_JVM, 267.87);
+        for (int i = 0; i < count; i++) {
+            addDatapoint(data, Framework.values()[i], (double) new Random().nextInt(400));
+        }
         addConfig(data);
         return data;
     }
@@ -83,14 +206,6 @@ public abstract class ChartTest {
         chart.draw(new Subcanvas(svgGenerator), theme);
     }
 
-    protected static SVGGraphics2D getSvgGraphics2D(int width, int height) {
-        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-        Document doc = impl.createDocument(SVG_NAMESPACE_URI, "svg", null);
-
-        SVGGraphics2D svgGenerator = new SVGGraphics2D(doc);
-        svgGenerator.setSVGCanvasSize(new Dimension(width, height));
-        return svgGenerator;
-    }
 
     protected abstract Chart createChart(PlotDefinition plotDefinition, BenchmarkData data);
 }

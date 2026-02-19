@@ -27,7 +27,9 @@ public class CubeChart extends Chart {
         // Make sure the preferred size calculations don't return something absurdly huge for the number of datasets
         int approximateTotalNumberOfColumns = (int) (data.stream().mapToDouble(d -> d.value().getValue()).sum()
                 / numCubesPerColumn);
-        Cubes.setMaxCubeSize(2000 / approximateTotalNumberOfColumns);
+        if (approximateTotalNumberOfColumns > 0) {
+            Cubes.setMaxCubeSize(2000 / approximateTotalNumberOfColumns);
+        }
 
         for (Datapoint d : data) {
             Cubes c = new Cubes(d);
@@ -59,17 +61,28 @@ public class CubeChart extends Chart {
     @Override
     protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
 
-        int finePrintHeight = fineprint.getPreferredVerticalSize();
-
         canvasWithMargins.setPaint(theme.text());
 
-        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), title.getPreferredVerticalSize(),
-                0, 0);
-        title.draw(titleCanvas, theme);
+        // Start by assuming we can have the preferred size for title and fine print
+        int finePrintHeight = fineprint.getPreferredVerticalSize();
+        int titleHeight = title.getPreferredVerticalSize();
 
-        Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
-                canvasWithMargins.getHeight() - titleCanvas.getHeight() - finePrintHeight, 0, titleCanvas.getHeight());
+        // ... but then check if that actually fits
+        int plotHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
 
+        int minumumCubeSize = cubes.stream()
+                .max(Comparator.comparing(Cubes::getMinimumVerticalSize))
+                .map(Cubes::getMinimumVerticalSize).orElse(0);
+
+        // If it doesn't fit, shrink the fine print and title so the actual plot has the minimum it needs
+        if (plotHeight < minumumCubeSize) {
+            int delta = minumumCubeSize - plotHeight;
+            finePrintHeight -= delta / 2;
+            titleHeight -= delta / 2;
+            plotHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
+        }
+
+        // Now check in the cube bits themselves to adjust cube sizes and font sizes
         int dataPadding = workOutCubeSizes(canvasWithMargins);
 
         while (dataPadding < MINIMUM_PADDING_BETWEEN_DATASETS) {
@@ -80,24 +93,26 @@ public class CubeChart extends Chart {
             dataPadding = workOutCubeSizes(canvasWithMargins);
         }
 
+        // Ok, hopefully we're good and can start drawing
+
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleHeight,
+                0, 0);
+
         int x = 0;
 
+        title.draw(titleCanvas, theme);
+
+        Subcanvas plotArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
+                plotHeight, 0, titleCanvas.getHeight());
+
         for (Cubes c : cubes) {
-
             int width = c.getActualHorizontalSize();
-
             Subcanvas dataArea = new Subcanvas(plotArea, width, plotArea.getHeight(), x, 0);
             c.draw(dataArea, theme);
-
             x += dataArea.getWidth() + dataPadding;
-
         }
-            int finePrintWidth = Math.min(plotArea.getWidth(), fineprint.getActualHorizontalSize(finePrintHeight));
-            int finePrintPadding = (plotArea.getWidth() - finePrintWidth) / 2;
-            Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, finePrintWidth, finePrintHeight,
-                    finePrintPadding,
-                    plotArea.getHeight() + titleCanvas.getHeight());
-            fineprint.draw(finePrintArea, theme);
+
+        drawFinePrint(canvasWithMargins, theme, finePrintHeight, titleCanvas.getHeight() + plotArea.getHeight(), fineprint);
     }
 
     private int workOutCubeSizes(Subcanvas canvasWithMargins) {

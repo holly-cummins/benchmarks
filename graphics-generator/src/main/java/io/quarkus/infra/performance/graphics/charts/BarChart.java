@@ -100,12 +100,7 @@ public class BarChart extends Chart {
 
         }
 
-            int finePrintWidth = Math.min(barArea.getWidth(), fineprint.getActualHorizontalSize(finePrintHeight));
-            int finePrintPadding = (barArea.getWidth() - finePrintWidth) / 2;
-            Subcanvas finePrintArea = new Subcanvas(canvasWithMargins, finePrintWidth, finePrintHeight,
-                    finePrintPadding,
-                    barArea.getHeight() + titleCanvas.getHeight());
-            fineprint.draw(finePrintArea, theme);
+        drawFinePrint(canvasWithMargins, theme, finePrintHeight, barArea.getHeight() + titleCanvas.getHeight(), fineprint);
     }
 
     @Override
