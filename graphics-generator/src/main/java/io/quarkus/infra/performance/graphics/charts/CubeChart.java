@@ -16,6 +16,7 @@ public class CubeChart extends Chart {
 
     //    The ideal ratio between space for cubes and space for labels
     private static final int TARGET_CUBE_LABEL_RATIO = 4;
+    private static final int MINIMUM_GUTTER = 14;
 
     // These graphs can go quite wide, and we want to cap that on the preferred size
     private static final int MAXIMUM_NATURAL_WIDTH = 2048;
@@ -144,12 +145,9 @@ public class CubeChart extends Chart {
         // 2. Shrink the cubes until all the cubes fits in horizontally
         // 3. Now check if things fit in vertically? If not, we have a choice between shrinking cubes, or shrinking text. That’s a decision we make based on how much vertical space each occupies.
 
-        int minimumGutter = 8;
-
-        int unitsPerCube = 1; // For now, assume 1mb per square
 
         int numGutters = data.size() - 1;
-        int gutterPadding = minimumGutter * numGutters;
+        int gutterPadding = MINIMUM_GUTTER * numGutters;
 
         // Step 1 - make sure all the labels fit horizontally
         int totalTextWidth = cubes.stream().mapToInt(Cubes::getTextWidth).sum();
