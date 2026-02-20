@@ -16,6 +16,9 @@ public class CubeChart extends Chart {
 
     //    The ideal ratio between space for cubes and space for labels
     private static final int TARGET_CUBE_LABEL_RATIO = 4;
+
+    // These graphs can go quite wide, and we want to cap that on the preferred size
+    private static final int MAXIMUM_NATURAL_WIDTH = 2048;
     private final FinePrint fineprint;
     private final List<Cubes> cubes = new ArrayList<>();
     private final Optional<Cubes> tallestCube;
@@ -55,8 +58,32 @@ public class CubeChart extends Chart {
 
     @Override
     public int getPreferredHorizontalSize() {
-        return Math.max(Math.max(fineprint.getPreferredHorizontalSize(), cubes.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).sum()), title.getPreferredHorizontalSize()) + 2 * xmargins;
+        int naturalWidth = Math.max(Math.max(fineprint.getPreferredHorizontalSize(), cubes.stream().mapToInt(ElasticElement::getPreferredHorizontalSize).sum()), title.getPreferredHorizontalSize()) + 2 * xmargins;
+        if (naturalWidth > MAXIMUM_NATURAL_WIDTH) {
+            return Math.max(getMinimumHorizontalSize(), MAXIMUM_NATURAL_WIDTH);
+        } else {
+            return naturalWidth;
+        }
     }
+
+    @Override
+    public int getPreferredVerticalSize() {
+        // The vertical size and horizontal size are coupled, so base the vertical size on the horizontal size
+        return getPreferredVerticalSize(getPreferredHorizontalSize());
+    }
+
+    private int getPreferredVerticalSize(int horizontalSize) {
+        int defaultPreferred = super.getPreferredVerticalSize();
+        if (tallestCube.isPresent()) {
+            // Calibrate the cube sizes to the given width, assuming a big (but not infinite) height (the height parameter shouldn't matter except in rare cases)
+            workOutCubeSizes(horizontalSize, 4 * horizontalSize);
+
+            return defaultPreferred - tallestCube.get().getPreferredVerticalSize() + tallestCube.get().getActualVerticalSize();
+        } else {
+            return defaultPreferred;
+        }
+    }
+
 
     @Override
     protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
@@ -105,7 +132,12 @@ public class CubeChart extends Chart {
         drawFinePrint(canvasWithMargins, theme, finePrintHeight, titleCanvas.getHeight() + plotArea.getHeight(), fineprint);
     }
 
+
     private int workOutCubeSizes(Subcanvas plotArea) {
+        return workOutCubeSizes(plotArea.getWidth(), plotArea.getHeight());
+    }
+
+    private int workOutCubeSizes(int targetWidth, int targetHeight) {
 
         // Here's the algorithm we follow to try and fit everything in, when everything affects everything else.
         // 1. Does the text fit in horizontally? If not, shrink it until it fits – we can do this first.
@@ -114,12 +146,7 @@ public class CubeChart extends Chart {
 
         int minimumGutter = 8;
 
-        int totalColumnsContributingToWidth = 0;
-
         int unitsPerCube = 1; // For now, assume 1mb per square
-
-
-        int maxColumns = (int) Math.ceil(maxValue / (cubeGroup.getNumCubesPerColumn() * unitsPerCube));
 
         int numGutters = data.size() - 1;
         int gutterPadding = minimumGutter * numGutters;
@@ -127,7 +154,7 @@ public class CubeChart extends Chart {
         // Step 1 - make sure all the labels fit horizontally
         int totalTextWidth = cubes.stream().mapToInt(Cubes::getTextWidth).sum();
 
-        int availableWidth = plotArea.getWidth() - gutterPadding;
+        int availableWidth = targetWidth - gutterPadding;
 
         while (totalTextWidth > availableWidth) {
             decrementFonts();
@@ -149,7 +176,7 @@ public class CubeChart extends Chart {
             int height = tallestCube.map(Cubes::getActualVerticalSize).orElse(0);
 
             // If it's too tall, decide whether to shrink the fonts or the cubes to get the best-looking result
-            while (height > plotArea.getHeight()) {
+            while (height > targetHeight) {
                 int cubesHeight = tallestCube.get().getActualCubesHeight();
                 int labelHeight = tallestCube.get().getActualLabelHeight();
 
@@ -170,7 +197,7 @@ public class CubeChart extends Chart {
             actualOccupiedArea += width;
         }
 
-        int actualGutterPadding = numGutters > 0 ? (plotArea.getWidth() - actualOccupiedArea) / numGutters:0;
+        int actualGutterPadding = numGutters > 0 ? (targetWidth - actualOccupiedArea) / numGutters:0;
 
         return actualGutterPadding;
     }
