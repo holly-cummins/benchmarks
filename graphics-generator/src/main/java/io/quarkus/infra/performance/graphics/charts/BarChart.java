@@ -63,16 +63,32 @@ public class BarChart extends Chart {
 
     @Override
     protected void drawNoCheck(Subcanvas canvasWithMargins, Theme theme) {
-
         int finePrintHeight = fineprint.getPreferredVerticalSize();
+        int titleHeight = title.getPreferredVerticalSize();
+
+
+        // ... but then check if that actually fits
+        int barHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
+
+        int requiredBarHeight = barsAndPartitions.stream().mapToInt(ElasticElement::getMinimumVerticalSize).sum();
+
+        // If it doesn't fit, shrink the fine print and title so the actual plot has the minimum it needs
+        if (barHeight < requiredBarHeight) {
+            int delta = requiredBarHeight - barHeight;
+            finePrintHeight -= delta / 2;
+            titleHeight -= delta / 2;
+
+            barHeight = canvasWithMargins.getHeight() - titleHeight - finePrintHeight;
+        }
 
         canvasWithMargins.setPaint(theme.text());
-        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), title.getPreferredVerticalSize(),
+        Subcanvas titleCanvas = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(), titleHeight,
                 0, 0);
         title.draw(titleCanvas, theme);
 
+
         Subcanvas barArea = new Subcanvas(canvasWithMargins, canvasWithMargins.getWidth(),
-                canvasWithMargins.getHeight() - titleCanvas.getHeight() - finePrintHeight, 0, titleCanvas.getHeight());
+                barHeight, 0, titleCanvas.getHeight());
 
         int leftLabelWidth = Sizer.calculateWidth(bars.stream().map(Bar::getLeftLabelText).collect(Collectors.toSet()),
                 Bar.LEFT_LABEL_SIZE);
@@ -92,9 +108,12 @@ public class BarChart extends Chart {
             bar.setScale(scale);
         }
 
+        int extraVerticalSpace = barArea.getHeight() - barsAndPartitions.stream().mapToInt(ElasticElement::getMinimumVerticalSize).sum();
+        int padding = barsAndPartitions.size() > 0 ? extraVerticalSpace / barsAndPartitions.size():0;
+
         for (ElasticElement bar : barsAndPartitions) {
-            // TODO slight hack, assuming the min and max are always equal
-            Subcanvas individualBarArea = new Subcanvas(barArea, barArea.getWidth(), bar.getMaximumVerticalSize(), 0, y);
+            Subcanvas individualBarArea = new Subcanvas(barArea, barArea.getWidth(), bar.getMinimumVerticalSize() + padding, 0, y);
+
             bar.draw(individualBarArea, theme);
             y += individualBarArea.getHeight();
 
