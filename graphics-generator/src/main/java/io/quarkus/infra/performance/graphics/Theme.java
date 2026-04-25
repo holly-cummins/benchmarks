@@ -85,4 +85,8 @@ public record Theme(String name, Color background, Color text, Color divider, Co
         this(name, background, text, divider, finePrint, DEFAULT_CHART_ELEMENTS);
     }
 
+    public Color annotationText(Framework framework) {
+        // For now, just return the background colour
+        return background();
+    }
 }

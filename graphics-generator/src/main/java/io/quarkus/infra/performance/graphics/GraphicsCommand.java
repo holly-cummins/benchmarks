@@ -109,19 +109,28 @@ public class GraphicsCommand implements Runnable {
             generate(file, qualifiedOutputDir, BarChart::new, data, TIME_TO_FIRST_REQUEST);
             generate(file, qualifiedOutputDir, BarChart::new, data, THROUGHPUT);
             generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
+            generate(file, qualifiedOutputDir, StackedBarChart::new, data, TIME_TO_FIRST_REQUEST, "stacked-by-mode");
+            generate(file, qualifiedOutputDir, StackedBarChart::new, data, THROUGHPUT, "stacked-by-mode");
+            generate(file, qualifiedOutputDir, StackedBarChart::new, data, BUILD_TIME, "stacked-by-mode");
             generate(file, qualifiedOutputDir, CompositeChart::new, data, FRONT_PAGE);
+            generate(file, qualifiedOutputDir, StackedCompositeChart::new, data, FRONT_PAGE, "stacked-by-mode");
+
         }
     }
 
     private void generate(Path file, Path qualifiedOutputDir, BiFunction<PlotDefinition, BenchmarkData, Chart> chartConstructor, BenchmarkData allData, PlotDefinition plotDefinition) {
+        generate(file, qualifiedOutputDir, chartConstructor, allData, plotDefinition, "");
+    }
+
+    private void generate(Path file, Path qualifiedOutputDir, BiFunction<PlotDefinition, BenchmarkData, Chart> chartConstructor, BenchmarkData allData, PlotDefinition plotDefinition, String qualifier) {
         for (Group group : Group.values()) {
             BenchmarkData data = allData.subgroup(group);
             if (data.results() != null && data.results().size() > 0) {
                 try {
-                    var lightFile = qualifiedOutputDir.resolve(deriveOutputFilename(file, plotDefinition, data, Theme.LIGHT));
+                    var lightFile = qualifiedOutputDir.resolve(deriveOutputFilename(file, plotDefinition, data, Theme.LIGHT, qualifier));
                     generator.generate(chartConstructor, data, plotDefinition, lightFile, Theme.LIGHT);
 
-                    var darkFile = qualifiedOutputDir.resolve(deriveOutputFilename(file, plotDefinition, data, Theme.DARK));
+                    var darkFile = qualifiedOutputDir.resolve(deriveOutputFilename(file, plotDefinition, data, Theme.DARK, qualifier));
                     generator.generate(chartConstructor, data, plotDefinition, darkFile, Theme.DARK);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -134,7 +143,7 @@ public class GraphicsCommand implements Runnable {
         }
     }
 
-    private static String deriveOutputFilename(Path file, PlotDefinition plotDefinition, BenchmarkData data, Theme mode) {
+    private static String deriveOutputFilename(Path file, PlotDefinition plotDefinition, BenchmarkData data, Theme mode, String qualifier) {
         var filename = plotDefinition.filename().toLowerCase()
                 .replaceAll(" ", "-")
                 .replaceAll("\\+", "and")
@@ -147,7 +156,7 @@ public class GraphicsCommand implements Runnable {
         return Optional.ofNullable(data.config().repo())
                 .map(repo -> repo.scenario())
                 .filter(scenario -> ! currentFilename.contains(scenario))
-                .map(scenario -> currentFilename.replace(".json", "-%s-%s-for-%s-%s.svg".formatted(scenario, filename, group, mode.name())))
-                .orElseGet(() -> currentFilename.replace(".json", "-%s-for-%s-%s.svg".formatted(filename, group, mode.name())));
+                .map(scenario -> currentFilename.replace(".json", "-%s-%s-%s-for-%s-%s.svg".formatted(scenario, filename, qualifier, group, mode.name())))
+                .orElseGet(() -> currentFilename.replace(".json", "-%s-%s-for-%s-%s.svg".formatted(filename, qualifier, group, mode.name())));
     }
 }

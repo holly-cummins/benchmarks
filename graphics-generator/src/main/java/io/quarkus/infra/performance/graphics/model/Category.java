@@ -1,5 +1,7 @@
 package io.quarkus.infra.performance.graphics.model;
 
+import static io.quarkus.infra.performance.graphics.util.StringHelpers.prettify;
+
 public enum Category {
     JVM,
     VANILLA_JIT(true),
@@ -25,5 +27,9 @@ public enum Category {
 
     public boolean isPartitionable() {
         return isPartitionable;
+    }
+
+    public String prettyName() {
+        return prettify(name());
     }
 }

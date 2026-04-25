@@ -17,13 +17,13 @@ import static java.util.Collections.emptyList;
 
 public class BarChart extends SingleSeriesChart {
 
-    private static final int MINIMUM_PARTITION_SIZE = 2;
-    private final Optional<FinePrint> fineprint;
-    private final List<Bar> bars = new ArrayList<>();
-    private final List<ScaledElement> barsAndPartitions = new ArrayList<>();
-    private final LabelGroup frameworkLabelGroup = new LabelGroup(Bar.LEFT_LABEL_SIZE);
-    private final LabelGroup valueLabelGroup = new LabelGroup();
-    private final ScaleGroup scaleGroup = new ScaleGroup();
+    protected static final int MINIMUM_PARTITION_SIZE = 2;
+    protected final Optional<FinePrint> fineprint;
+    protected final List<Bar> bars = new ArrayList<>();
+    protected final List<ScaledElement> barsAndPartitions = new ArrayList<>();
+    protected final LabelGroup frameworkLabelGroup = new LabelGroup(Bar.LEFT_LABEL_SIZE);
+    protected final LabelGroup valueLabelGroup = new LabelGroup();
+    protected final ScaleGroup scaleGroup = new ScaleGroup();
 
     public BarChart(PlotDefinition plotDefinition, BenchmarkData bmData) {
         this(plotDefinition, bmData, false);
@@ -39,6 +39,10 @@ public class BarChart extends SingleSeriesChart {
             fineprint = Optional.empty();
         }
 
+        initialiseBars();
+    }
+
+    protected void initialiseBars() {
         Category previousCategory = null;
         int partitionCount = countPartitions(data) + 1;
         int averagePartitionSize = data.size() / partitionCount;
@@ -61,10 +65,9 @@ public class BarChart extends SingleSeriesChart {
             children.add(e);
             previousCategory = newCategory;
         }
-
     }
 
-    private int countPartitions(List<Datapoint> data) {
+    protected int countPartitions(List<Datapoint> data) {
         Category previousCategory = null;
         int partitions = 0;
         for (Datapoint d : data) {

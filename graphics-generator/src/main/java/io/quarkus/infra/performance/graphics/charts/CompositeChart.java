@@ -21,12 +21,7 @@ public class CompositeChart extends Chart {
         // The layout is a bit coupled to the chart types, so although arbitrary numbers of definitions can get passed in, only three got plotted, and they look best if they're a certain set
         if (plotDefinition instanceof CompositePlotDefinition compositePlotDefinition) {
             for (PlotDefinition pd : compositePlotDefinition.pds()) {
-                Chart chart;
-                if (pd.title().contains("Memory")) {
-                    chart = new CubeChart(pd, bmData, true);
-                } else {
-                    chart = new BarChart(pd, bmData, true);
-                }
+                Chart chart = getChartForPlotDefinition(bmData, pd);
 
                 charts.add(chart);
             }
@@ -46,6 +41,16 @@ public class CompositeChart extends Chart {
         }
         // No title on the composite plots
         children.remove(title);
+    }
+
+    protected Chart getChartForPlotDefinition(BenchmarkData bmData, PlotDefinition pd) {
+        Chart chart;
+        if (pd.title().contains("Memory")) {
+            chart = new CubeChart(pd, bmData, true);
+        } else {
+            chart = new BarChart(pd, bmData, true);
+        }
+        return chart;
     }
 
     @Override

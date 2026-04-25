@@ -191,12 +191,12 @@ public abstract class ChartTest extends ElasticElementTest {
         return plotDefinition;
     }
 
-    private static BenchmarkData mockBenchmarkData() {
+    protected static BenchmarkData mockBenchmarkData() {
         return mockBenchmarkData(4);
     }
 
 
-    private static BenchmarkData mockBenchmarkData(int count) {
+    protected static BenchmarkData mockBenchmarkData(int count) {
         return mockBenchmarkData(count, () -> (double) RANDOM.nextInt(400));
     }
 
