@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import io.quarkus.infra.performance.graphics.LoadDensityPlotDefinition;
+import io.quarkus.infra.performance.graphics.LoadDensityPlotFields;
 import io.quarkus.infra.performance.graphics.PlotDefinition;
 import io.quarkus.infra.performance.graphics.Theme;
 import io.quarkus.infra.performance.graphics.charts.fonts.Alignment;
@@ -27,21 +27,21 @@ public class LoadDensityChart extends Chart {
     private static final int MINIMUM_PLOT_WIDTH = 300;
     private static final int MAXIMUM_NATURAL_WIDTH = 1200;
     private static final int MINIMUM_PLOT_HEIGHT = 200;
-    private static final int AXIS_LABEL_FONT_SIZE = 12;
-    private static final int TICK_LENGTH = 5;
+    protected static final int AXIS_LABEL_FONT_SIZE = 12;
+    protected static final int TICK_LENGTH = 5;
     private static final int LINE_THICKNESS = 3;
     private static final int LEGEND_LINE_LENGTH = 24;
     private static final int LEGEND_PADDING = 10;
     private static final int LEGEND_ENTRY_GAP = 20;
-    private static final int Y_AXIS_LABEL_WIDTH = 40;
-    private static final int X_AXIS_LABEL_HEIGHT = 44;
+    protected static final int Y_AXIS_LABEL_WIDTH = 40;
+    protected static final int X_AXIS_LABEL_HEIGHT = 44;
     private static final int KEY_PADDING_LEFT = 8;
     private static final int KEY_PADDING_RIGHT = 14;
 
-    private final Optional<FinePrint> fineprint;
-    private final List<FrameworkStepData> frameworkSteps = new ArrayList<>();
-    private final int maxInstances;
-    private final double maxLoad;
+    protected Optional<FinePrint> fineprint;
+    protected final List<FrameworkStepData> frameworkSteps = new ArrayList<>();
+    protected final int maxInstances;
+    protected final double maxLoad;
 
     public LoadDensityChart(PlotDefinition plotDefinition, BenchmarkData bmData) {
         this(plotDefinition, bmData, EmbedOptions.DEFAULT);
@@ -50,7 +50,7 @@ public class LoadDensityChart extends Chart {
     public LoadDensityChart(PlotDefinition plotDefinition, BenchmarkData bmData, EmbedOptions embedOptions) {
         super(plotDefinition, bmData, embedOptions);
 
-        if (!(plotDefinition instanceof LoadDensityPlotDefinition ldDef)) {
+        if (!(plotDefinition instanceof LoadDensityPlotFields ldDef)) {
             throw new IllegalArgumentException(
                     "Cannot construct a " + this.getClass().getName()
                             + " with a " + plotDefinition.getClass());
@@ -161,13 +161,13 @@ public class LoadDensityChart extends Chart {
                 titleHeight + plotHeight, fineprint);
     }
 
-    private void drawStepChart(Subcanvas plotArea, Theme theme) {
+    protected void drawStepChart(Subcanvas plotArea, Theme theme) {
         int legendHeight = estimateLegendHeight();
 
         int chartLeft = Y_AXIS_LABEL_WIDTH;
         int chartBottom = plotArea.getHeight() - X_AXIS_LABEL_HEIGHT - legendHeight;
         int chartTop = 10;
-        int chartRight = plotArea.getWidth() - 20;
+        int chartRight = plotArea.getWidth() - getRightMargin();
 
         int chartWidth = chartRight - chartLeft;
         int chartHeight = chartBottom - chartTop;
@@ -181,7 +181,7 @@ public class LoadDensityChart extends Chart {
         drawLegend(plotArea, theme, chartLeft, chartBottom + X_AXIS_LABEL_HEIGHT, chartWidth);
     }
 
-    private void drawAxes(Subcanvas g, Theme theme, int chartLeft, int chartTop, int chartBottom,
+    protected void drawAxes(Subcanvas g, Theme theme, int chartLeft, int chartTop, int chartBottom,
                            int chartRight, int chartWidth, int chartHeight) {
         g.setPaint(theme.text());
 
@@ -453,7 +453,11 @@ public class LoadDensityChart extends Chart {
         return 0;
     }
 
-    private static double niceStep(double range, int targetTicks) {
+    protected int getRightMargin() {
+        return 20;
+    }
+
+    protected static double niceStep(double range, int targetTicks) {
         double roughStep = range / targetTicks;
         double magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
         double residual = roughStep / magnitude;
@@ -491,7 +495,7 @@ public class LoadDensityChart extends Chart {
         return fineprint.map(FinePrint::getInlinedSVGs).orElse(emptyList());
     }
 
-    private record FrameworkStepData(Framework framework, double throughput) {
+    protected record FrameworkStepData(Framework framework, double throughput) {
     }
 
     private record LegendEntry(String name, Framework framework, int width) {

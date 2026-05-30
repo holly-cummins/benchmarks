@@ -1,0 +1,9 @@
+{
+  "instanceType": "c6i.xlarge",
+  "region": "us-east-1",
+  "vCPUs": 4,
+  "memoryGiB": 8,
+  "onDemandPricePerHour": 0.170,
+  "currency": "USD",
+  "lastUpdated": "2026-05-30"
+}

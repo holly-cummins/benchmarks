@@ -16,8 +16,10 @@ import io.quarkus.infra.performance.graphics.charts.BarChart;
 import io.quarkus.infra.performance.graphics.charts.Chart;
 import io.quarkus.infra.performance.graphics.charts.CompositeChart;
 import io.quarkus.infra.performance.graphics.charts.CubeChart;
+import io.quarkus.infra.performance.graphics.charts.CostChart;
 import io.quarkus.infra.performance.graphics.charts.LoadDensityChart;
 import io.quarkus.infra.performance.graphics.model.BenchmarkData;
+import io.quarkus.infra.performance.graphics.model.Ec2Pricing;
 import io.quarkus.infra.performance.graphics.model.CompositePlotDefinition;
 import io.quarkus.infra.performance.graphics.model.Config;
 import io.quarkus.infra.performance.graphics.model.Group;
@@ -36,6 +38,8 @@ public class GraphicsCommand implements Runnable {
     private static final int NODE_MEMORY_MIB = 8192;
     private static final int K8S_OVERHEAD_MIB = 1024;
     private static final PlotDefinition LOAD_DENSITY = new LoadDensityPlotDefinition("How Many Instances?", "load-density", "(Fewer instances is better)", NODE_MEMORY_MIB - K8S_OVERHEAD_MIB, 200_000, framework -> framework.load().avThroughput(), framework -> framework.rss().avFirstRequestRss());
+    private static final Ec2Pricing EC2_PRICING = Ec2Pricing.load();
+    private static final PlotDefinition COST = new CostPlotDefinition("How Much Does It Cost?", "load-cost", "(Lower cost is better)", NODE_MEMORY_MIB - K8S_OVERHEAD_MIB, 200_000, framework -> framework.load().avThroughput(), framework -> framework.rss().avFirstRequestRss(), EC2_PRICING);
 
     @Parameters(paramLabel = "<filename>", defaultValue = "latest.json", description = "A filename of json-formatted data, or a directory. For directories, .json files in the directory will be processed recursively.")
     Path filename;
@@ -115,6 +119,7 @@ public class GraphicsCommand implements Runnable {
             generate(file, qualifiedOutputDir, BarChart::new, data, BUILD_TIME);
             generate(file, qualifiedOutputDir, CompositeChart::new, data, FRONT_PAGE);
             generate(file, qualifiedOutputDir, LoadDensityChart::new, data, LOAD_DENSITY);
+            generate(file, qualifiedOutputDir, CostChart::new, data, COST);
         }
     }
 

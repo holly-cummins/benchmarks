@@ -9,5 +9,5 @@ public record LoadDensityPlotDefinition(String title, String filename, String su
                                         int schedulableMemoryMiB,
                                         double maxLoadTps,
                                         Function<Result, ? extends DimensionalNumber> throughputFun,
-                                        Function<Result, ? extends DimensionalNumber> rssFun) implements PlotDefinition {
+                                        Function<Result, ? extends DimensionalNumber> rssFun) implements LoadDensityPlotFields {
 }
