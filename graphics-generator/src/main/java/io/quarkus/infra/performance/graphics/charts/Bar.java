@@ -11,9 +11,8 @@ import static io.quarkus.infra.performance.graphics.charts.fonts.FontStyle.PLAIN
 
 public class Bar extends ScaledElement {
     protected static final int BAR_THICKNESS = 44;
-    public static final int VALUE_LABEL_HEIGHT = BAR_THICKNESS * 2 / 3;
     protected static final int MINIMUM_BAR_THICKNESS = 44;
-    private static final int MAXIMUM_BAR_THICKNESS = 44;
+    protected static final int MAXIMUM_BAR_THICKNESS = 44;
     private static final int MINIMUM_BAR_LENGTH = 200;
 
     public static final int LEFT_LABEL_SIZE = Sizer.calculateFontSize(BAR_THICKNESS / 2);
@@ -40,7 +39,7 @@ public class Bar extends ScaledElement {
                 .setVerticalAlignment(VAlignment.MIDDLE)
                 .setStyles(new FontStyle[]{BOLD, PLAIN})
                 .setTargetHeight(BAR_THICKNESS);
-        valueLabel = new Label(valueLabelText, valueLabelGroup).setStyle(BOLD).setTargetHeight(VALUE_LABEL_HEIGHT);
+        valueLabel = new Label(valueLabelText, valueLabelGroup).setStyle(BOLD).setTargetHeight(getLabelTargetHeight());
 
         // This will probably be overridden, but set a value
         offset = Sizer.calculateWidth(frameworkLabelText, LEFT_LABEL_SIZE) + LABEL_PADDING;
@@ -89,7 +88,6 @@ public class Bar extends ScaledElement {
         Subcanvas barSubcanvas = new Subcanvas(barArea, barArea.getWidth() - offset, Math.max(frameworkLabel.getTargetHeight(), BAR_THICKNESS), offset, y);
 
         drawBar(theme, barSubcanvas);
-
         drawValueLabel(barSubcanvas, theme);
     }
 
@@ -97,7 +95,7 @@ public class Bar extends ScaledElement {
         int labelY = barSubcanvas.getHeight() / 2;
         int length = (int) (d.value().getValue() * scaleGroup.getScale());
 
-        valueLabel.setTargetHeight(BAR_THICKNESS * 2 / 3).draw(barSubcanvas, length + LABEL_PADDING, labelY);
+        valueLabel.setTargetHeight(getLabelTargetHeight()).draw(barSubcanvas, length + LABEL_PADDING, labelY);
     }
 
     protected void drawBar(Theme theme, Subcanvas barSubcanvas) {
@@ -116,5 +114,9 @@ public class Bar extends ScaledElement {
 
     public double getMaximumScale(Subcanvas barArea) {
         return getMaximumBarWidth(barArea) / d.value().getValue();
+    }
+
+    protected static int getLabelTargetHeight() {
+        return BAR_THICKNESS * 2 / 3;
     }
 }
