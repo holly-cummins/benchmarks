@@ -84,7 +84,11 @@ public class CostChart extends LoadDensityChart {
 
     private static String formatAnnualCost(double cost) {
         if (cost >= 1000) {
-            return String.format("%,.0f", cost);
+            double k = cost / 1000;
+            if (k == Math.floor(k)) {
+                return String.format("%.0fK", k);
+            }
+            return String.format("%.1fK", k);
         }
         return String.format("%.0f", cost);
     }
